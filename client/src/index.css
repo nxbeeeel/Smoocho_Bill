@@ -1,0 +1,152 @@
+/* CACHE BUST: 2025-03-09 07:00 - ORIGINAL WORKING LAYOUT RESTORED */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Touch-optimized styles */
+@layer base {
+  html {
+    /* Prevent text size adjustment on orientation change */
+    -webkit-text-size-adjust: 100%;
+    -ms-text-size-adjust: 100%;
+    /* Enable hardware acceleration */
+    transform: translateZ(0);
+  }
+
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+      'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+      sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    /* Optimize for touch */
+    touch-action: manipulation;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    /* Prevent bounce scrolling on iOS */
+    overscroll-behavior: none;
+  }
+
+  /* Remove default button styles and make touch-friendly */
+  button, input, select, textarea {
+    touch-action: manipulation;
+    font-size: 16px; /* Prevent zoom on iOS */
+  }
+
+  /* Ensure minimum touch target size */
+  button, .touch-target {
+    min-height: 60px;
+    min-width: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+@layer components {
+  /* Touch-optimized button components */
+  .btn-touch {
+    @apply min-h-touch min-w-touch px-6 py-3 rounded-lg font-medium transition-all duration-200 
+           flex items-center justify-center gap-2 shadow-touch
+           focus:outline-none focus:ring-4 focus:ring-opacity-50
+           active:scale-95 active:shadow-sm;
+  }
+
+  .btn-primary {
+    @apply btn-touch bg-primary-500 text-white hover:bg-primary-600 
+           focus:ring-primary-500 active:bg-primary-700;
+  }
+
+  .btn-secondary {
+    @apply btn-touch bg-secondary-200 text-secondary-800 hover:bg-secondary-300 
+           focus:ring-secondary-500 active:bg-secondary-400;
+  }
+
+  .btn-success {
+    @apply btn-touch bg-green-500 text-white hover:bg-green-600 
+           focus:ring-green-500 active:bg-green-700;
+  }
+
+  .btn-danger {
+    @apply btn-touch bg-red-500 text-white hover:bg-red-600 
+           focus:ring-red-500 active:bg-red-700;
+  }
+
+  /* Touch-optimized input */
+  .input-touch {
+    @apply min-h-touch px-4 py-3 text-lg border-2 border-secondary-300 rounded-lg
+           focus:outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500 focus:ring-opacity-20
+           transition-all duration-200;
+  }
+
+  /* Card component */
+  .card {
+    @apply bg-white rounded-xl shadow-touch border border-secondary-200 p-6;
+  }
+
+  /* Grid layouts for touch */
+  .grid-touch {
+    @apply grid gap-4;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  }
+
+  .grid-touch-large {
+    @apply grid gap-6;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  }
+}
+
+@layer utilities {
+  /* Disable text selection */
+  .no-select {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  }
+
+  /* Touch feedback */
+  .touch-feedback {
+    transition: transform 0.1s ease-in-out;
+  }
+
+  .touch-feedback:active {
+    transform: scale(0.98);
+  }
+
+  /* Mobile-first touch targets */
+  .min-touch {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  /* Tablet touch targets */
+  @media (min-width: 768px) {
+    .min-touch {
+      min-height: 48px;
+      min-width: 48px;
+    }
+  }
+}
+
+/* Loading spinner */
+.spinner {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Offline indicator styles */
+.offline-indicator {
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}

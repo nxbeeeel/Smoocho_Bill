@@ -1,0 +1,315 @@
+// This is your Prisma schema file
+// Learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Users and Authentication
+model User {
+  id            String   @id @default(cuid())
+  username      String   @unique
+  email         String   @unique
+  password_hash String
+  role          Role     @default(CASHIER)
+  is_active     Boolean  @default(true)
+  created_at    DateTime @default(now())
+  updated_at    DateTime @updatedAt
+
+  // Relations
+  orders             Order[]
+  stock_transactions StockTransaction[]
+
+  @@map("users")
+}
+
+enum Role {
+  ADMIN
+  CASHIER
+  MANAGER
+}
+
+// Product Categories
+model Category {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  image_url   String?
+  sort_order  Int      @default(0)
+  is_active   Boolean  @default(true)
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+
+  // Relations
+  products Product[]
+
+  @@map("categories")
+}
+
+// Products/Menu Items
+model Product {
+  id               String      @id @default(cuid())
+  name             String
+  description      String?
+  category_id      String
+  price            Decimal     @db.Decimal(10, 2)
+  cost_price       Decimal?    @db.Decimal(10, 2)
+  image_url        String?
+  sku              String?     @unique
+  barcode          String?
+  is_available     Boolean     @default(true)
+  is_active        Boolean     @default(true)
+  sort_order       Int         @default(0)
+  recipe_items     Json?       // Array of {inventory_id, quantity, unit}
+  preparation_time Int?        // in minutes
+  created_at       DateTime    @default(now())
+  updated_at       DateTime    @updatedAt
+
+  // Relations
+  category    Category    @relation(fields: [category_id], references: [id])
+  order_items OrderItem[]
+
+  @@map("products")
+}
+
+// Inventory Items (Raw materials/ingredients)
+model InventoryItem {
+  id               String   @id @default(cuid())
+  name             String
+  unit             String   // grams, pieces, liters, etc.
+  current_stock    Decimal  @default(0) @db.Decimal(10, 3)
+  minimum_stock    Decimal  @default(0) @db.Decimal(10, 3)
+  cost_per_unit    Decimal? @db.Decimal(10, 4)
+  supplier_name    String?
+  supplier_contact String?
+  expiry_date      DateTime?
+  last_restocked   DateTime?
+  is_active        Boolean  @default(true)
+  created_at       DateTime @default(now())
+  updated_at       DateTime @updatedAt
+
+  // Relations
+  stock_transactions StockTransaction[]
+
+  @@map("inventory_items")
+}
+
+// Stock Transactions (for tracking inventory changes)
+model StockTransaction {
+  id                 String               @id @default(cuid())
+  inventory_item_id  String
+  transaction_type   TransactionType
+  quantity           Decimal              @db.Decimal(10, 3)
+  cost_per_unit      Decimal?             @db.Decimal(10, 4)
+  total_cost         Decimal?             @db.Decimal(10, 2)
+  reference_type     ReferenceType?
+  reference_id       String?
+  notes              String?
+  user_id            String
+  created_at         DateTime             @default(now())
+
+  // Relations
+  inventory_item InventoryItem @relation(fields: [inventory_item_id], references: [id])
+  user           User          @relation(fields: [user_id], references: [id])
+
+  @@map("stock_transactions")
+}
+
+enum TransactionType {
+  IN
+  OUT
+  ADJUSTMENT
+}
+
+enum ReferenceType {
+  ORDER
+  RESTOCK
+  MANUAL
+  WASTAGE
+}
+
+// Orders
+model Order {
+  id                   String        @id @default(cuid())
+  order_number         String        @unique
+  order_type           OrderType
+  customer_name        String?
+  customer_phone       String?
+  customer_email       String?
+  table_number         String?
+  subtotal             Decimal       @db.Decimal(10, 2)
+  discount_amount      Decimal       @default(0) @db.Decimal(10, 2)
+  discount_type        DiscountType?
+  tax_amount           Decimal       @default(0) @db.Decimal(10, 2)
+  total_amount         Decimal       @db.Decimal(10, 2)
+  status               OrderStatus   @default(PENDING)
+  payment_status       PaymentStatus @default(PENDING)
+  external_order_id    String?
+  external_platform    Platform?
+  order_date           DateTime      @default(now())
+  estimated_ready_time DateTime?
+  completed_at         DateTime?
+  cashier_id           String
+  is_synced            Boolean       @default(false)
+  created_at           DateTime      @default(now())
+  updated_at           DateTime      @updatedAt
+
+  // Relations
+  cashier     User        @relation(fields: [cashier_id], references: [id])
+  order_items OrderItem[]
+  payments    Payment[]
+
+  @@map("orders")
+}
+
+enum OrderType {
+  DINE_IN
+  TAKEAWAY
+  ZOMATO
+  SWIGGY
+}
+
+enum OrderStatus {
+  PENDING
+  CONFIRMED
+  PREPARING
+  READY
+  COMPLETED
+  CANCELLED
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  PARTIAL
+  REFUNDED
+}
+
+enum DiscountType {
+  PERCENTAGE
+  FIXED
+}
+
+enum Platform {
+  ZOMATO
+  SWIGGY
+}
+
+// Order Items
+model OrderItem {
+  id                    String   @id @default(cuid())
+  order_id              String
+  product_id            String
+  product_name          String   // Snapshot for historical data
+  product_price         Decimal  @db.Decimal(10, 2)
+  quantity              Int
+  item_total            Decimal  @db.Decimal(10, 2)
+  special_instructions  String?
+  created_at            DateTime @default(now())
+
+  // Relations
+  order   Order   @relation(fields: [order_id], references: [id], onDelete: Cascade)
+  product Product @relation(fields: [product_id], references: [id])
+
+  @@map("order_items")
+}
+
+// Payments
+model Payment {
+  id                    String            @id @default(cuid())
+  order_id              String
+  payment_method        PaymentMethod
+  amount                Decimal           @db.Decimal(10, 2)
+  transaction_id        String?
+  paytm_transaction_id  String?
+  payment_status        PaymentStatus     @default(PENDING)
+  payment_date          DateTime          @default(now())
+  is_synced             Boolean           @default(false)
+  created_at            DateTime          @default(now())
+
+  // Relations
+  order Order @relation(fields: [order_id], references: [id])
+
+  @@map("payments")
+}
+
+enum PaymentMethod {
+  CASH
+  CARD
+  UPI
+  ZOMATO
+  SWIGGY
+}
+
+// Daily Sales Summary
+model DailySummary {
+  id            String   @id @default(cuid())
+  summary_date  DateTime @unique @db.Date
+  total_sales   Decimal  @default(0) @db.Decimal(10, 2)
+  total_orders  Int      @default(0)
+  cash_sales    Decimal  @default(0) @db.Decimal(10, 2)
+  card_sales    Decimal  @default(0) @db.Decimal(10, 2)
+  online_sales  Decimal  @default(0) @db.Decimal(10, 2)
+  total_discount Decimal @default(0) @db.Decimal(10, 2)
+  total_tax     Decimal  @default(0) @db.Decimal(10, 2)
+  created_at    DateTime @default(now())
+  updated_at    DateTime @updatedAt
+
+  @@map("daily_summaries")
+}
+
+// Settings
+model Setting {
+  key         String      @id
+  value       String
+  data_type   DataType    @default(STRING)
+  description String?
+  updated_at  DateTime    @updatedAt
+
+  @@map("settings")
+}
+
+enum DataType {
+  STRING
+  NUMBER
+  BOOLEAN
+  JSON
+}
+
+// Sync Queue (for offline operations)
+model SyncQueue {
+  id             String          @id @default(cuid())
+  operation_type OperationType
+  table_name     String
+  record_id      String
+  data           Json
+  status         SyncStatus      @default(PENDING)
+  retry_count    Int             @default(0)
+  error_message  String?
+  created_at     DateTime        @default(now())
+  processed_at   DateTime?
+
+  @@map("sync_queue")
+}
+
+enum OperationType {
+  CREATE
+  UPDATE
+  DELETE
+}
+
+enum SyncStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
+}
+
+// Indexes for performance
+// These are automatically created by Prisma for relations and unique fields
+// Additional indexes can be added as needed

@@ -1,0 +1,49 @@
+{
+  "name": "smoocho-bill",
+  "version": "1.0.0",
+  "description": "Smoocho Bill - POS & Inventory Management System",
+  "main": "index.js",
+  "scripts": {
+    "dev": "concurrently \"npm run dev:server\" \"npm run dev:client\"",
+    "dev:server": "cd server && npm run dev",
+    "dev:client": "cd client && npm run dev",
+    "build": "npm run build:client && npm run build:server",
+    "build:client": "cd client && npm run build",
+    "build:server": "cd server && npm run build",
+    "start": "cd server && npm start",
+    "setup-db": "cd server && npm run db:generate && npm run db:push && npm run db:seed",
+    "install-all": "npm install && cd client && npm install && cd ../server && npm install",
+    "upgrade-latest": "powershell -ExecutionPolicy Bypass -File upgrade-latest.ps1",
+    "test": "jest",
+    "lint": "eslint . --ext .ts,.tsx",
+    "lint:fix": "eslint . --ext .ts,.tsx --fix"
+  },
+  "keywords": [
+    "pos",
+    "inventory",
+    "management",
+    "restaurant",
+    "retail",
+    "pwa",
+    "offline-first"
+  ],
+  "author": "Smoocho Team",
+  "license": "MIT",
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^8.18.2",
+    "@typescript-eslint/parser": "^8.18.2",
+    "concurrently": "^9.2.1",
+    "eslint": "^9.17.0",
+    "jest": "^29.7.0"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=8.0.0"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.57.0",
+    "firebase": "^12.2.1",
+    "html2canvas": "^1.4.1",
+    "jspdf": "^3.0.2"
+  }
+}
