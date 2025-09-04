@@ -68,49 +68,11 @@ export class AutoImageLoader {
       }
     }
 
-    // Check cache first
-    if (this.imageCache.has(menuItem.filename)) {
-      return {
-        success: true,
-        image: this.imageCache.get(menuItem.filename)!,
-        source: 'local'
-      }
-    }
-
-    // Try local image first
-    try {
-      const localImage = await this.tryLocalImage(menuItem.filename)
-      if (localImage) {
-        this.imageCache.set(menuItem.filename, localImage)
-        return {
-          success: true,
-          image: localImage,
-          source: 'local'
-        }
-      }
-    } catch (error) {
-      console.log(`Local image failed for ${menuItem.filename}:`, error)
-    }
-
-    // Try cloud image
-    try {
-      const cloudImage = await this.tryCloudImage(menuItem.filename)
-      if (cloudImage) {
-        this.imageCache.set(menuItem.filename, cloudImage)
-        return {
-          success: true,
-          image: cloudImage,
-          source: 'cloud'
-        }
-      }
-    } catch (error) {
-      console.log(`Cloud image failed for ${menuItem.filename}:`, error)
-    }
-
-    // Return fallback
+    // For now, skip image loading to prevent 404 errors
+    // Return fallback emoji immediately
     return {
       success: false,
-      error: 'No image available',
+      error: 'Images temporarily disabled',
       source: 'fallback'
     }
   }
@@ -125,9 +87,43 @@ export class AutoImageLoader {
         return await this.blobToBase64(blob)
       }
     } catch (error) {
-      // Local image not available
+      // Local image not available - try to find a similar image
+      const similarImage = this.findSimilarImage(filename)
+      if (similarImage) {
+        try {
+          const response = await fetch(`/images/${similarImage}`)
+          if (response.ok) {
+            const blob = await response.blob()
+            return await this.blobToBase64(blob)
+          }
+        } catch (error) {
+          // Similar image also not available
+        }
+      }
     }
     return null
+  }
+
+  // Find a similar image that actually exists
+  private findSimilarImage(filename: string): string | null {
+    // Map of expected filenames to actual existing filenames
+    const imageMap: { [key: string]: string } = {
+      '01_hazelnut_kunafa.jpg': '02_white_chocolate_kunafa.jpg', // Use white chocolate as fallback
+      '02_white_chocolate_kunafa.jpg': '02_white_chocolate_kunafa.jpg',
+      '03_pista_kunafa.jpg': '03_pista_kunafa.jpg',
+      '04_biscoff_kunafa.jpg': '04_biscoff_kunafa.jpg',
+      '05_hazelnut_white_kunafa.jpg': '05_hazelnut_white_kunafa.jpg',
+      // For missing images, use the closest available one
+      '06_biscoff_hazelnut_kunafa.jpg': '04_biscoff_kunafa.jpg',
+      '07_pista_white_kunafa.jpg': '03_pista_kunafa.jpg',
+      '08_hazelnut_pista_kunafa.jpg': '03_pista_kunafa.jpg',
+      '09_biscoff_white_kunafa.jpg': '04_biscoff_kunafa.jpg',
+      '10_pista_biscoff_kunafa.jpg': '03_pista_kunafa.jpg',
+      '11_coffee_hazelnut_kunafa.jpg': '02_white_chocolate_kunafa.jpg',
+      '12_pista_coffee_kunafa.jpg': '03_pista_kunafa.jpg',
+    }
+    
+    return imageMap[filename] || null
   }
 
   // Try to load cloud image
@@ -159,17 +155,8 @@ export class AutoImageLoader {
 
   // Preload all images for better performance
   async preloadAllImages(): Promise<void> {
-    const menuItems = menuImageLoader.getMenuItemsWithImages()
-    const promises = menuItems.map(async (item) => {
-      try {
-        await this.getImage(item.name)
-      } catch (error) {
-        console.log(`Failed to preload ${item.name}:`, error)
-      }
-    })
-
-    await Promise.allSettled(promises)
-    console.log('Image preloading completed')
+    // Skip preloading for now to prevent 404 errors
+    console.log('Image preloading skipped - using emoji fallbacks')
   }
 
   // Get fallback emoji based on category
