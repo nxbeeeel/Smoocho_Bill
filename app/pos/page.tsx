@@ -26,6 +26,7 @@ import { useSettings } from '@/hooks/use-settings'
 import { db, Product } from '@/lib/database'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { QRGenerator } from '@/components/ui/qr-generator'
+import { thermalPrinter } from '@/lib/printer'
 
 interface CartItem {
   id: number | undefined
@@ -279,227 +280,66 @@ export default function POSPage() {
   }
 
   const generateBill = async (order: any) => {
-    // Create thermal receipt format
-    const printWindow = window.open('', '_blank')
-    if (!printWindow) return
+    try {
+      // Generate receipt content using thermal printer
+      const receiptContent = thermalPrinter.generateReceiptContent(order, settings)
+      
+      // Try direct printing to built-in printer
+      const printSuccess = await thermalPrinter.printDirect(receiptContent, {
+        width: 80,
+        fontSize: 12,
+        fontFamily: 'Courier New, monospace',
+        margin: 5
+      })
 
-    const printContent = `
-      <!DOCTYPE html>
-      <html>
-        <head>
-          <title>Receipt - ${order.orderNumber}</title>
-          <style>
-            @page {
-              size: 80mm auto;
-              margin: 0;
-            }
-            * {
-              margin: 0;
-              padding: 0;
-              box-sizing: border-box;
-            }
-            body {
-              font-family: 'Courier New', monospace;
-              font-size: 12px;
-              line-height: 1.2;
-              width: 80mm;
-              max-width: 80mm;
-              margin: 0 auto;
-              padding: 5mm;
-              background: white;
-              color: black;
-            }
-            .receipt {
-              width: 100%;
-            }
-            .header {
-              text-align: center;
-              border-bottom: 1px dashed #000;
-              padding-bottom: 8px;
-              margin-bottom: 8px;
-            }
-            .store-name {
-              font-size: 16px;
-              font-weight: bold;
-              margin-bottom: 2px;
-            }
-            .store-details {
-              font-size: 10px;
-              margin-bottom: 4px;
-            }
-            .order-info {
-              margin-bottom: 8px;
-              font-size: 11px;
-            }
-            .order-info p {
-              margin: 1px 0;
-            }
-            .items {
-              margin-bottom: 8px;
-            }
-            .item-row {
-              display: flex;
-              justify-content: space-between;
-              margin-bottom: 2px;
-              font-size: 11px;
-            }
-            .item-name {
-              flex: 1;
-              margin-right: 4px;
-            }
-            .item-qty {
-              width: 20px;
-              text-align: center;
-            }
-            .item-price {
-              width: 40px;
-              text-align: right;
-            }
-            .item-total {
-              width: 50px;
-              text-align: right;
-              font-weight: bold;
-            }
-            .divider {
-              border-top: 1px dashed #000;
-              margin: 4px 0;
-            }
-            .totals {
-              margin-bottom: 8px;
-            }
-            .total-row {
-              display: flex;
-              justify-content: space-between;
-              margin: 1px 0;
-              font-size: 11px;
-            }
-            .total-label {
-              flex: 1;
-            }
-            .total-amount {
-              font-weight: bold;
-            }
-            .grand-total {
-              font-size: 14px;
-              font-weight: bold;
-              border-top: 1px solid #000;
-              padding-top: 4px;
-              margin-top: 4px;
-            }
-            .footer {
-              text-align: center;
-              margin-top: 8px;
-              border-top: 1px dashed #000;
-              padding-top: 8px;
-              font-size: 10px;
-            }
-            .thank-you {
-              font-weight: bold;
-              margin-bottom: 4px;
-            }
-            .generated-time {
-              font-size: 9px;
-            }
-            @media print {
-              body {
-                margin: 0;
-                padding: 2mm;
-              }
-            }
-          </style>
-        </head>
-        <body>
-          <div class="receipt">
-            <div class="header">
-              <div class="store-name">${settings?.storeName || 'SMOOCHO BILL'}</div>
-              <div class="store-details">${settings?.storeAddress || 'Premium POS System'}</div>
-              <div class="store-details">Phone: ${settings?.storePhone || 'N/A'}</div>
-              ${settings?.storeEmail ? `<div class="store-details">Email: ${settings.storeEmail}</div>` : ''}
-              ${settings?.storeWebsite ? `<div class="store-details">Web: ${settings.storeWebsite}</div>` : ''}
-              ${settings?.storeGST ? `<div class="store-details">GST: ${settings.storeGST}</div>` : ''}
-              <div class="divider"></div>
-              <div class="store-details" style="font-weight: bold;">BILL #${order.orderNumber}</div>
-            </div>
-            
-            <div class="order-info">
-              <p>Date: ${new Date().toLocaleDateString('en-IN')}</p>
-              <p>Time: ${new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })}</p>
-              <p>Order Type: ${orderType.toUpperCase()}</p>
-              <p>Payment: ${order.paymentMethod.toUpperCase()}</p>
-              <p>Status: PAID</p>
-              ${order.customerName ? `<p>Customer: ${order.customerName}</p>` : ''}
-              ${order.customerPhone ? `<p>Phone: ${order.customerPhone}</p>` : ''}
-            </div>
-
-            <div class="items">
-              <div class="item-row" style="font-weight: bold; border-bottom: 1px solid #000; padding-bottom: 2px;">
-                <div class="item-name">Item</div>
-                <div class="item-qty">Qty</div>
-                <div class="item-price">Price</div>
-                <div class="item-total">Total</div>
-              </div>
-              ${order.items.map((item: any) => `
-                <div class="item-row">
-                  <div class="item-name">${item.productName}</div>
-                  <div class="item-qty">${item.quantity}</div>
-                  <div class="item-price">₹${item.price.toFixed(2)}</div>
-                  <div class="item-total">₹${item.total.toFixed(2)}</div>
-                </div>
-              `).join('')}
-            </div>
-
-            <div class="divider"></div>
-
-            <div class="totals">
-              <div class="total-row">
-                <div class="total-label">Subtotal:</div>
-                <div class="total-amount">₹${order.subtotal.toFixed(2)}</div>
-              </div>
-              ${order.discount > 0 ? `
-                <div class="total-row">
-                  <div class="total-label">Discount:</div>
-                  <div class="total-amount">${order.discountType === 'percentage' ? order.discount + '%' : '₹' + order.discount.toFixed(2)}</div>
-                </div>
-              ` : ''}
-              ${orderType === 'delivery' && (settings?.deliveryCharge || 0) > 0 ? `
-                <div class="total-row">
-                  <div class="total-label">Delivery Charge:</div>
-                  <div class="total-amount">₹${(settings?.deliveryCharge || 0).toFixed(2)}</div>
-                </div>
-              ` : ''}
-              <div class="total-row">
-                <div class="total-label">Tax (${settings?.taxRate || 18}%):</div>
-                <div class="total-amount">₹${order.tax.toFixed(2)}</div>
-              </div>
-              <div class="total-row grand-total">
-                <div class="total-label">TOTAL:</div>
-                <div class="total-amount">₹${order.total.toFixed(2)}</div>
-              </div>
-            </div>
-
-            <div class="footer">
-              <div class="thank-you">Thank you for your visit!</div>
-              ${settings?.upiId ? `<div style="margin: 4px 0; font-size: 9px;">UPI ID: ${settings.upiId}</div>` : ''}
-              <div style="margin: 4px 0; font-size: 9px;">Keep this receipt for warranty</div>
-              <div style="margin: 4px 0; font-size: 9px;">For queries: ${settings?.storePhone || 'Contact Store'}</div>
-              <div class="generated-time">Generated: ${new Date().toLocaleString('en-IN')}</div>
-              <div style="margin-top: 4px; font-size: 8px; color: #666;">Powered by Smoocho Bill POS</div>
-            </div>
-          </div>
-        </body>
-      </html>
-    `
-
-    printWindow.document.write(printContent)
-    printWindow.document.close()
-    
-    // Auto-print after a short delay
-    setTimeout(() => {
-      printWindow.print()
-    }, 500)
-
-    // Also log to console for debugging
-    console.log('Bill Generated for Order:', order.orderNumber)
+      if (printSuccess) {
+        toast({
+          title: "Receipt Printed",
+          description: "Receipt sent to built-in printer successfully",
+        })
+        console.log('Bill printed to built-in printer for Order:', order.orderNumber)
+      } else {
+        // Fallback to traditional printing if direct print fails
+        const printWindow = window.open('', '_blank')
+        if (printWindow) {
+          printWindow.document.write(`
+            <!DOCTYPE html>
+            <html>
+              <head>
+                <title>Receipt - ${order.orderNumber}</title>
+                <style>
+                  @page { size: 80mm auto; margin: 0; }
+                  * { margin: 0; padding: 0; box-sizing: border-box; }
+                  body { font-family: 'Courier New', monospace; font-size: 12px; line-height: 1.2; width: 80mm; max-width: 80mm; margin: 0 auto; padding: 5mm; background: white; color: black; }
+                  @media print { body { margin: 0; padding: 2mm; } }
+                </style>
+              </head>
+              <body>
+                ${receiptContent}
+              </body>
+            </html>
+          `)
+          printWindow.document.close()
+          
+          setTimeout(() => {
+            printWindow.print()
+            setTimeout(() => printWindow.close(), 1000)
+          }, 500)
+          
+          toast({
+            title: "Receipt Printed",
+            description: "Receipt opened in print dialog",
+          })
+        }
+      }
+    } catch (error) {
+      console.error('Print error:', error)
+      toast({
+        title: "Print Error",
+        description: "Failed to print receipt. Please try again.",
+        variant: "destructive"
+      })
+    }
   }
 
   return (
