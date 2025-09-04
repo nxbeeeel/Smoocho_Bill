@@ -3,7 +3,7 @@
 import React from 'react'
 import { menuImageLoader } from '@/lib/image-loader'
 import { db } from '@/lib/database'
-import { useLiveQuery } from 'dexie-react-hooks'
+import { useLiveQuery } from 'dexie-react-hooks'nimport { Button } from '@/components/ui/button'
 
 export default function ImageTestPage() {
   const products = useLiveQuery(() => db.products.toArray())
