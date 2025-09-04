@@ -449,4 +449,3 @@ class ApiClient {
 export const apiClient = new ApiClient()
 
 // Export types
-export type { ApiResponse, User, Shop, Product, Order }
