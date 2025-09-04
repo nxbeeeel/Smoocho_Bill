@@ -44,15 +44,15 @@ export function generateToken(user: Omit<User, 'shopName'>): string {
       shopId: user.shopId,
       role: user.role,
     },
-    JWT_SECRET,
-    { expiresIn: JWT_EXPIRES_IN }
+    JWT_SECRET as string,
+    { expiresIn: JWT_EXPIRES_IN as string }
   )
 }
 
 // Verify JWT token
 export function verifyToken(token: string): AuthToken | null {
   try {
-    return jwt.verify(token, JWT_SECRET) as AuthToken
+    return jwt.verify(token, JWT_SECRET as string) as AuthToken
   } catch (error) {
     return null
   }
