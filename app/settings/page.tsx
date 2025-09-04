@@ -102,8 +102,8 @@ export default function SettingsPage() {
   const renderTabContent = () => {
     switch (activeTab) {
       case 'store':
-  return (
-      <div className="space-y-4">
+        return (
+          <div className="space-y-4">
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center text-base">
