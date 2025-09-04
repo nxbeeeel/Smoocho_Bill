@@ -71,87 +71,94 @@ export default function SettingsPage() {
     switch (activeTab) {
       case 'store':
   return (
-      <div className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-                <Label htmlFor="storeName">Store Name</Label>
-              <Input
+          <div className="space-y-4 sm:space-y-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="storeName" className="text-sm font-medium">Store Name</Label>
+                <Input
                   id="storeName"
                   value={localSettings.storeName || ''}
                   onChange={(e) => setLocalSettings({...localSettings, storeName: e.target.value})}
-                placeholder="Enter store name"
-              />
-            </div>
-            <div>
-                <Label htmlFor="storePhone">Phone Number</Label>
+                  placeholder="Enter store name"
+                  className="w-full"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="storePhone" className="text-sm font-medium">Phone Number</Label>
                 <Input
                   id="storePhone"
                   value={localSettings.storePhone || ''}
                   onChange={(e) => setLocalSettings({...localSettings, storePhone: e.target.value})}
                   placeholder="+91 9876543210"
+                  className="w-full"
                 />
               </div>
             </div>
-            <div>
-              <Label htmlFor="storeAddress">Store Address</Label>
+            <div className="space-y-2">
+              <Label htmlFor="storeAddress" className="text-sm font-medium">Store Address</Label>
               <Input
                 id="storeAddress"
                 value={localSettings.storeAddress || ''}
                 onChange={(e) => setLocalSettings({...localSettings, storeAddress: e.target.value})}
                 placeholder="Enter complete store address"
+                className="w-full"
               />
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="storeEmail">Email Address</Label>
-              <Input
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="storeEmail" className="text-sm font-medium">Email Address</Label>
+                <Input
                   id="storeEmail"
                   type="email"
                   value={localSettings.storeEmail || ''}
                   onChange={(e) => setLocalSettings({...localSettings, storeEmail: e.target.value})}
                   placeholder="store@example.com"
-              />
-            </div>
-            <div>
-                <Label htmlFor="storeWebsite">Website</Label>
-              <Input
+                  className="w-full"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="storeWebsite" className="text-sm font-medium">Website</Label>
+                <Input
                   id="storeWebsite"
                   value={localSettings.storeWebsite || ''}
                   onChange={(e) => setLocalSettings({...localSettings, storeWebsite: e.target.value})}
                   placeholder="www.example.com"
+                  className="w-full"
                 />
               </div>
             </div>
-            <div>
-              <Label htmlFor="storeGST">GST Number</Label>
+            <div className="space-y-2">
+              <Label htmlFor="storeGST" className="text-sm font-medium">GST Number</Label>
               <Input
                 id="storeGST"
                 value={localSettings.storeGST || ''}
                 onChange={(e) => setLocalSettings({...localSettings, storeGST: e.target.value})}
                 placeholder="22ABCDE1234F1Z5"
+                className="w-full"
               />
-            </div>
           </div>
+        </div>
         )
 
       case 'payment':
         return (
-          <div className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="taxRate">Tax Rate (%)</Label>
+          <div className="space-y-4 sm:space-y-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="taxRate" className="text-sm font-medium">Tax Rate (%)</Label>
               <Input
                   id="taxRate"
-                type="number"
+                  type="number"
                   value={localSettings.taxRate || 18}
                   onChange={(e) => setLocalSettings({...localSettings, taxRate: Number(e.target.value)})}
-                placeholder="18"
+                  placeholder="18"
+                  className="w-full"
               />
             </div>
-              <div>
-                <Label htmlFor="currency">Currency</Label>
+              <div className="space-y-2">
+                <Label htmlFor="currency" className="text-sm font-medium">Currency</Label>
                 <Select value={localSettings.currency || 'INR'} onValueChange={(value) => setLocalSettings({...localSettings, currency: value})}>
-                  <SelectTrigger>
+                  <SelectTrigger className="w-full">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -162,34 +169,37 @@ export default function SettingsPage() {
                 </Select>
               </div>
             </div>
-            <div>
-              <Label htmlFor="upiId">UPI ID</Label>
+            <div className="space-y-2">
+              <Label htmlFor="upiId" className="text-sm font-medium">UPI ID</Label>
               <Input
                 id="upiId"
                 value={localSettings.upiId || ''}
                 onChange={(e) => setLocalSettings({...localSettings, upiId: e.target.value})}
                 placeholder="yourname@upi"
+                className="w-full"
               />
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="minOrderAmount">Minimum Order Amount</Label>
-                <Input
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="minOrderAmount" className="text-sm font-medium">Minimum Order Amount</Label>
+              <Input
                   id="minOrderAmount"
                   type="number"
                   value={localSettings.minOrderAmount || 0}
                   onChange={(e) => setLocalSettings({...localSettings, minOrderAmount: Number(e.target.value)})}
                   placeholder="0"
-                />
-              </div>
-              <div>
-                <Label htmlFor="deliveryCharge">Delivery Charge</Label>
-                <Input
+                  className="w-full"
+              />
+            </div>
+              <div className="space-y-2">
+                <Label htmlFor="deliveryCharge" className="text-sm font-medium">Delivery Charge</Label>
+              <Input
                   id="deliveryCharge"
-                  type="number"
+                type="number"
                   value={localSettings.deliveryCharge || 0}
                   onChange={(e) => setLocalSettings({...localSettings, deliveryCharge: Number(e.target.value)})}
                   placeholder="0"
+                  className="w-full"
                 />
               </div>
             </div>
@@ -198,12 +208,12 @@ export default function SettingsPage() {
 
       case 'system':
         return (
-          <div className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="theme">Theme</Label>
+          <div className="space-y-4 sm:space-y-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="theme" className="text-sm font-medium">Theme</Label>
                 <Select value={localSettings.theme || 'light'} onValueChange={(value) => setLocalSettings({...localSettings, theme: value})}>
-                  <SelectTrigger>
+                  <SelectTrigger className="w-full">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -213,10 +223,10 @@ export default function SettingsPage() {
                   </SelectContent>
                 </Select>
               </div>
-              <div>
-                <Label htmlFor="language">Language</Label>
+              <div className="space-y-2">
+                <Label htmlFor="language" className="text-sm font-medium">Language</Label>
                 <Select value={localSettings.language || 'en'} onValueChange={(value) => setLocalSettings({...localSettings, language: value})}>
-                  <SelectTrigger>
+                  <SelectTrigger className="w-full">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -228,11 +238,11 @@ export default function SettingsPage() {
                 </Select>
               </div>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="timezone">Timezone</Label>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="timezone" className="text-sm font-medium">Timezone</Label>
                 <Select value={localSettings.timezone || 'Asia/Kolkata'} onValueChange={(value) => setLocalSettings({...localSettings, timezone: value})}>
-                  <SelectTrigger>
+                  <SelectTrigger className="w-full">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -243,10 +253,10 @@ export default function SettingsPage() {
                   </SelectContent>
                 </Select>
               </div>
-              <div>
-                <Label htmlFor="dateFormat">Date Format</Label>
+              <div className="space-y-2">
+                <Label htmlFor="dateFormat" className="text-sm font-medium">Date Format</Label>
                 <Select value={localSettings.dateFormat || 'DD/MM/YYYY'} onValueChange={(value) => setLocalSettings({...localSettings, dateFormat: value})}>
-                  <SelectTrigger>
+                  <SelectTrigger className="w-full">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -257,44 +267,44 @@ export default function SettingsPage() {
                 </Select>
               </div>
             </div>
-            <div className="space-y-3">
-              <div className="flex items-center justify-between">
-                <div>
-                  <Label htmlFor="printerEnabled">Enable Printer</Label>
-                  <p className="text-sm text-gray-600">Auto-print receipts after payment</p>
+            <div className="space-y-4">
+              <div className="flex items-start justify-between p-3 bg-gray-50 rounded-lg">
+                <div className="flex-1 pr-3">
+                  <Label htmlFor="printerEnabled" className="text-sm font-medium block mb-1">Enable Printer</Label>
+                  <p className="text-xs text-gray-600">Auto-print receipts after payment</p>
                 </div>
                 <input
                   id="printerEnabled"
                   type="checkbox"
                   checked={localSettings.printerEnabled || false}
                   onChange={(e) => setLocalSettings({...localSettings, printerEnabled: e.target.checked})}
-                  className="h-4 w-4"
+                  className="h-4 w-4 mt-1"
                 />
               </div>
-              <div className="flex items-center justify-between">
-                <div>
-                  <Label htmlFor="soundEnabled">Enable Sound</Label>
-                  <p className="text-sm text-gray-600">Play sounds for notifications</p>
+              <div className="flex items-start justify-between p-3 bg-gray-50 rounded-lg">
+                <div className="flex-1 pr-3">
+                  <Label htmlFor="soundEnabled" className="text-sm font-medium block mb-1">Enable Sound</Label>
+                  <p className="text-xs text-gray-600">Play sounds for notifications</p>
                 </div>
                 <input
                   id="soundEnabled"
                   type="checkbox"
                   checked={localSettings.soundEnabled || false}
                   onChange={(e) => setLocalSettings({...localSettings, soundEnabled: e.target.checked})}
-                  className="h-4 w-4"
+                  className="h-4 w-4 mt-1"
                 />
               </div>
-              <div className="flex items-center justify-between">
-                <div>
-                  <Label htmlFor="autoBackup">Auto Backup</Label>
-                  <p className="text-sm text-gray-600">Automatically backup data</p>
+              <div className="flex items-start justify-between p-3 bg-gray-50 rounded-lg">
+                <div className="flex-1 pr-3">
+                  <Label htmlFor="autoBackup" className="text-sm font-medium block mb-1">Auto Backup</Label>
+                  <p className="text-xs text-gray-600">Automatically backup data</p>
                 </div>
                 <input
                   id="autoBackup"
                   type="checkbox"
                   checked={localSettings.autoBackup || false}
                   onChange={(e) => setLocalSettings({...localSettings, autoBackup: e.target.checked})}
-                  className="h-4 w-4"
+                  className="h-4 w-4 mt-1"
                 />
               </div>
             </div>
@@ -303,58 +313,58 @@ export default function SettingsPage() {
 
       case 'display':
         return (
-          <div className="space-y-4">
-            <div className="space-y-3">
-              <div className="flex items-center justify-between">
-                <div>
-                  <Label htmlFor="showImages">Show Product Images</Label>
-                  <p className="text-sm text-gray-600">Display product images in POS</p>
+          <div className="space-y-4 sm:space-y-6">
+            <div className="space-y-4">
+              <div className="flex items-start justify-between p-3 bg-gray-50 rounded-lg">
+                <div className="flex-1 pr-3">
+                  <Label htmlFor="showImages" className="text-sm font-medium block mb-1">Show Product Images</Label>
+                  <p className="text-xs text-gray-600">Display product images in POS</p>
                 </div>
                 <input
                   id="showImages"
                   type="checkbox"
                   checked={localSettings.showImages || false}
                   onChange={(e) => setLocalSettings({...localSettings, showImages: e.target.checked})}
-                  className="h-4 w-4"
+                  className="h-4 w-4 mt-1"
                 />
               </div>
-              <div className="flex items-center justify-between">
-                <div>
-                  <Label htmlFor="showPrices">Show Prices</Label>
-                  <p className="text-sm text-gray-600">Display prices on product cards</p>
+              <div className="flex items-start justify-between p-3 bg-gray-50 rounded-lg">
+                <div className="flex-1 pr-3">
+                  <Label htmlFor="showPrices" className="text-sm font-medium block mb-1">Show Prices</Label>
+                  <p className="text-xs text-gray-600">Display prices on product cards</p>
                 </div>
                 <input
                   id="showPrices"
                   type="checkbox"
                   checked={localSettings.showPrices || false}
                   onChange={(e) => setLocalSettings({...localSettings, showPrices: e.target.checked})}
-                  className="h-4 w-4"
+                  className="h-4 w-4 mt-1"
                 />
               </div>
-              <div className="flex items-center justify-between">
-                <div>
-                  <Label htmlFor="showStock">Show Stock</Label>
-                  <p className="text-sm text-gray-600">Display stock levels</p>
+              <div className="flex items-start justify-between p-3 bg-gray-50 rounded-lg">
+                <div className="flex-1 pr-3">
+                  <Label htmlFor="showStock" className="text-sm font-medium block mb-1">Show Stock</Label>
+                  <p className="text-xs text-gray-600">Display stock levels</p>
                 </div>
                 <input
                   id="showStock"
                   type="checkbox"
                   checked={localSettings.showStock || false}
                   onChange={(e) => setLocalSettings({...localSettings, showStock: e.target.checked})}
-                  className="h-4 w-4"
+                  className="h-4 w-4 mt-1"
                 />
               </div>
-              <div className="flex items-center justify-between">
-                <div>
-                  <Label htmlFor="compactMode">Compact Mode</Label>
-                  <p className="text-sm text-gray-600">Use compact layout for small screens</p>
+              <div className="flex items-start justify-between p-3 bg-gray-50 rounded-lg">
+                <div className="flex-1 pr-3">
+                  <Label htmlFor="compactMode" className="text-sm font-medium block mb-1">Compact Mode</Label>
+                  <p className="text-xs text-gray-600">Use compact layout for small screens</p>
                 </div>
                 <input
                   id="compactMode"
                   type="checkbox"
                   checked={localSettings.compactMode || false}
                   onChange={(e) => setLocalSettings({...localSettings, compactMode: e.target.checked})}
-                  className="h-4 w-4"
+                  className="h-4 w-4 mt-1"
                 />
               </div>
             </div>
@@ -363,85 +373,85 @@ export default function SettingsPage() {
 
       case 'notifications':
         return (
-          <div className="space-y-4">
-            <div className="space-y-3">
-              <div className="flex items-center justify-between">
-                <div>
-                  <Label htmlFor="emailNotifications">Email Notifications</Label>
-                  <p className="text-sm text-gray-600">Send email alerts</p>
+          <div className="space-y-4 sm:space-y-6">
+            <div className="space-y-4">
+              <div className="flex items-start justify-between p-3 bg-gray-50 rounded-lg">
+                <div className="flex-1 pr-3">
+                  <Label htmlFor="emailNotifications" className="text-sm font-medium block mb-1">Email Notifications</Label>
+                  <p className="text-xs text-gray-600">Send email alerts</p>
                 </div>
                 <input
                   id="emailNotifications"
                   type="checkbox"
                   checked={localSettings.emailNotifications || false}
                   onChange={(e) => setLocalSettings({...localSettings, emailNotifications: e.target.checked})}
-                  className="h-4 w-4"
+                  className="h-4 w-4 mt-1"
                 />
               </div>
-              <div className="flex items-center justify-between">
-                <div>
-                  <Label htmlFor="smsNotifications">SMS Notifications</Label>
-                  <p className="text-sm text-gray-600">Send SMS alerts</p>
+              <div className="flex items-start justify-between p-3 bg-gray-50 rounded-lg">
+                <div className="flex-1 pr-3">
+                  <Label htmlFor="smsNotifications" className="text-sm font-medium block mb-1">SMS Notifications</Label>
+                  <p className="text-xs text-gray-600">Send SMS alerts</p>
                 </div>
                 <input
                   id="smsNotifications"
                   type="checkbox"
                   checked={localSettings.smsNotifications || false}
                   onChange={(e) => setLocalSettings({...localSettings, smsNotifications: e.target.checked})}
-                  className="h-4 w-4"
+                  className="h-4 w-4 mt-1"
                 />
               </div>
-              <div className="flex items-center justify-between">
-                <div>
-                  <Label htmlFor="pushNotifications">Push Notifications</Label>
-                  <p className="text-sm text-gray-600">Browser push notifications</p>
+              <div className="flex items-start justify-between p-3 bg-gray-50 rounded-lg">
+                <div className="flex-1 pr-3">
+                  <Label htmlFor="pushNotifications" className="text-sm font-medium block mb-1">Push Notifications</Label>
+                  <p className="text-xs text-gray-600">Browser push notifications</p>
                 </div>
                 <input
                   id="pushNotifications"
                   type="checkbox"
                   checked={localSettings.pushNotifications || false}
                   onChange={(e) => setLocalSettings({...localSettings, pushNotifications: e.target.checked})}
-                  className="h-4 w-4"
+                  className="h-4 w-4 mt-1"
                 />
               </div>
-            <div className="flex items-center justify-between">
-              <div>
-                  <Label htmlFor="lowStockAlert">Low Stock Alert</Label>
-                  <p className="text-sm text-gray-600">Alert when stock is low</p>
-              </div>
+              <div className="flex items-start justify-between p-3 bg-gray-50 rounded-lg">
+                <div className="flex-1 pr-3">
+                  <Label htmlFor="lowStockAlert" className="text-sm font-medium block mb-1">Low Stock Alert</Label>
+                  <p className="text-xs text-gray-600">Alert when stock is low</p>
+                </div>
                 <input
                   id="lowStockAlert"
                   type="checkbox"
                   checked={localSettings.lowStockAlert || false}
                   onChange={(e) => setLocalSettings({...localSettings, lowStockAlert: e.target.checked})}
-                  className="h-4 w-4"
+                  className="h-4 w-4 mt-1"
                 />
-            </div>
-            <div className="flex items-center justify-between">
-              <div>
-                  <Label htmlFor="dailyReport">Daily Report</Label>
-                  <p className="text-sm text-gray-600">Send daily sales report</p>
+              </div>
+              <div className="flex items-start justify-between p-3 bg-gray-50 rounded-lg">
+                <div className="flex-1 pr-3">
+                  <Label htmlFor="dailyReport" className="text-sm font-medium block mb-1">Daily Report</Label>
+                  <p className="text-xs text-gray-600">Send daily sales report</p>
                 </div>
                 <input
                   id="dailyReport"
                   type="checkbox"
                   checked={localSettings.dailyReport || false}
                   onChange={(e) => setLocalSettings({...localSettings, dailyReport: e.target.checked})}
-                  className="h-4 w-4"
-                />
-              </div>
+                  className="h-4 w-4 mt-1"
+              />
+            </div>
             </div>
           </div>
         )
 
       case 'backup':
         return (
-          <div className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="backupFrequency">Backup Frequency</Label>
+          <div className="space-y-4 sm:space-y-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="backupFrequency" className="text-sm font-medium">Backup Frequency</Label>
                 <Select value={localSettings.backupFrequency || 'daily'} onValueChange={(value) => setLocalSettings({...localSettings, backupFrequency: value})}>
-                  <SelectTrigger>
+                  <SelectTrigger className="w-full">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -452,50 +462,51 @@ export default function SettingsPage() {
                   </SelectContent>
                 </Select>
               </div>
-              <div>
-                <Label htmlFor="backupRetention">Backup Retention (days)</Label>
+              <div className="space-y-2">
+                <Label htmlFor="backupRetention" className="text-sm font-medium">Backup Retention (days)</Label>
                 <Input
                   id="backupRetention"
                   type="number"
                   value={localSettings.backupRetention || 30}
                   onChange={(e) => setLocalSettings({...localSettings, backupRetention: Number(e.target.value)})}
                   placeholder="30"
+                  className="w-full"
                 />
               </div>
             </div>
-            <div className="space-y-3">
-              <div className="flex items-center justify-between">
-                <div>
-                  <Label htmlFor="cloudBackup">Cloud Backup</Label>
-                  <p className="text-sm text-gray-600">Backup to cloud storage</p>
-              </div>
+            <div className="space-y-4">
+              <div className="flex items-start justify-between p-3 bg-gray-50 rounded-lg">
+                <div className="flex-1 pr-3">
+                  <Label htmlFor="cloudBackup" className="text-sm font-medium block mb-1">Cloud Backup</Label>
+                  <p className="text-xs text-gray-600">Backup to cloud storage</p>
+                </div>
                 <input
                   id="cloudBackup"
                   type="checkbox"
                   checked={localSettings.cloudBackup || false}
                   onChange={(e) => setLocalSettings({...localSettings, cloudBackup: e.target.checked})}
-                  className="h-4 w-4"
+                  className="h-4 w-4 mt-1"
                 />
-            </div>
-            <div className="flex items-center justify-between">
-              <div>
-                  <Label htmlFor="localBackup">Local Backup</Label>
-                  <p className="text-sm text-gray-600">Backup to local storage</p>
+              </div>
+              <div className="flex items-start justify-between p-3 bg-gray-50 rounded-lg">
+                <div className="flex-1 pr-3">
+                  <Label htmlFor="localBackup" className="text-sm font-medium block mb-1">Local Backup</Label>
+                  <p className="text-xs text-gray-600">Backup to local storage</p>
                 </div>
                 <input
                   id="localBackup"
                   type="checkbox"
                   checked={localSettings.localBackup || false}
                   onChange={(e) => setLocalSettings({...localSettings, localBackup: e.target.checked})}
-                  className="h-4 w-4"
+                  className="h-4 w-4 mt-1"
                 />
               </div>
             </div>
-            <div className="space-y-3">
-              <div className="flex gap-2">
+            <div className="space-y-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <Button 
                   variant="outline" 
-                  className="flex-1"
+                  className="w-full"
                   onClick={async () => {
                     try {
                       await syncService.exportToFile()
@@ -517,7 +528,7 @@ export default function SettingsPage() {
                 </Button>
                 <Button 
                   variant="outline" 
-                  className="flex-1"
+                  className="w-full"
                   onClick={() => {
                     const input = document.createElement('input')
                     input.type = 'file'
@@ -550,10 +561,10 @@ export default function SettingsPage() {
                 </Button>
               </div>
               
-              <div className="flex gap-2">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <Button 
                   variant="outline" 
-                  className="flex-1"
+                  className="w-full"
                   onClick={async () => {
                     try {
                       const result = await syncService.syncWithCloud()
@@ -583,7 +594,7 @@ export default function SettingsPage() {
                 </Button>
                 <Button 
                   variant="outline" 
-                  className="flex-1"
+                  className="w-full"
                   onClick={() => {
                     const status = syncService.getSyncStatus()
                     toast({
@@ -597,7 +608,7 @@ export default function SettingsPage() {
                 </Button>
               </div>
             </div>
-          </div>
+            </div>
         )
 
       default:
@@ -607,17 +618,42 @@ export default function SettingsPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="max-w-6xl mx-auto p-4">
+      <div className="max-w-7xl mx-auto p-2 sm:p-4 lg:p-6">
         {/* Header */}
-        <div className="bg-white rounded-xl shadow-sm border p-6 mb-6">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Settings</h1>
-          <p className="text-gray-600">Configure your POS system settings</p>
+        <div className="bg-white rounded-lg sm:rounded-xl shadow-sm border p-4 sm:p-6 mb-4 sm:mb-6">
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-1 sm:mb-2">Settings</h1>
+          <p className="text-sm sm:text-base text-gray-600">Configure your POS system settings</p>
               </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-          {/* Sidebar */}
-          <div className="lg:col-span-1">
-            <Card>
+        {/* Mobile Tab Navigation */}
+        <div className="lg:hidden mb-4">
+          <div className="bg-white rounded-lg shadow-sm border overflow-hidden">
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-0">
+              {tabs.map((tab) => {
+                const Icon = tab.icon
+                return (
+              <button
+                    key={tab.id}
+                    onClick={() => setActiveTab(tab.id)}
+                    className={`flex flex-col items-center p-3 sm:p-4 text-center transition-colors border-b-2 ${
+                      activeTab === tab.id
+                        ? 'bg-blue-50 text-blue-700 border-blue-700'
+                        : 'text-gray-600 hover:bg-gray-50 border-transparent'
+                    }`}
+                  >
+                    <Icon className="h-4 w-4 sm:h-5 sm:w-5 mb-1 sm:mb-2" />
+                    <span className="text-xs sm:text-sm font-medium">{tab.label}</span>
+              </button>
+                )
+              })}
+            </div>
+            </div>
+              </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 sm:gap-6">
+          {/* Desktop Sidebar */}
+          <div className="hidden lg:block lg:col-span-1">
+            <Card className="sticky top-4">
               <CardContent className="p-0">
                 <div className="space-y-1">
                   {tabs.map((tab) => {
@@ -645,20 +681,20 @@ export default function SettingsPage() {
           {/* Main Content */}
           <div className="lg:col-span-3">
             <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center">
+              <CardHeader className="pb-4">
+                <CardTitle className="flex items-center text-lg sm:text-xl">
                   {React.createElement(tabs.find(t => t.id === activeTab)?.icon || SettingsIcon, { className: "h-5 w-5 mr-2" })}
                   {tabs.find(t => t.id === activeTab)?.label}
                 </CardTitle>
               </CardHeader>
-              <CardContent>
+              <CardContent className="space-y-4 sm:space-y-6">
                 {renderTabContent()}
           </CardContent>
         </Card>
 
         {/* Save Button */}
-            <div className="mt-6 flex justify-end">
-              <Button onClick={handleSave} size="lg" className="px-8">
+            <div className="mt-4 sm:mt-6 flex justify-center sm:justify-end">
+              <Button onClick={handleSave} size="lg" className="w-full sm:w-auto px-6 sm:px-8">
           <Save className="h-4 w-4 mr-2" />
                 Save All Settings
         </Button>
