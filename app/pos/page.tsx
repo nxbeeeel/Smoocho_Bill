@@ -54,6 +54,7 @@ export default function POSPage() {
   const [customerPhone, setCustomerPhone] = React.useState('')
   const [showCartModal, setShowCartModal] = React.useState(false)
   const [addedItemAnimation, setAddedItemAnimation] = React.useState<{id: number, name: string} | null>(null)
+  const [itemAddedIndicator, setItemAddedIndicator] = React.useState<{id: number, quantity: number} | null>(null)
 
   // Live query for products from database - get all products first, then filter
   const products = useLiveQuery(() => db.products.toArray()) || []
@@ -156,10 +157,13 @@ export default function POSPage() {
     if (!product.id) return
     
     const existingItem = cart.find(item => item.id === product.id)
+    let newQuantity = 1
+    
     if (existingItem) {
+      newQuantity = existingItem.quantity + 1
       setCart(cart.map(item => 
         item.id === product.id 
-          ? { ...item, quantity: item.quantity + 1, total: (item.quantity + 1) * item.price }
+          ? { ...item, quantity: newQuantity, total: newQuantity * item.price }
           : item
       ))
     } else {
@@ -172,9 +176,15 @@ export default function POSPage() {
       }])
     }
     
-    // Trigger animation
+    // Trigger animations
     setAddedItemAnimation({ id: product.id, name: product.name })
-    setTimeout(() => setAddedItemAnimation(null), 2000)
+    setItemAddedIndicator({ id: product.id, quantity: newQuantity })
+    
+    // Clear animations after 2 seconds
+    setTimeout(() => {
+      setAddedItemAnimation(null)
+      setItemAddedIndicator(null)
+    }, 2000)
     
     // Show success toast
     toast({
@@ -438,16 +448,29 @@ export default function POSPage() {
             {filteredProducts.map(product => (
               <Card 
                 key={product.id} 
-                className="cursor-pointer hover:shadow-md transition-all duration-200 active:scale-95 hover:scale-105"
+                className="cursor-pointer hover:shadow-md transition-all duration-200 active:scale-95 hover:scale-105 relative"
                 onClick={() => addToCart(product)}
               >
+                {/* Item Added Indicator */}
+                {itemAddedIndicator && itemAddedIndicator.id === product.id && (
+                  <div className="absolute top-2 right-2 z-10 animate-bounce">
+                    <div className="bg-green-500 text-white text-xs font-bold px-2 py-1 rounded-full shadow-lg border-2 border-white">
+                      +{itemAddedIndicator.quantity}
+                    </div>
+                  </div>
+                )}
+                
                 <CardContent className="p-3">
-                  <div className="aspect-square bg-gradient-to-br from-slate-100 to-slate-200 rounded-lg mb-3 flex items-center justify-center border border-slate-200 hover:shadow-sm transition-shadow overflow-hidden">
+                  <div className="aspect-square bg-gradient-to-br from-slate-100 to-slate-200 rounded-lg mb-3 flex items-center justify-center border border-slate-200 hover:shadow-sm transition-shadow overflow-hidden relative">
                     <AutoProductImage 
                       product={product}
                       className="w-full h-full object-cover"
                       fallbackClassName="text-3xl drop-shadow-sm"
                     />
+                    {/* Overlay effect when item is added */}
+                    {itemAddedIndicator && itemAddedIndicator.id === product.id && (
+                      <div className="absolute inset-0 bg-green-500 bg-opacity-20 rounded-lg animate-pulse"></div>
+                    )}
                   </div>
                   <h3 className="font-semibold text-sm mb-2 line-clamp-2 leading-tight text-center text-slate-800">{product.name}</h3>
                   <div className="flex items-center justify-between">
