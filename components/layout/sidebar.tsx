@@ -11,7 +11,8 @@ import {
   Bot,
   Home,
   Wifi,
-  WifiOff
+  WifiOff,
+  History
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
@@ -23,6 +24,7 @@ interface SidebarProps {
 const navigation = [
   { name: 'Dashboard', href: '/', icon: Home },
   { name: 'POS', href: '/pos', icon: ShoppingCart },
+  { name: 'Order History', href: '/order-history', icon: History },
   { name: 'Inventory', href: '/inventory', icon: Package },
   { name: 'Menu Editor', href: '/menu-editor', icon: Settings },
   { name: 'Reports', href: '/reports', icon: BarChart3 },

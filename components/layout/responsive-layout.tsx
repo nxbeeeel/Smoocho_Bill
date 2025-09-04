@@ -13,19 +13,29 @@ export function ResponsiveLayout({ children }: ResponsiveLayoutProps) {
 
   React.useEffect(() => {
     const checkScreenSize = () => {
-      // Use 1024px as breakpoint - below this use mobile layout (tablets and phones)
-      // Above this use desktop layout (laptops and desktops)
+      // Use 1024px (lg breakpoint) as the threshold
+      // Below 1024px: Mobile layout (tablets and phones)
+      // Above 1024px: Desktop layout (laptops and desktops)
       setIsMobile(window.innerWidth < 1024)
     }
 
     // Check on mount
     checkScreenSize()
 
-    // Listen for resize events
-    window.addEventListener('resize', checkScreenSize)
+    // Listen for resize events with debouncing
+    let timeoutId: NodeJS.Timeout
+    const debouncedCheck = () => {
+      clearTimeout(timeoutId)
+      timeoutId = setTimeout(checkScreenSize, 100)
+    }
+
+    window.addEventListener('resize', debouncedCheck)
 
     // Cleanup
-    return () => window.removeEventListener('resize', checkScreenSize)
+    return () => {
+      window.removeEventListener('resize', debouncedCheck)
+      clearTimeout(timeoutId)
+    }
   }, [])
 
   // Use mobile layout for tablets and phones, desktop layout for laptops and PCs

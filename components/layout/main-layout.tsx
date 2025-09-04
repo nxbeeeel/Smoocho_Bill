@@ -18,7 +18,10 @@ export function MainLayout({ children }: MainLayoutProps) {
 
   return (
     <div className="flex h-screen bg-slate-50">
-      <Sidebar isCollapsed={sidebarCollapsed} />
+      {/* Desktop Sidebar - Hidden on mobile/tablet */}
+      <div className="hidden lg:block">
+        <Sidebar isCollapsed={sidebarCollapsed} />
+      </div>
       
       <div className="flex-1 flex flex-col overflow-hidden">
         <Header 
@@ -26,7 +29,7 @@ export function MainLayout({ children }: MainLayoutProps) {
           user={currentUser}
         />
         
-        <main className="flex-1 overflow-auto p-6">
+        <main className="flex-1 overflow-auto p-4 lg:p-6">
           <ErrorBoundary>
             {children}
           </ErrorBoundary>
