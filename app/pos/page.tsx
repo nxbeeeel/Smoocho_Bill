@@ -1,6 +1,7 @@
 "use client"
 
 import React from 'react'
+import { ProtectedRoute } from '@/components/auth/protected-route'
 import { 
   Search, 
   Plus, 
@@ -273,7 +274,8 @@ export default function POSPage() {
   }
 
   return (
-    <ResponsiveLayout>
+    <ProtectedRoute>
+      <ResponsiveLayout>
       <div className="space-y-4 p-4 pb-24 lg:pb-4">
         {/* Main Content Area - Responsive Grid Layout */}
         <div className="lg:grid lg:grid-cols-4 lg:gap-6 space-y-4 lg:space-y-0">
@@ -894,6 +896,7 @@ export default function POSPage() {
           </div>
         )}
       </div>
-    </ResponsiveLayout>
+      </ResponsiveLayout>
+    </ProtectedRoute>
   )
 }

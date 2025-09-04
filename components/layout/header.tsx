@@ -3,13 +3,10 @@
 import React from 'react'
 import { 
   Bell, 
-  User, 
-  LogOut, 
-  Menu,
-  ChevronDown,
-  Settings
+  Menu
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { UserMenu } from '@/components/ui/user-menu'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -98,34 +95,7 @@ export function Header({ onToggleSidebar, user }: HeaderProps) {
         </DropdownMenu>
 
         {/* User Menu */}
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="flex items-center space-x-2 text-gray-700 hover:bg-gray-100">
-              <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center">
-                <User className="h-4 w-4 text-white" />
-              </div>
-              <span className="hidden md:block">Admin User</span>
-              <ChevronDown className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>My Account</DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>
-              <User className="mr-2 h-4 w-4" />
-              Profile
-            </DropdownMenuItem>
-            <DropdownMenuItem>
-              <Settings className="mr-2 h-4 w-4" />
-              Settings
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>
-              <LogOut className="mr-2 h-4 w-4" />
-              Log out
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <UserMenu />
       </div>
     </header>
   )

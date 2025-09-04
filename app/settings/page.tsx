@@ -36,21 +36,41 @@ import { ImageSync } from '@/components/ui/image-sync'
 export default function SettingsPage() {
   const { toast } = useToast()
   const { settings, updateSetting, updateSettings } = useSettings()
-  const [localSettings, setLocalSettings] = React.useState(settings)
+  const [localSettings, setLocalSettings] = React.useState(settings || {})
   const [activeTab, setActiveTab] = React.useState('store')
 
   React.useEffect(() => {
-    setLocalSettings(settings)
+    if (settings) {
+      setLocalSettings(settings)
+    }
   }, [settings])
+
+  // Add error boundary for tab switching
+  const handleTabChange = (tabId: string) => {
+    try {
+      setActiveTab(tabId)
+    } catch (error) {
+      console.error('Error switching tab:', error)
+      toast({
+        title: "Error",
+        description: "Failed to switch tab. Please try again.",
+        variant: "destructive"
+      })
+    }
+  }
 
   const handleSave = async () => {
     try {
+      if (!localSettings || typeof localSettings !== 'object') {
+        throw new Error('Invalid settings data')
+      }
       await updateSettings(localSettings)
       toast({
         title: "Settings Saved",
         description: "Your settings have been saved successfully.",
       })
     } catch (error) {
+      console.error('Error saving settings:', error)
       toast({
         title: "Error",
         description: "Failed to save settings. Please try again.",
@@ -69,7 +89,20 @@ export default function SettingsPage() {
   ]
 
   const renderTabContent = () => {
-    switch (activeTab) {
+    // Add safety check for localSettings
+    if (!localSettings || typeof localSettings !== 'object') {
+      return (
+        <div className="flex items-center justify-center p-8">
+          <div className="text-center">
+            <div className="text-gray-500 mb-2">Loading settings...</div>
+            <div className="text-sm text-gray-400">Please wait while settings are being loaded.</div>
+          </div>
+        </div>
+      )
+    }
+
+    try {
+      switch (activeTab) {
       case 'store':
   return (
           <div className="space-y-4 sm:space-y-6">
@@ -619,6 +652,24 @@ export default function SettingsPage() {
 
       default:
         return null
+      }
+    } catch (error) {
+      console.error('Error rendering tab content:', error)
+      return (
+        <div className="flex items-center justify-center p-8">
+          <div className="text-center">
+            <div className="text-red-500 mb-2">Error loading content</div>
+            <div className="text-sm text-gray-400">There was an error loading this tab. Please try refreshing the page.</div>
+            <Button 
+              onClick={() => window.location.reload()} 
+              className="mt-4"
+              variant="outline"
+            >
+              Refresh Page
+            </Button>
+          </div>
+        </div>
+      )
     }
   }
 
@@ -640,7 +691,7 @@ export default function SettingsPage() {
                 return (
               <button
                     key={tab.id}
-                    onClick={() => setActiveTab(tab.id)}
+                    onClick={() => handleTabChange(tab.id)}
                     className={`flex flex-col items-center p-3 sm:p-4 text-center transition-colors border-b-2 ${
                       activeTab === tab.id
                         ? 'bg-blue-50 text-blue-700 border-blue-700'
@@ -667,7 +718,7 @@ export default function SettingsPage() {
                     return (
               <button
                         key={tab.id}
-                        onClick={() => setActiveTab(tab.id)}
+                        onClick={() => handleTabChange(tab.id)}
                         className={`w-full flex items-center px-4 py-3 text-left transition-colors ${
                           activeTab === tab.id
                             ? 'bg-blue-50 text-blue-700 border-r-2 border-blue-700'
