@@ -18,6 +18,7 @@ import {
 } from 'lucide-react'
 import { ResponsiveLayout } from '@/components/layout/responsive-layout'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { AutoProductImage } from '@/components/ui/auto-product-image'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { formatCurrency, calculateTax, generateOrderNumber } from '@/lib/utils'
@@ -435,26 +436,11 @@ export default function POSPage() {
               >
                 <CardContent className="p-3">
                   <div className="aspect-square bg-gradient-to-br from-slate-100 to-slate-200 rounded-lg mb-3 flex items-center justify-center border border-slate-200 hover:shadow-sm transition-shadow overflow-hidden">
-                    {(() => {
-                      const image = getProductImage(product)
-                      // Check if it's a base64 image (starts with data:image)
-                      if (image.startsWith('data:image')) {
-                        return (
-                          <img 
-                            src={image} 
-                            alt={product.name}
-                            className="w-full h-full object-cover"
-                          />
-                        )
-                      } else {
-                        // It's an emoji
-                        return (
-                          <span className="text-3xl drop-shadow-sm">
-                            {image}
-                          </span>
-                        )
-                      }
-                    })()}
+                    <AutoProductImage 
+                      product={product}
+                      className="w-full h-full object-cover"
+                      fallbackClassName="text-3xl drop-shadow-sm"
+                    />
                   </div>
                   <h3 className="font-semibold text-sm mb-2 line-clamp-2 leading-tight text-center text-slate-800">{product.name}</h3>
                   <div className="flex items-center justify-between">

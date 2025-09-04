@@ -4,6 +4,7 @@ import React from 'react'
 import { Sidebar } from './sidebar'
 import { Header } from './header'
 import { ErrorBoundary } from '../error-boundary'
+import { ImagePreloader } from '@/components/ui/image-preloader'
 
 interface MainLayoutProps {
   children: React.ReactNode
@@ -35,6 +36,9 @@ export function MainLayout({ children }: MainLayoutProps) {
           </ErrorBoundary>
         </main>
       </div>
+      
+      {/* Image Preloader - runs in background */}
+      <ImagePreloader />
     </div>
   )
 }

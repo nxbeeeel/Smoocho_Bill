@@ -9,6 +9,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { ImageUpload } from '@/components/ui/image-upload'
+import { AutoProductImage } from '@/components/ui/auto-product-image'
 import { db, Product } from '@/lib/database'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { cn } from '@/lib/utils'
@@ -250,17 +251,11 @@ export default function MenuEditorPage() {
           {filteredProducts.map((product) => (
             <Card key={product.id} className={`overflow-hidden ${!product.isActive ? 'opacity-60' : ''}`}>
               <div className="relative aspect-video bg-gray-100">
-                {product.image ? (
-                  <img 
-                    src={product.image} 
-                    alt={product.name}
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center text-gray-400">
-                    <ImageIcon className="h-12 w-12" />
-                  </div>
-                )}
+                <AutoProductImage 
+                  product={product}
+                  className="w-full h-full object-cover"
+                  fallbackClassName="text-gray-400"
+                />
                 <div className="absolute top-2 left-2 bg-white/90 px-2 py-1 rounded text-xs font-medium">
                   {product.category}
                 </div>
