@@ -418,41 +418,41 @@ export default function POSPage() {
             {/* Desktop Cart Sidebar */}
             {cart.length > 0 && (
               <div className="hidden lg:block">
-                <Card className="sticky top-4 bg-white shadow-xl border-2 border-slate-200">
-                  <CardHeader className="bg-gradient-to-r from-green-50 to-emerald-50 border-b border-green-100">
+                <Card className="sticky top-4 bg-gradient-to-br from-slate-50 to-slate-100 shadow-2xl border-2 border-slate-300/50 backdrop-blur-sm">
+                  <CardHeader className="bg-gradient-to-r from-slate-800 to-slate-900 border-b border-slate-700">
                     <CardTitle className="flex items-center justify-between">
-                      <span className="flex items-center text-slate-800">
-                        <div className="bg-green-100 p-2 rounded-full mr-3">
-                          <ShoppingCart className="h-5 w-5 text-green-600" />
+                      <span className="flex items-center text-white">
+                        <div className="bg-gradient-to-r from-blue-500 to-purple-600 p-2 rounded-full mr-3 shadow-lg">
+                          <ShoppingCart className="h-5 w-5 text-white" />
                         </div>
                         <div>
-                          <div className="font-semibold">Shopping Cart</div>
-                          <div className="text-sm text-slate-600 font-normal">{cart.length} items</div>
+                          <div className="font-semibold text-white">Shopping Cart</div>
+                          <div className="text-sm text-slate-300 font-normal">{cart.length} items</div>
                         </div>
                       </span>
                       <Button 
                         variant="ghost" 
                         size="sm" 
                         onClick={clearCart}
-                        className="hover:bg-red-50 hover:text-red-600 transition-colors"
+                        className="hover:bg-red-500/20 hover:text-red-400 transition-colors text-slate-300"
                       >
                         <Trash2 className="h-4 w-4" />
                       </Button>
                     </CardTitle>
                   </CardHeader>
-                  <CardContent className="p-4">
+                  <CardContent className="p-4 bg-gradient-to-br from-slate-50 to-slate-100">
                     <div className="space-y-3 max-h-96 overflow-y-auto">
                       {cart.map(item => (
-                        <div key={item.id} className="flex items-center justify-between p-3 bg-slate-50 rounded-lg border border-slate-100">
+                        <div key={item.id} className="flex items-center justify-between p-3 bg-white/80 backdrop-blur-sm rounded-lg border border-slate-200/50 shadow-sm">
                           <div className="flex-1 min-w-0">
                             <h4 className="font-semibold text-sm text-slate-800 truncate">{item.name}</h4>
                             <p className="text-xs text-slate-500">{formatCurrency(item.price)} × {item.quantity}</p>
                           </div>
-                          <div className="flex items-center space-x-2 bg-white rounded-lg p-1 border border-slate-200">
+                          <div className="flex items-center space-x-2 bg-gradient-to-r from-slate-100 to-slate-200 rounded-lg p-1 border border-slate-300/50">
                             <Button
                               size="sm"
                               variant="ghost"
-                              className="h-7 w-7 p-0 hover:bg-red-50 hover:text-red-600"
+                              className="h-7 w-7 p-0 hover:bg-red-500/20 hover:text-red-600 text-slate-600"
                               onClick={() => updateQuantity(item.id, item.quantity - 1)}
                             >
                               <Minus className="h-3 w-3" />
@@ -461,52 +461,52 @@ export default function POSPage() {
                             <Button
                               size="sm"
                               variant="ghost"
-                              className="h-7 w-7 p-0 hover:bg-green-50 hover:text-green-600"
+                              className="h-7 w-7 p-0 hover:bg-blue-500/20 hover:text-blue-600 text-slate-600"
                               onClick={() => updateQuantity(item.id, item.quantity + 1)}
                             >
                               <Plus className="h-3 w-3" />
                             </Button>
                           </div>
                           <div className="ml-3 text-right min-w-0">
-                            <p className="font-bold text-sm text-green-600">{formatCurrency(item.total)}</p>
+                            <p className="font-bold text-sm text-blue-600">{formatCurrency(item.total)}</p>
                           </div>
                         </div>
                       ))}
                     </div>
                     
                     {/* Order Summary */}
-                    <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg p-4 mt-4">
+                    <div className="bg-gradient-to-r from-slate-800 to-slate-900 rounded-lg p-4 mt-4 border border-slate-700">
                       <div className="space-y-2 text-sm">
-                        <div className="flex justify-between text-slate-700">
+                        <div className="flex justify-between text-slate-300">
                           <span>Subtotal:</span>
-                          <span className="font-semibold">{formatCurrency(subtotal)}</span>
+                          <span className="font-semibold text-white">{formatCurrency(subtotal)}</span>
                         </div>
                         {discountAmount > 0 && (
-                          <div className="flex justify-between text-green-600">
+                          <div className="flex justify-between text-orange-400">
                             <span>Discount ({discount}{discountType === 'percentage' ? '%' : '₹'}):</span>
                             <span className="font-semibold">-{formatCurrency(discountAmount)}</span>
                           </div>
                         )}
-                        <div className="flex justify-between text-slate-700">
+                        <div className="flex justify-between text-slate-300">
                           <span>Tax ({taxRate}%):</span>
-                          <span className="font-semibold">{formatCurrency(tax)}</span>
+                          <span className="font-semibold text-white">{formatCurrency(tax)}</span>
                         </div>
                         {deliveryCharge > 0 && (
-                          <div className="flex justify-between text-slate-700">
+                          <div className="flex justify-between text-slate-300">
                             <span>Delivery:</span>
-                            <span className="font-semibold">{formatCurrency(deliveryCharge)}</span>
+                            <span className="font-semibold text-white">{formatCurrency(deliveryCharge)}</span>
                           </div>
                         )}
                       </div>
-                      <div className="flex justify-between text-xl font-bold border-t border-green-200 pt-3 text-slate-800">
+                      <div className="flex justify-between text-xl font-bold border-t border-slate-600 pt-3 text-white">
                         <span>Total:</span>
-                        <span className="text-green-600">{formatCurrency(total)}</span>
+                        <span className="text-blue-400">{formatCurrency(total)}</span>
                       </div>
                     </div>
                     
                     <Button 
                       onClick={() => setShowCheckout(true)}
-                      className="w-full bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-200 mt-4"
+                      className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-200 mt-4"
                       size="lg"
                     >
                       <Receipt className="h-5 w-5 mr-2" />
@@ -524,13 +524,11 @@ export default function POSPage() {
           <div className="fixed bottom-24 right-4 z-50 lg:hidden">
             <div className="relative">
               {/* Outer glow effect */}
-              <div className="absolute inset-0 bg-gradient-to-r from-green-400 to-emerald-500 rounded-full blur-lg opacity-60 animate-pulse"></div>
+              <div className="absolute inset-0 bg-gradient-to-r from-blue-400 to-purple-500 rounded-full blur-lg opacity-60 animate-pulse"></div>
               
               {/* Main button */}
-              <Button 
-                variant="default" 
-                size="lg" 
-                className="relative rounded-full h-16 w-16 shadow-2xl bg-gradient-to-br from-green-500 via-green-600 to-emerald-600 hover:from-green-600 hover:via-green-700 hover:to-emerald-700 transition-all duration-300 hover:scale-110 border-2 border-white/20 backdrop-blur-sm"
+              <button 
+                className="relative rounded-full h-16 w-16 shadow-2xl bg-gradient-to-br from-slate-700 via-slate-800 to-slate-900 hover:from-slate-600 hover:via-slate-700 hover:to-slate-800 transition-all duration-300 hover:scale-110 border-2 border-white/20 backdrop-blur-sm cursor-pointer flex items-center justify-center"
                 onClick={() => setShowCartModal(true)}
               >
                 {/* Inner shine effect */}
@@ -545,10 +543,10 @@ export default function POSPage() {
                 <div className="absolute -top-1 -right-1 z-20">
                   <div className="relative">
                     {/* Badge glow */}
-                    <div className="absolute inset-0 bg-gradient-to-r from-red-400 to-pink-500 rounded-full blur-sm opacity-80"></div>
+                    <div className="absolute inset-0 bg-gradient-to-r from-orange-400 to-red-500 rounded-full blur-sm opacity-80"></div>
                     
                     {/* Badge content */}
-                    <div className="relative bg-gradient-to-r from-red-500 to-pink-500 text-white text-xs font-bold rounded-full h-7 w-7 flex items-center justify-center border-2 border-white shadow-lg">
+                    <div className="relative bg-gradient-to-r from-orange-500 to-red-500 text-white text-xs font-bold rounded-full h-7 w-7 flex items-center justify-center border-2 border-white shadow-lg">
                       {cart.reduce((total, item) => total + item.quantity, 0)}
                     </div>
                   </div>
@@ -556,7 +554,7 @@ export default function POSPage() {
                 
                 {/* Subtle animation ring */}
                 <div className="absolute inset-0 rounded-full border-2 border-white/30 animate-ping opacity-20"></div>
-              </Button>
+              </button>
             </div>
           </div>
         )}

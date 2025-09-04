@@ -68,11 +68,49 @@ export class AutoImageLoader {
       }
     }
 
-    // For now, skip image loading to prevent 404 errors
-    // Return fallback emoji immediately
+    // Check cache first
+    if (this.imageCache.has(menuItem.filename)) {
+      return {
+        success: true,
+        image: this.imageCache.get(menuItem.filename)!,
+        source: 'local'
+      }
+    }
+
+    // Try local image first
+    try {
+      const localImage = await this.tryLocalImage(menuItem.filename)
+      if (localImage) {
+        this.imageCache.set(menuItem.filename, localImage)
+        return {
+          success: true,
+          image: localImage,
+          source: 'local'
+        }
+      }
+    } catch (error) {
+      console.log(`Local image failed for ${menuItem.filename}:`, error)
+    }
+
+    // Try cloud image
+    try {
+      const cloudImage = await this.tryCloudImage(menuItem.filename)
+      if (cloudImage) {
+        this.imageCache.set(menuItem.filename, cloudImage)
+        return {
+          success: true,
+          image: cloudImage,
+          source: 'cloud'
+        }
+      }
+    } catch (error) {
+      console.log(`Cloud image failed for ${menuItem.filename}:`, error)
+    }
+
+    // Return fallback
     return {
       success: false,
-      error: 'Images temporarily disabled',
+      error: 'No image available',
       source: 'fallback'
     }
   }
@@ -155,8 +193,17 @@ export class AutoImageLoader {
 
   // Preload all images for better performance
   async preloadAllImages(): Promise<void> {
-    // Skip preloading for now to prevent 404 errors
-    console.log('Image preloading skipped - using emoji fallbacks')
+    const menuItems = menuImageLoader.getMenuItemsWithImages()
+    const promises = menuItems.map(async (item) => {
+      try {
+        await this.getImage(item.name)
+      } catch (error) {
+        console.log(`Failed to preload ${item.name}:`, error)
+      }
+    })
+
+    await Promise.allSettled(promises)
+    console.log('Image preloading completed')
   }
 
   // Get fallback emoji based on category
