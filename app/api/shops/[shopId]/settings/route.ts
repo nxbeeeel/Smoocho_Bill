@@ -3,10 +3,9 @@ import { NextRequest, NextResponse } from 'next/server'
 import { requireAuth, checkShopAccess } from '@/lib/auth'
 import { query } from '@/lib/database-server'
 
-export const GET = requireAuth(async (request: NextRequest, user) => {
+export const GET = requireAuth(async (request: NextRequest, user, { params }: { params: { shopId: string } }) => {
   try {
-    const { params } = await request
-    const shopId = params.shopId
+    const { shopId } = params
 
     // Check if user has access to this shop
     const hasAccess = await checkShopAccess(user.id, shopId)
@@ -40,10 +39,9 @@ export const GET = requireAuth(async (request: NextRequest, user) => {
   }
 })
 
-export const PUT = requireAuth(async (request: NextRequest, user) => {
+export const PUT = requireAuth(async (request: NextRequest, user, { params }: { params: { shopId: string } }) => {
   try {
-    const { params } = await request
-    const shopId = params.shopId
+    const { shopId } = params
     const { settings } = await request.json()
 
     // Check if user has access to this shop
@@ -59,9 +57,6 @@ export const PUT = requireAuth(async (request: NextRequest, user) => {
       'UPDATE shops SET settings = $1, updated_at = NOW() WHERE id = $2',
       [JSON.stringify(settings), shopId]
     )
-
-    // TODO: Emit real-time update via WebSocket
-    // This will be implemented when we add Socket.io
 
     return NextResponse.json({ 
       success: true,

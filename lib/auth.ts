@@ -75,8 +75,8 @@ export function getUserFromRequest(request: NextRequest): AuthToken | null {
 }
 
 // Middleware for protected routes
-export function requireAuth(handler: (request: NextRequest, user: AuthToken) => Promise<Response>) {
-  return async (request: NextRequest) => {
+export function requireAuth(handler: (request: NextRequest, user: AuthToken, context?: any) => Promise<Response>) {
+  return async (request: NextRequest, context?: any) => {
     const user = getUserFromRequest(request)
     
     if (!user) {
@@ -89,14 +89,14 @@ export function requireAuth(handler: (request: NextRequest, user: AuthToken) => 
       )
     }
 
-    return handler(request, user)
+    return handler(request, user, context)
   }
 }
 
 // Middleware for role-based access
 export function requireRole(allowedRoles: string[]) {
-  return function(handler: (request: NextRequest, user: AuthToken) => Promise<Response>) {
-    return async (request: NextRequest) => {
+  return function(handler: (request: NextRequest, user: AuthToken, context?: any) => Promise<Response>) {
+    return async (request: NextRequest, context?: any) => {
       const user = getUserFromRequest(request)
       
       if (!user) {
@@ -119,7 +119,7 @@ export function requireRole(allowedRoles: string[]) {
         )
       }
 
-      return handler(request, user)
+      return handler(request, user, context)
     }
   }
 }

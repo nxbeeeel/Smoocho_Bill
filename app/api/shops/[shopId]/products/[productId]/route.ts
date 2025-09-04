@@ -3,11 +3,9 @@ import { NextRequest, NextResponse } from 'next/server'
 import { requireAuth, checkShopAccess } from '@/lib/auth'
 import { query } from '@/lib/database-server'
 
-export const PUT = requireAuth(async (request: NextRequest, user) => {
+export const PUT = requireAuth(async (request: NextRequest, user, { params }: { params: { shopId: string; productId: string } }) => {
   try {
-    const { params } = await request
-    const shopId = params.shopId
-    const productId = params.productId
+    const { shopId, productId } = params
     const productData = await request.json()
 
     const { name, price, category, description, image_url, is_active } = productData
@@ -36,8 +34,6 @@ export const PUT = requireAuth(async (request: NextRequest, user) => {
       )
     }
 
-    // TODO: Emit real-time update via WebSocket
-
     return NextResponse.json(result.rows[0])
 
   } catch (error) {
@@ -49,11 +45,9 @@ export const PUT = requireAuth(async (request: NextRequest, user) => {
   }
 })
 
-export const DELETE = requireAuth(async (request: NextRequest, user) => {
+export const DELETE = requireAuth(async (request: NextRequest, user, { params }: { params: { shopId: string; productId: string } }) => {
   try {
-    const { params } = await request
-    const shopId = params.shopId
-    const productId = params.productId
+    const { shopId, productId } = params
 
     // Check if user has access to this shop
     const hasAccess = await checkShopAccess(user.id, shopId)
@@ -75,8 +69,6 @@ export const DELETE = requireAuth(async (request: NextRequest, user) => {
         { status: 404 }
       )
     }
-
-    // TODO: Emit real-time update via WebSocket
 
     return NextResponse.json({ 
       success: true,

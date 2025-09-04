@@ -3,10 +3,9 @@ import { NextRequest, NextResponse } from 'next/server'
 import { requireAuth, checkShopAccess } from '@/lib/auth'
 import { query } from '@/lib/database-server'
 
-export const GET = requireAuth(async (request: NextRequest, user) => {
+export const GET = requireAuth(async (request: NextRequest, user, { params }: { params: { shopId: string } }) => {
   try {
-    const { params } = await request
-    const shopId = params.shopId
+    const { shopId } = params
 
     // Check if user has access to this shop
     const hasAccess = await checkShopAccess(user.id, shopId)
@@ -33,10 +32,9 @@ export const GET = requireAuth(async (request: NextRequest, user) => {
   }
 })
 
-export const POST = requireAuth(async (request: NextRequest, user) => {
+export const POST = requireAuth(async (request: NextRequest, user, { params }: { params: { shopId: string } }) => {
   try {
-    const { params } = await request
-    const shopId = params.shopId
+    const { shopId } = params
     const productData = await request.json()
 
     const { name, price, category, description, image_url, is_active } = productData
@@ -64,8 +62,6 @@ export const POST = requireAuth(async (request: NextRequest, user) => {
        RETURNING *`,
       [shopId, name, price, category, description, image_url, is_active !== false]
     )
-
-    // TODO: Emit real-time update via WebSocket
 
     return NextResponse.json(result.rows[0], { status: 201 })
 

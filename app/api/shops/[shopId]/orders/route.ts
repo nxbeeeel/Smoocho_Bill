@@ -3,10 +3,9 @@ import { NextRequest, NextResponse } from 'next/server'
 import { requireAuth, checkShopAccess, generateOrderNumber } from '@/lib/auth'
 import { query } from '@/lib/database-server'
 
-export const GET = requireAuth(async (request: NextRequest, user) => {
+export const GET = requireAuth(async (request: NextRequest, user, { params }: { params: { shopId: string } }) => {
   try {
-    const { params } = await request
-    const shopId = params.shopId
+    const { shopId } = params
     const { searchParams } = new URL(request.url)
     
     const page = parseInt(searchParams.get('page') || '1')
@@ -51,10 +50,9 @@ export const GET = requireAuth(async (request: NextRequest, user) => {
   }
 })
 
-export const POST = requireAuth(async (request: NextRequest, user) => {
+export const POST = requireAuth(async (request: NextRequest, user, { params }: { params: { shopId: string } }) => {
   try {
-    const { params } = await request
-    const shopId = params.shopId
+    const { shopId } = params
     const orderData = await request.json()
 
     const {
@@ -107,8 +105,6 @@ export const POST = requireAuth(async (request: NextRequest, user) => {
         customer_phone, order_type, delivery_address, delivery_charge, notes
       ]
     )
-
-    // TODO: Emit real-time update via WebSocket
 
     return NextResponse.json(result.rows[0], { status: 201 })
 
