@@ -112,13 +112,14 @@ export default function SettingsPage() {
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-4">
             <div>
                     <label className="text-sm font-medium mb-1 block">Store Name *</label>
               <Input
                       value={localSettings.storeName || ''}
                       onChange={(e) => updateLocalSetting('storeName', e.target.value)}
                 placeholder="Enter store name"
+                className="w-full"
               />
             </div>
             <div>
@@ -127,6 +128,7 @@ export default function SettingsPage() {
                       value={localSettings.storePhone || ''}
                       onChange={(e) => updateLocalSetting('storePhone', e.target.value)}
                       placeholder="+91 9876543210"
+                      className="w-full"
                     />
                   </div>
                 </div>
@@ -138,7 +140,7 @@ export default function SettingsPage() {
                     placeholder="Enter complete store address"
                   />
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-4">
                   <div>
                     <label className="text-sm font-medium mb-1 block">Email Address</label>
                     <Input
@@ -146,14 +148,16 @@ export default function SettingsPage() {
                       value={localSettings.storeEmail}
                       onChange={(e) => setLocalSettings({...localSettings, storeEmail: e.target.value})}
                       placeholder="info@yourstore.com"
+                      className="w-full"
                     />
                   </div>
                   <div>
                     <label className="text-sm font-medium mb-1 block">Website</label>
-              <Input
+                    <Input
                       value={localSettings.storeWebsite}
                       onChange={(e) => setLocalSettings({...localSettings, storeWebsite: e.target.value})}
                       placeholder="www.yourstore.com"
+                      className="w-full"
                     />
                   </div>
                 </div>
@@ -182,7 +186,7 @@ export default function SettingsPage() {
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-4">
                   <div>
                     <label className="text-sm font-medium mb-1 block">Tax Rate (%)</label>
                     <Input
@@ -190,6 +194,7 @@ export default function SettingsPage() {
                       value={localSettings.taxRate}
                       onChange={(e) => setLocalSettings({...localSettings, taxRate: Number(e.target.value)})}
                       placeholder="18"
+                      className="w-full"
                     />
                   </div>
                   <div>
@@ -198,6 +203,7 @@ export default function SettingsPage() {
                       value={localSettings.currency}
                       onChange={(e) => setLocalSettings({...localSettings, currency: e.target.value})}
                       placeholder="INR"
+                      className="w-full"
                     />
                   </div>
                 </div>
@@ -210,7 +216,7 @@ export default function SettingsPage() {
               />
               <p className="text-xs text-gray-500 mt-1">This UPI ID will be used to generate QR codes for payments</p>
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-4">
                   <div>
                     <label className="text-sm font-medium mb-1 block">Minimum Order Amount (₹)</label>
                     <Input
@@ -218,6 +224,7 @@ export default function SettingsPage() {
                       value={localSettings.minOrderAmount}
                       onChange={(e) => setLocalSettings({...localSettings, minOrderAmount: Number(e.target.value)})}
                       placeholder="0"
+                      className="w-full"
                     />
             </div>
             <div>
@@ -227,14 +234,15 @@ export default function SettingsPage() {
                       value={localSettings.deliveryCharge}
                       onChange={(e) => setLocalSettings({...localSettings, deliveryCharge: Number(e.target.value)})}
                       placeholder="0"
+                      className="w-full"
                     />
                   </div>
                 </div>
                 <div>
                   <label className="text-sm font-medium mb-2 block">Enabled Payment Methods</label>
-                  <div className="grid grid-cols-2 gap-2">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     {['cash', 'card', 'upi', 'wallet'].map((method) => (
-                      <label key={method} className="flex items-center space-x-2">
+                      <label key={method} className="flex items-center space-x-3 p-3 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer">
                         <input
                           type="checkbox"
                           checked={localSettings.paymentMethods.includes(method)}
@@ -251,9 +259,9 @@ export default function SettingsPage() {
                               })
                             }
                           }}
-                          className="rounded border-gray-300"
+                          className="rounded border-gray-300 h-4 w-4"
                         />
-                        <span className="text-sm capitalize">{method}</span>
+                        <span className="text-sm font-medium capitalize">{method}</span>
                       </label>
                     ))}
                   </div>
@@ -843,10 +851,10 @@ export default function SettingsPage() {
 
   return (
     <ResponsiveLayout>
-      <div className="space-y-6 p-4">
-        {/* Mobile-Friendly Header */}
-        <div className="bg-white rounded-lg shadow-sm border p-6">
-          <div className="flex items-center justify-between mb-4">
+      <div className="space-y-4 p-4">
+        {/* Premium Mobile Header */}
+        <div className="bg-white rounded-xl shadow-sm border p-4">
+          <div className="flex items-center justify-between mb-3">
             <div>
               <h1 className="text-2xl font-bold text-gray-900">Settings</h1>
               <p className="text-sm text-gray-600">Configure your system</p>
@@ -865,29 +873,29 @@ export default function SettingsPage() {
             </div>
           </div>
 
-          {/* Mobile-Friendly Tab Navigation */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2">
+          {/* Premium Mobile Tab Navigation */}
+          <div className="grid grid-cols-2 gap-2">
             {tabs.map((tab) => (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`flex flex-col items-center gap-2 px-3 py-3 rounded-lg text-center transition-colors ${
+                className={`flex items-center gap-3 px-4 py-3 rounded-lg text-left transition-all duration-200 ${
                   activeTab === tab.id
-                    ? 'bg-blue-50 text-blue-700 border border-blue-200'
-                    : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                    ? 'bg-blue-50 text-blue-700 border-2 border-blue-200 shadow-sm'
+                    : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900 border border-gray-200'
                 }`}
               >
-                <tab.icon className="h-5 w-5" />
-                <span className="text-xs font-medium">{tab.name}</span>
+                <tab.icon className="h-5 w-5 flex-shrink-0" />
+                <span className="font-medium text-sm">{tab.name}</span>
               </button>
             ))}
           </div>
         </div>
 
-        {/* Main Content */}
-        <div className="bg-white rounded-lg shadow-sm border p-6">
+        {/* Premium Mobile Content - Single Column */}
+        <div className="bg-white rounded-xl shadow-sm border p-4">
           {/* Tab Content */}
-          <div>
+          <div className="space-y-6">
             {renderTabContent()}
           </div>
 
