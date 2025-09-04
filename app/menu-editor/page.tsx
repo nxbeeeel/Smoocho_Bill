@@ -39,6 +39,17 @@ export default function MenuEditorPage() {
 
   // Live query for products from database
   const products = useLiveQuery(() => db.products.toArray()) || []
+
+  // Ensure menu data is loaded on component mount
+  React.useEffect(() => {
+    const ensureMenuData = async () => {
+      if (products.length === 0) {
+        console.log('No products found in Menu Editor - Ensuring menu data is loaded...')
+        await db.ensureMenuData()
+      }
+    }
+    ensureMenuData()
+  }, [products.length])
   
   // Get unique categories
   const categories = ['All', ...Array.from(new Set(products.map(p => p.category).filter(Boolean)))]

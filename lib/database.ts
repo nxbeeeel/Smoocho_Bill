@@ -152,10 +152,22 @@ export class SmoochoDB extends Dexie {
     });
   }
 
-  // Clear and reload menu data
+  // Clear and reload menu data (preserves settings)
   async reloadMenuData() {
+    console.log('Reloading menu data...');
     await this.products.clear();
     await this.loadSmoochoMenu();
+    console.log('Menu data reloaded successfully');
+  }
+
+  // Load menu data if products table is empty
+  async ensureMenuData() {
+    const productCount = await this.products.count();
+    if (productCount === 0) {
+      console.log('No products found - Loading default menu...');
+      await this.loadSmoochoMenu();
+      console.log('Default menu loaded successfully');
+    }
   }
 
   // Load complete Smoocho menu
@@ -377,19 +389,30 @@ export class SmoochoDB extends Dexie {
 // Export singleton instance
 export const db = new SmoochoDB();
 
-// Initialize database when imported - COMPLETELY DISABLED
+// Initialize database when imported - Smart initialization
 let isInitialized = false;
 db.open().then(async () => {
   if (!isInitialized) {
     isInitialized = true;
-    console.log('Database opened successfully - ALL initialization DISABLED to prevent settings conflicts');
+    console.log('Database opened successfully - Checking for initialization...');
     
-    // Just log what data exists, don't initialize anything
+    // Check what data exists
     const userCount = await db.users.count();
     const settingsCount = await db.settings.count();
     const productCount = await db.products.count();
+    const inventoryCount = await db.inventory.count();
     
-    console.log('Database status:', { userCount, settingsCount, productCount });
-    console.log('NO AUTOMATIC INITIALIZATION - Use manual initialization button if needed');
+    console.log('Database status:', { userCount, settingsCount, productCount, inventoryCount });
+    
+    // Auto-initialize if database is completely empty (first time setup)
+    if (userCount === 0 && settingsCount === 0 && productCount === 0 && inventoryCount === 0) {
+      console.log('Database is empty - Auto-initializing with default data...');
+      await db.initializeData();
+      console.log('Auto-initialization completed successfully');
+    } else {
+      console.log('Database has existing data - Checking for missing menu data...');
+      // Ensure menu data is loaded even if other data exists
+      await db.ensureMenuData();
+    }
   }
 });

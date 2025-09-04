@@ -843,13 +843,15 @@ export default function SettingsPage() {
 
   return (
     <ResponsiveLayout>
-      <div className="flex h-full">
-        {/* Sidebar Navigation */}
-        <div className="w-64 bg-white border-r border-gray-200 p-6">
-          <div className="mb-6">
-            <h1 className="text-2xl font-bold text-gray-900">Settings</h1>
-            <p className="text-sm text-gray-600">Configure your system</p>
-            <div className="mt-2 flex items-center gap-2">
+      <div className="space-y-6 p-4">
+        {/* Mobile-Friendly Header */}
+        <div className="bg-white rounded-lg shadow-sm border p-6">
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <h1 className="text-2xl font-bold text-gray-900">Settings</h1>
+              <p className="text-sm text-gray-600">Configure your system</p>
+            </div>
+            <div className="flex items-center gap-2">
               <div className={`w-2 h-2 rounded-full ${Object.keys(settings).length > 0 ? 'bg-green-500' : 'bg-red-500'}`}></div>
               <span className="text-xs text-gray-500">
                 {Object.keys(settings).length > 0 ? 'Settings loaded' : 'Loading settings...'}
@@ -862,32 +864,32 @@ export default function SettingsPage() {
               )}
             </div>
           </div>
-          
-          <nav className="space-y-2">
+
+          {/* Mobile-Friendly Tab Navigation */}
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2">
             {tabs.map((tab) => (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left transition-colors ${
+                className={`flex flex-col items-center gap-2 px-3 py-3 rounded-lg text-center transition-colors ${
                   activeTab === tab.id
                     ? 'bg-blue-50 text-blue-700 border border-blue-200'
                     : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
                 }`}
               >
                 <tab.icon className="h-5 w-5" />
-                <span className="font-medium">{tab.name}</span>
+                <span className="text-xs font-medium">{tab.name}</span>
               </button>
             ))}
-          </nav>
+          </div>
         </div>
 
         {/* Main Content */}
-        <div className="flex-1 p-6 overflow-y-auto">
-          <div className="max-w-4xl mx-auto">
-            {/* Tab Content */}
-            <div className="mb-6">
-              {renderTabContent()}
-            </div>
+        <div className="bg-white rounded-lg shadow-sm border p-6">
+          {/* Tab Content */}
+          <div>
+            {renderTabContent()}
+          </div>
 
                         {/* Action Buttons */}
             <div className="space-y-4">
