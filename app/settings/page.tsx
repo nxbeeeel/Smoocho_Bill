@@ -1,6 +1,7 @@
 'use client'
 
 import React from 'react'
+// Settings page - clean and working version
 import { Save, Store } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
