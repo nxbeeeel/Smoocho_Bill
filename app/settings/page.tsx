@@ -20,7 +20,7 @@ export default function SettingsPage() {
   const handleSave = async () => {
     try {
       for (const [key, value] of Object.entries(localSettings)) {
-        await updateSetting(key, value)
+        await updateSetting(key as keyof typeof localSettings, value)
       }
       toast({
         title: "Settings Saved",
