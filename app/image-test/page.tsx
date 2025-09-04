@@ -1,0 +1,146 @@
+'use client'
+
+import React from 'react'
+import { menuImageLoader } from '@/lib/image-loader'
+import { db } from '@/lib/database'
+import { useLiveQuery } from 'dexie-react-hooks'
+
+export default function ImageTestPage() {
+  const products = useLiveQuery(() => db.products.toArray())
+  const [imageStatus, setImageStatus] = React.useState<any>(null)
+  const [testResults, setTestResults] = React.useState<any>(null)
+
+  React.useEffect(() => {
+    const checkImages = async () => {
+      try {
+        const status = await menuImageLoader.getImageStatusReport()
+        setImageStatus(status)
+        
+        // Test specific images
+        const testImages = [
+          'White Chocolate Kunafa',
+          'Pista Kunafa', 
+          'Biscoff Kunafa',
+          'Hazelnut White Kunafa'
+        ]
+        
+        const results = []
+        for (const name of testImages) {
+          try {
+            const image = await menuImageLoader.getImageForMenuItem(name)
+            results.push({ name, found: !!image, image })
+          } catch (error) {
+            results.push({ name, found: false, error: error instanceof Error ? error.message : String(error) })
+          }
+        }
+        
+        setTestResults(results)
+      } catch (error) {
+        console.error('Error checking images:', error)
+      }
+    }
+    
+    checkImages()
+  }, [])
+
+  return (
+    <div className="min-h-screen bg-gray-50 p-4">
+      <div className="max-w-4xl mx-auto space-y-6">
+        <h1 className="text-3xl font-bold text-gray-900">Image Test Page</h1>
+        
+        {/* Image Status Report */}
+        <div className="bg-white rounded-lg shadow p-6">
+          <h2 className="text-xl font-semibold mb-4">Image Status Report</h2>
+          {imageStatus ? (
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div className="text-center">
+                <div className="text-2xl font-bold text-blue-600">{imageStatus.total}</div>
+                <div className="text-sm text-gray-600">Total Items</div>
+              </div>
+              <div className="text-center">
+                <div className="text-2xl font-bold text-green-600">{imageStatus.available}</div>
+                <div className="text-sm text-gray-600">Available</div>
+              </div>
+              <div className="text-center">
+                <div className="text-2xl font-bold text-red-600">{imageStatus.missing}</div>
+                <div className="text-sm text-gray-600">Missing</div>
+              </div>
+              <div className="text-center">
+                <div className="text-2xl font-bold text-purple-600">
+                  {Math.round((imageStatus.available / imageStatus.total) * 100)}%
+                </div>
+                <div className="text-sm text-gray-600">Complete</div>
+              </div>
+            </div>
+          ) : (
+            <div>Loading image status...</div>
+          )}
+        </div>
+
+        {/* Test Results */}
+        <div className="bg-white rounded-lg shadow p-6">
+          <h2 className="text-xl font-semibold mb-4">Test Results</h2>
+          {testResults ? (
+            <div className="space-y-4">
+              {testResults.map((result: any, index: number) => (
+                <div key={index} className="flex items-center justify-between p-4 border rounded-lg">
+                  <div>
+                    <h3 className="font-medium">{result.name}</h3>
+                    <p className="text-sm text-gray-600">
+                      {result.found ? '✅ Image found' : '❌ Image not found'}
+                    </p>
+                    {result.error && (
+                      <p className="text-sm text-red-600">{result.error}</p>
+                    )}
+                  </div>
+                  {result.image && (
+                    <div className="w-16 h-16 rounded-lg overflow-hidden border">
+                      <img 
+                        src={result.image} 
+                        alt={result.name}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div>Loading test results...</div>
+          )}
+        </div>
+
+        {/* Products with Images */}
+        <div className="bg-white rounded-lg shadow p-6">
+          <h2 className="text-xl font-semibold mb-4">Products with Images</h2>
+          {products ? (
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+              {products.slice(0, 8).map((product) => (
+                <div key={product.id} className="border rounded-lg p-3">
+                  <div className="aspect-square bg-gray-100 rounded-lg mb-2 flex items-center justify-center overflow-hidden">
+                    {product.image && product.image.startsWith('data:image') ? (
+                      <img 
+                        src={product.image} 
+                        alt={product.name}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div className="text-4xl">🍰</div>
+                    )}
+                  </div>
+                  <h3 className="font-medium text-sm">{product.name}</h3>
+                  <p className="text-xs text-gray-600">₹{product.price}</p>
+                  <p className="text-xs text-blue-600">
+                    {product.image ? 'Has Image' : 'No Image'}
+                  </p>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div>Loading products...</div>
+          )}
+        </div>
+      </div>
+    </div>
+  )
+}

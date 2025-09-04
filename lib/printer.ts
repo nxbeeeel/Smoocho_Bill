@@ -1,5 +1,63 @@
 // Printer utilities for built-in tablet printers
 
+// Type declarations for Web APIs
+declare global {
+  interface Navigator {
+    usb?: {
+      getDevices(): Promise<USBDevice[]>
+      requestDevice(options: USBDeviceRequestOptions): Promise<USBDevice>
+    }
+    bluetooth?: {
+      requestDevice(options: BluetoothDeviceRequestOptions): Promise<BluetoothDevice>
+    }
+  }
+  
+  interface USBDevice {
+    productName?: string
+    manufacturerName?: string
+    open(): Promise<void>
+    selectConfiguration(configurationValue: number): Promise<void>
+    claimInterface(interfaceNumber: number): Promise<void>
+    transferOut(endpointNumber: number, data: BufferSource): Promise<USBOutTransferResult>
+    close(): Promise<void>
+  }
+  
+  interface USBDeviceRequestOptions {
+    filters: USBDeviceFilter[]
+  }
+  
+  interface USBDeviceFilter {
+    classCode?: number
+    vendorId?: number
+    productId?: number
+  }
+  
+  interface USBOutTransferResult {
+    status: string
+    bytesWritten: number
+  }
+  
+  interface BluetoothDevice {
+    gatt?: BluetoothRemoteGATTServer
+  }
+  
+  interface BluetoothDeviceRequestOptions {
+    filters: BluetoothLEScanFilter[]
+    optionalServices?: BluetoothServiceUUID[]
+  }
+  
+  interface BluetoothLEScanFilter {
+    namePrefix?: string
+  }
+  
+  interface BluetoothRemoteGATTServer {
+    connect(): Promise<BluetoothRemoteGATTServer>
+    disconnect(): void
+  }
+  
+  type BluetoothServiceUUID = string
+}
+
 export interface PrintOptions {
   width?: number
   height?: number
@@ -23,7 +81,7 @@ export class ThermalPrinter {
   async detectBuiltInPrinter(): Promise<boolean> {
     try {
       // Check for various printer APIs
-      if ('usb' in navigator && 'getDevices' in navigator.usb) {
+      if (navigator.usb && 'getDevices' in navigator.usb) {
         const devices = await navigator.usb.getDevices()
         return devices.some(device => 
           device.productName?.toLowerCase().includes('printer') ||
@@ -32,12 +90,12 @@ export class ThermalPrinter {
       }
 
       // Check for WebUSB printer support
-      if ('usb' in navigator) {
+      if (navigator.usb) {
         return true
       }
 
       // Check for Bluetooth printer support
-      if ('bluetooth' in navigator) {
+      if (navigator.bluetooth) {
         return true
       }
 
@@ -74,13 +132,13 @@ export class ThermalPrinter {
   private async tryDirectPrint(content: string, options: PrintOptions): Promise<boolean> {
     try {
       // Method 1: Try WebUSB for direct printer communication
-      if ('usb' in navigator) {
+      if (navigator.usb) {
         const success = await this.printViaWebUSB(content, options)
         if (success) return true
       }
 
       // Method 2: Try Bluetooth for wireless printers
-      if ('bluetooth' in navigator) {
+      if (navigator.bluetooth) {
         const success = await this.printViaBluetooth(content, options)
         if (success) return true
       }
@@ -100,6 +158,8 @@ export class ThermalPrinter {
 
   private async printViaWebUSB(content: string, options: PrintOptions): Promise<boolean> {
     try {
+      if (!navigator.usb) return false
+      
       // Request access to USB devices
       const device = await navigator.usb.requestDevice({
         filters: [
@@ -132,6 +192,8 @@ export class ThermalPrinter {
 
   private async printViaBluetooth(content: string, options: PrintOptions): Promise<boolean> {
     try {
+      if (!navigator.bluetooth) return false
+      
       // Request Bluetooth device
       const device = await navigator.bluetooth.requestDevice({
         filters: [
