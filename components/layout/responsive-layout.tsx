@@ -3,26 +3,34 @@
 import React from 'react'
 import { MainLayout } from './main-layout'
 import { MobileLayout } from './mobile-layout'
+import { TabletLayout } from './tablet-layout'
 
 interface ResponsiveLayoutProps {
   children: React.ReactNode
 }
 
 export function ResponsiveLayout({ children }: ResponsiveLayoutProps) {
-  const [isMobile, setIsMobile] = React.useState(false)
+  const [deviceType, setDeviceType] = React.useState<'mobile' | 'tablet' | 'desktop'>('desktop')
   const [isLoading, setIsLoading] = React.useState(true)
 
   React.useEffect(() => {
     const checkScreenSize = () => {
-      // Use 768px (md breakpoint) as the threshold for better mobile optimization
-      // Below 768px: Mobile layout (phones)
-      // Above 768px: Desktop layout (tablets, laptops and desktops)
-      const mobile = window.innerWidth < 768
-      setIsMobile(mobile)
+      const width = window.innerWidth
+      let type: 'mobile' | 'tablet' | 'desktop'
+      
+      if (width < 768) {
+        type = 'mobile' // Phones
+      } else if (width < 1024) {
+        type = 'tablet' // Tablets
+      } else {
+        type = 'desktop' // Laptops and desktops
+      }
+      
+      setDeviceType(type)
       setIsLoading(false)
       
       // Debug log
-      console.log(`Screen width: ${window.innerWidth}px, Using ${mobile ? 'Mobile' : 'Desktop'} layout`)
+      console.log(`Screen width: ${width}px, Using ${type} layout`)
     }
 
     // Check on mount
@@ -56,9 +64,11 @@ export function ResponsiveLayout({ children }: ResponsiveLayoutProps) {
     )
   }
 
-  // Use mobile layout for tablets and phones, desktop layout for laptops and PCs
-  if (isMobile) {
+  // Use appropriate layout based on device type
+  if (deviceType === 'mobile') {
     return <MobileLayout>{children}</MobileLayout>
+  } else if (deviceType === 'tablet') {
+    return <TabletLayout>{children}</TabletLayout>
   }
 
   return <MainLayout>{children}</MainLayout>
