@@ -57,16 +57,17 @@ export default function POSPage() {
   const products = useLiveQuery(() => db.products.toArray()) || []
   const activeProducts = products.filter(p => p.isActive)
 
-  // Ensure menu data is loaded on component mount
+  // Ensure menu data is loaded on component mount (only once)
   React.useEffect(() => {
     const ensureMenuData = async () => {
-      if (products.length === 0) {
+      const productCount = await db.products.count()
+      if (productCount === 0) {
         console.log('No products found in POS - Ensuring menu data is loaded...')
         await db.ensureMenuData()
       }
     }
     ensureMenuData()
-  }, [products.length])
+  }, []) // Empty dependency array - run only once on mount
 
   // Get unique categories from products
   const categories = ['All', ...Array.from(new Set(activeProducts.map(p => p.category).filter(Boolean)))]

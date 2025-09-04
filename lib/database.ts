@@ -330,8 +330,7 @@ export class SmoochoDB extends Dexie {
       });
     }
 
-    // Load complete Smoocho menu
-    await this.loadSmoochoMenu();
+    // Note: loadSmoochoMenu is already being called, no need to call it again
 
     // Add sample inventory items
     const sampleInventory = [
