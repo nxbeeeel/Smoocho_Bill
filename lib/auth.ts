@@ -37,22 +37,24 @@ export async function verifyPassword(password: string, hashedPassword: string): 
 
 // Generate JWT token
 export function generateToken(user: Omit<User, 'shopName'>): string {
-  return jwt.sign(
-    {
-      id: user.id,
-      email: user.email,
-      shopId: user.shopId,
-      role: user.role,
-    },
-    JWT_SECRET as string,
-    { expiresIn: JWT_EXPIRES_IN as string }
-  )
+  const payload = {
+    id: user.id,
+    email: user.email,
+    shopId: user.shopId,
+    role: user.role,
+  }
+  
+  const options = {
+    expiresIn: JWT_EXPIRES_IN
+  }
+  
+  return jwt.sign(payload, JWT_SECRET, options)
 }
 
 // Verify JWT token
 export function verifyToken(token: string): AuthToken | null {
   try {
-    return jwt.verify(token, JWT_SECRET as string) as AuthToken
+    return jwt.verify(token, JWT_SECRET) as AuthToken
   } catch (error) {
     return null
   }
