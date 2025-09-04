@@ -192,8 +192,14 @@ export default function POSPage() {
   const subtotal = cart.reduce((sum, item) => sum + item.total, 0)
   const discountAmount = discountType === 'flat' ? Math.min(discount, subtotal) : (subtotal * discount) / 100
   const taxableAmount = subtotal - discountAmount
-  const tax = calculateTax(taxableAmount, settings.taxRate) // Use settings tax rate
-  const total = taxableAmount + tax
+  
+  // Use settings tax rate with fallback to 18%
+  const taxRate = settings?.taxRate || 18
+  const tax = calculateTax(taxableAmount, taxRate)
+  
+  // Add delivery charge for delivery orders
+  const deliveryCharge = orderType === 'delivery' ? (settings?.deliveryCharge || 0) : 0
+  const total = taxableAmount + tax + deliveryCharge
 
   const completeOrder = async () => {
     if (cart.length === 0) {
@@ -227,7 +233,7 @@ export default function POSPage() {
       cashierId: 1, // Default cashier
       customerName: customerName || undefined,
       customerPhone: customerPhone || undefined,
-      notes: `Order Type: ${orderType.toUpperCase()}`,
+      notes: `Order Type: ${orderType.toUpperCase()}${deliveryCharge > 0 ? ` | Delivery: ₹${deliveryCharge}` : ''}`,
       createdAt: new Date(),
       updatedAt: new Date()
     }
@@ -393,12 +399,12 @@ export default function POSPage() {
         <body>
           <div class="receipt">
             <div class="header">
-              <div class="store-name">${settings.storeName || 'SMOOCHO BILL'}</div>
-              <div class="store-details">${settings.storeAddress || 'Premium POS System'}</div>
-              <div class="store-details">Phone: ${settings.storePhone || 'N/A'}</div>
-              ${settings.storeEmail ? `<div class="store-details">Email: ${settings.storeEmail}</div>` : ''}
-              ${settings.storeWebsite ? `<div class="store-details">Web: ${settings.storeWebsite}</div>` : ''}
-              ${settings.storeGST ? `<div class="store-details">GST: ${settings.storeGST}</div>` : ''}
+              <div class="store-name">${settings?.storeName || 'SMOOCHO BILL'}</div>
+              <div class="store-details">${settings?.storeAddress || 'Premium POS System'}</div>
+              <div class="store-details">Phone: ${settings?.storePhone || 'N/A'}</div>
+              ${settings?.storeEmail ? `<div class="store-details">Email: ${settings.storeEmail}</div>` : ''}
+              ${settings?.storeWebsite ? `<div class="store-details">Web: ${settings.storeWebsite}</div>` : ''}
+              ${settings?.storeGST ? `<div class="store-details">GST: ${settings.storeGST}</div>` : ''}
               <div class="divider"></div>
               <div class="store-details" style="font-weight: bold;">BILL #${order.orderNumber}</div>
             </div>
@@ -443,14 +449,14 @@ export default function POSPage() {
                   <div class="total-amount">${order.discountType === 'percentage' ? order.discount + '%' : '₹' + order.discount.toFixed(2)}</div>
                 </div>
               ` : ''}
-              ${orderType === 'delivery' && settings.deliveryCharge > 0 ? `
+              ${orderType === 'delivery' && (settings?.deliveryCharge || 0) > 0 ? `
                 <div class="total-row">
                   <div class="total-label">Delivery Charge:</div>
-                  <div class="total-amount">₹${settings.deliveryCharge.toFixed(2)}</div>
+                  <div class="total-amount">₹${(settings?.deliveryCharge || 0).toFixed(2)}</div>
                 </div>
               ` : ''}
               <div class="total-row">
-                <div class="total-label">Tax (${settings.taxRate || 18}%):</div>
+                <div class="total-label">Tax (${settings?.taxRate || 18}%):</div>
                 <div class="total-amount">₹${order.tax.toFixed(2)}</div>
               </div>
               <div class="total-row grand-total">
@@ -461,9 +467,9 @@ export default function POSPage() {
 
             <div class="footer">
               <div class="thank-you">Thank you for your visit!</div>
-              ${settings.upiId ? `<div style="margin: 4px 0; font-size: 9px;">UPI ID: ${settings.upiId}</div>` : ''}
+              ${settings?.upiId ? `<div style="margin: 4px 0; font-size: 9px;">UPI ID: ${settings.upiId}</div>` : ''}
               <div style="margin: 4px 0; font-size: 9px;">Keep this receipt for warranty</div>
-              <div style="margin: 4px 0; font-size: 9px;">For queries: ${settings.storePhone || 'Contact Store'}</div>
+              <div style="margin: 4px 0; font-size: 9px;">For queries: ${settings?.storePhone || 'Contact Store'}</div>
               <div class="generated-time">Generated: ${new Date().toLocaleString('en-IN')}</div>
               <div style="margin-top: 4px; font-size: 8px; color: #666;">Powered by Smoocho Bill POS</div>
             </div>
@@ -494,7 +500,24 @@ export default function POSPage() {
           <div className="flex items-center justify-between mb-4">
             <div>
               <h1 className="text-xl lg:text-3xl font-bold text-slate-900">POS System</h1>
-              <p className="text-sm lg:text-base text-slate-600">{activeProducts.length} items available</p>
+              <div className="flex items-center gap-4">
+                <p className="text-sm lg:text-base text-slate-600">{activeProducts.length} items available</p>
+                <div className="flex items-center gap-2 text-xs">
+                  <span className="px-2 py-1 bg-green-100 text-green-700 rounded-full">
+                    Tax: {settings?.taxRate || 18}%
+                  </span>
+                  {settings?.storeName && (
+                    <span className="px-2 py-1 bg-blue-100 text-blue-700 rounded-full">
+                      {settings.storeName}
+                    </span>
+                  )}
+                  {settings?.upiId && (
+                    <span className="px-2 py-1 bg-purple-100 text-purple-700 rounded-full">
+                      UPI: {settings.upiId}
+                    </span>
+                  )}
+                </div>
+              </div>
             </div>
             <div className="flex space-x-2">
               <Button 
@@ -721,9 +744,15 @@ export default function POSPage() {
                       </div>
                     )}
                     <div className="flex justify-between text-slate-700">
-                      <span>Tax ({settings.taxRate}%):</span>
+                      <span>Tax ({taxRate}%):</span>
                       <span className="font-semibold">{formatCurrency(tax)}</span>
                     </div>
+                    {deliveryCharge > 0 && (
+                      <div className="flex justify-between text-slate-700">
+                        <span>Delivery Charge:</span>
+                        <span className="font-semibold">{formatCurrency(deliveryCharge)}</span>
+                      </div>
+                    )}
                     <div className="flex justify-between text-lg font-bold text-slate-800 border-t border-green-200 pt-2">
                       <span>Total:</span>
                       <span className="text-green-600">{formatCurrency(total)}</span>
@@ -850,9 +879,15 @@ export default function POSPage() {
                     </div>
                   )}
                   <div className="flex justify-between text-slate-700">
-                    <span>Tax ({settings.taxRate}%):</span>
+                    <span>Tax ({taxRate}%):</span>
                     <span className="font-semibold">{formatCurrency(tax)}</span>
                   </div>
+                  {deliveryCharge > 0 && (
+                    <div className="flex justify-between text-slate-700">
+                      <span>Delivery Charge:</span>
+                      <span className="font-semibold">{formatCurrency(deliveryCharge)}</span>
+                    </div>
+                  )}
                   <div className="flex justify-between text-xl font-bold border-t border-green-200 pt-3 text-slate-800">
                     <span>Total:</span>
                     <span className="text-green-600">{formatCurrency(total)}</span>
@@ -1070,9 +1105,15 @@ export default function POSPage() {
                       </div>
                     )}
                     <div className="flex justify-between text-sm sm:text-base text-slate-700">
-                      <span>Tax ({settings.taxRate}%):</span>
+                      <span>Tax ({taxRate}%):</span>
                       <span className="font-medium">{formatCurrency(tax)}</span>
                     </div>
+                    {deliveryCharge > 0 && (
+                      <div className="flex justify-between text-sm sm:text-base text-slate-700">
+                        <span>Delivery Charge:</span>
+                        <span className="font-medium">{formatCurrency(deliveryCharge)}</span>
+                      </div>
+                    )}
                     <div className="flex justify-between text-xl sm:text-2xl font-bold border-t border-green-300 pt-3 text-slate-800">
                       <span>Total:</span>
                       <span className="text-green-600">{formatCurrency(total)}</span>
@@ -1090,7 +1131,7 @@ export default function POSPage() {
                         <h4 className="font-semibold text-lg text-slate-800">UPI Payment</h4>
                       </div>
                       <div className="p-2 sm:p-4 bg-white rounded-lg border border-purple-100">
-                        <QRGenerator amount={total} upiId={settings.upiId} onClose={() => setPaymentMethod('cash')} />
+                        <QRGenerator amount={total} upiId={settings?.upiId || 'pay@smoochobill.com'} onClose={() => setPaymentMethod('cash')} />
                       </div>
                       <p className="text-sm text-slate-500">Scan the QR code to complete payment</p>
                     </div>

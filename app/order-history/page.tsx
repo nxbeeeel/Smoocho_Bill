@@ -241,6 +241,9 @@ export default function OrderHistoryPage() {
               <div class="store-name">SMOOCHO BILL</div>
               <div class="store-details">Premium POS System</div>
               <div class="store-details">Phone: N/A</div>
+              <div class="store-details">Email: N/A</div>
+              <div class="store-details">Web: N/A</div>
+              <div class="store-details">GST: N/A</div>
               <div class="divider"></div>
               <div class="store-details" style="font-weight: bold;">BILL #${order.orderNumber}</div>
             </div>
@@ -304,6 +307,7 @@ export default function OrderHistoryPage() {
 
             <div class="footer">
               <div class="thank-you">Thank you for your business!</div>
+              <div style="margin: 4px 0; font-size: 9px;">UPI ID: N/A</div>
               <div style="margin: 4px 0; font-size: 9px;">Keep this receipt for warranty</div>
               <div style="margin: 4px 0; font-size: 9px;">For queries: Contact Store</div>
               <div class="generated-time">Generated: ${new Date().toLocaleString('en-IN')}</div>
