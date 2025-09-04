@@ -44,9 +44,12 @@ export default function POSPage() {
   const [selectedCategory, setSelectedCategory] = React.useState('All')
   const [showCheckout, setShowCheckout] = React.useState(false)
   const [paymentMethod, setPaymentMethod] = React.useState<'cash' | 'card' | 'upi'>('cash')
+  const [orderType, setOrderType] = React.useState<'takeaway' | 'delivery' | 'dine-in'>('takeaway')
   const [discount, setDiscount] = React.useState(0)
   const [discountType, setDiscountType] = React.useState<'flat' | 'percentage'>('percentage')
   const [showQR, setShowQR] = React.useState(false)
+  const [customerName, setCustomerName] = React.useState('')
+  const [customerPhone, setCustomerPhone] = React.useState('')
 
   // Live query for products from database - get all products first, then filter
   const products = useLiveQuery(() => db.products.toArray()) || []
@@ -222,6 +225,9 @@ export default function POSPage() {
       paymentMethod,
       paymentStatus: 'completed' as const,
       cashierId: 1, // Default cashier
+      customerName: customerName || undefined,
+      customerPhone: customerPhone || undefined,
+      notes: `Order Type: ${orderType.toUpperCase()}`,
       createdAt: new Date(),
       updatedAt: new Date()
     }
@@ -242,6 +248,9 @@ export default function POSPage() {
       clearCart()
       setShowCheckout(false)
       setDiscount(0)
+      setCustomerName('')
+      setCustomerPhone('')
+      setOrderType('takeaway')
     } catch (error) {
       toast({
         title: "Error",
@@ -252,41 +261,227 @@ export default function POSPage() {
   }
 
   const generateBill = async (order: any) => {
-    // Create bill content
-    const billContent = `
-${settings.storeName}
-${settings.storeAddress}
-Phone: ${settings.storePhone}
-${settings.storeGST ? `GST: ${settings.storeGST}` : ''}
+    // Create thermal receipt format
+    const printWindow = window.open('', '_blank')
+    if (!printWindow) return
 
-Order #: ${order.orderNumber}
-Date: ${new Date().toLocaleDateString()}
-Time: ${new Date().toLocaleTimeString()}
+    const printContent = `
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <title>Receipt - ${order.orderNumber}</title>
+          <style>
+            @page {
+              size: 80mm auto;
+              margin: 0;
+            }
+            * {
+              margin: 0;
+              padding: 0;
+              box-sizing: border-box;
+            }
+            body {
+              font-family: 'Courier New', monospace;
+              font-size: 12px;
+              line-height: 1.2;
+              width: 80mm;
+              max-width: 80mm;
+              margin: 0 auto;
+              padding: 5mm;
+              background: white;
+              color: black;
+            }
+            .receipt {
+              width: 100%;
+            }
+            .header {
+              text-align: center;
+              border-bottom: 1px dashed #000;
+              padding-bottom: 8px;
+              margin-bottom: 8px;
+            }
+            .store-name {
+              font-size: 16px;
+              font-weight: bold;
+              margin-bottom: 2px;
+            }
+            .store-details {
+              font-size: 10px;
+              margin-bottom: 4px;
+            }
+            .order-info {
+              margin-bottom: 8px;
+              font-size: 11px;
+            }
+            .order-info p {
+              margin: 1px 0;
+            }
+            .items {
+              margin-bottom: 8px;
+            }
+            .item-row {
+              display: flex;
+              justify-content: space-between;
+              margin-bottom: 2px;
+              font-size: 11px;
+            }
+            .item-name {
+              flex: 1;
+              margin-right: 4px;
+            }
+            .item-qty {
+              width: 20px;
+              text-align: center;
+            }
+            .item-price {
+              width: 40px;
+              text-align: right;
+            }
+            .item-total {
+              width: 50px;
+              text-align: right;
+              font-weight: bold;
+            }
+            .divider {
+              border-top: 1px dashed #000;
+              margin: 4px 0;
+            }
+            .totals {
+              margin-bottom: 8px;
+            }
+            .total-row {
+              display: flex;
+              justify-content: space-between;
+              margin: 1px 0;
+              font-size: 11px;
+            }
+            .total-label {
+              flex: 1;
+            }
+            .total-amount {
+              font-weight: bold;
+            }
+            .grand-total {
+              font-size: 14px;
+              font-weight: bold;
+              border-top: 1px solid #000;
+              padding-top: 4px;
+              margin-top: 4px;
+            }
+            .footer {
+              text-align: center;
+              margin-top: 8px;
+              border-top: 1px dashed #000;
+              padding-top: 8px;
+              font-size: 10px;
+            }
+            .thank-you {
+              font-weight: bold;
+              margin-bottom: 4px;
+            }
+            .generated-time {
+              font-size: 9px;
+            }
+            @media print {
+              body {
+                margin: 0;
+                padding: 2mm;
+              }
+            }
+          </style>
+        </head>
+        <body>
+          <div class="receipt">
+            <div class="header">
+              <div class="store-name">${settings.storeName || 'SMOOCHO BILL'}</div>
+              <div class="store-details">${settings.storeAddress || 'Premium POS System'}</div>
+              <div class="store-details">Phone: ${settings.storePhone || 'N/A'}</div>
+              ${settings.storeEmail ? `<div class="store-details">Email: ${settings.storeEmail}</div>` : ''}
+              ${settings.storeWebsite ? `<div class="store-details">Web: ${settings.storeWebsite}</div>` : ''}
+              ${settings.storeGST ? `<div class="store-details">GST: ${settings.storeGST}</div>` : ''}
+              <div class="divider"></div>
+              <div class="store-details" style="font-weight: bold;">BILL #${order.orderNumber}</div>
+            </div>
+            
+            <div class="order-info">
+              <p>Date: ${new Date().toLocaleDateString('en-IN')}</p>
+              <p>Time: ${new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })}</p>
+              <p>Order Type: ${orderType.toUpperCase()}</p>
+              <p>Payment: ${order.paymentMethod.toUpperCase()}</p>
+              <p>Status: PAID</p>
+              ${order.customerName ? `<p>Customer: ${order.customerName}</p>` : ''}
+              ${order.customerPhone ? `<p>Phone: ${order.customerPhone}</p>` : ''}
+            </div>
 
-Items:
-${order.items.map((item: any) => 
-  `${item.productName} x${item.quantity} = ₹${item.total}`
-).join('\n')}
+            <div class="items">
+              <div class="item-row" style="font-weight: bold; border-bottom: 1px solid #000; padding-bottom: 2px;">
+                <div class="item-name">Item</div>
+                <div class="item-qty">Qty</div>
+                <div class="item-price">Price</div>
+                <div class="item-total">Total</div>
+              </div>
+              ${order.items.map((item: any) => `
+                <div class="item-row">
+                  <div class="item-name">${item.productName}</div>
+                  <div class="item-qty">${item.quantity}</div>
+                  <div class="item-price">₹${item.price.toFixed(2)}</div>
+                  <div class="item-total">₹${item.total.toFixed(2)}</div>
+                </div>
+              `).join('')}
+            </div>
 
-Subtotal: ₹${order.subtotal}
-${order.discount > 0 ? `Discount (${order.discountType === 'percentage' ? order.discount + '%' : '₹' + order.discount}): -₹${order.discount}` : ''}
-Tax (${settings.taxRate}%): ₹${order.tax}
-Total: ₹${order.total}
+            <div class="divider"></div>
 
-Payment Method: ${order.paymentMethod.toUpperCase()}
-Status: PAID
+            <div class="totals">
+              <div class="total-row">
+                <div class="total-label">Subtotal:</div>
+                <div class="total-amount">₹${order.subtotal.toFixed(2)}</div>
+              </div>
+              ${order.discount > 0 ? `
+                <div class="total-row">
+                  <div class="total-label">Discount:</div>
+                  <div class="total-amount">${order.discountType === 'percentage' ? order.discount + '%' : '₹' + order.discount.toFixed(2)}</div>
+                </div>
+              ` : ''}
+              ${orderType === 'delivery' && settings.deliveryCharge > 0 ? `
+                <div class="total-row">
+                  <div class="total-label">Delivery Charge:</div>
+                  <div class="total-amount">₹${settings.deliveryCharge.toFixed(2)}</div>
+                </div>
+              ` : ''}
+              <div class="total-row">
+                <div class="total-label">Tax (${settings.taxRate || 18}%):</div>
+                <div class="total-amount">₹${order.tax.toFixed(2)}</div>
+              </div>
+              <div class="total-row grand-total">
+                <div class="total-label">TOTAL:</div>
+                <div class="total-amount">₹${order.total.toFixed(2)}</div>
+              </div>
+            </div>
 
-Thank you for your visit!
-    `.trim()
+            <div class="footer">
+              <div class="thank-you">Thank you for your visit!</div>
+              ${settings.upiId ? `<div style="margin: 4px 0; font-size: 9px;">UPI ID: ${settings.upiId}</div>` : ''}
+              <div style="margin: 4px 0; font-size: 9px;">Keep this receipt for warranty</div>
+              <div style="margin: 4px 0; font-size: 9px;">For queries: ${settings.storePhone || 'Contact Store'}</div>
+              <div class="generated-time">Generated: ${new Date().toLocaleString('en-IN')}</div>
+              <div style="margin-top: 4px; font-size: 8px; color: #666;">Powered by Smoocho Bill POS</div>
+            </div>
+          </div>
+        </body>
+      </html>
+    `
 
-    // If printer is enabled, send to printer
-    if (settings.printerEnabled) {
-      // In a real app, this would send to thermal printer
-      console.log('Printing bill:', billContent)
-    }
+    printWindow.document.write(printContent)
+    printWindow.document.close()
+    
+    // Auto-print after a short delay
+    setTimeout(() => {
+      printWindow.print()
+    }, 500)
 
     // Also log to console for debugging
-    console.log('Bill Generated:', billContent)
+    console.log('Bill Generated for Order:', order.orderNumber)
   }
 
   return (
@@ -758,6 +953,66 @@ Thank you for your visit!
                       <QrCode className="h-5 w-5 sm:h-6 sm:w-6 mb-0.5 sm:mb-1" />
                       <span className="text-xs sm:text-sm font-medium">UPI</span>
                     </Button>
+                  </div>
+                </div>
+
+                {/* Order Type & Customer Details */}
+                <div className="space-y-4">
+                  <div className="flex items-center">
+                    <div className="bg-orange-100 p-1.5 rounded-full mr-2">
+                      <User className="h-4 w-4 text-orange-600" />
+                    </div>
+                    <h3 className="font-semibold text-lg text-slate-800">Order Details</h3>
+                  </div>
+                  
+                  {/* Order Type */}
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium text-slate-700">Order Type</label>
+                    <div className="grid grid-cols-3 gap-2">
+                      <Button
+                        variant={orderType === 'takeaway' ? 'default' : 'outline'}
+                        onClick={() => setOrderType('takeaway')}
+                        className={`h-12 flex-col transition-all duration-200 ${orderType === 'takeaway' ? 'bg-gradient-to-r from-orange-600 to-red-600 text-white shadow-lg' : 'hover:bg-orange-50 hover:border-orange-300'}`}
+                      >
+                        <span className="text-xs font-medium">Takeaway</span>
+                      </Button>
+                      <Button
+                        variant={orderType === 'dine-in' ? 'default' : 'outline'}
+                        onClick={() => setOrderType('dine-in')}
+                        className={`h-12 flex-col transition-all duration-200 ${orderType === 'dine-in' ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg' : 'hover:bg-blue-50 hover:border-blue-300'}`}
+                      >
+                        <span className="text-xs font-medium">Dine-in</span>
+                      </Button>
+                      <Button
+                        variant={orderType === 'delivery' ? 'default' : 'outline'}
+                        onClick={() => setOrderType('delivery')}
+                        className={`h-12 flex-col transition-all duration-200 ${orderType === 'delivery' ? 'bg-gradient-to-r from-green-600 to-emerald-600 text-white shadow-lg' : 'hover:bg-green-50 hover:border-green-300'}`}
+                      >
+                        <span className="text-xs font-medium">Delivery</span>
+                      </Button>
+                    </div>
+                  </div>
+
+                  {/* Customer Details */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium text-slate-700">Customer Name</label>
+                      <Input
+                        placeholder="Enter customer name"
+                        value={customerName}
+                        onChange={(e) => setCustomerName(e.target.value)}
+                        className="border-2 focus:border-orange-400"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium text-slate-700">Phone Number</label>
+                      <Input
+                        placeholder="Enter phone number"
+                        value={customerPhone}
+                        onChange={(e) => setCustomerPhone(e.target.value)}
+                        className="border-2 focus:border-orange-400"
+                      />
+                    </div>
                   </div>
                 </div>
 

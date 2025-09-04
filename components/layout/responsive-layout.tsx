@@ -10,13 +10,19 @@ interface ResponsiveLayoutProps {
 
 export function ResponsiveLayout({ children }: ResponsiveLayoutProps) {
   const [isMobile, setIsMobile] = React.useState(false)
+  const [isLoading, setIsLoading] = React.useState(true)
 
   React.useEffect(() => {
     const checkScreenSize = () => {
       // Use 1024px (lg breakpoint) as the threshold
       // Below 1024px: Mobile layout (tablets and phones)
       // Above 1024px: Desktop layout (laptops and desktops)
-      setIsMobile(window.innerWidth < 1024)
+      const mobile = window.innerWidth < 1024
+      setIsMobile(mobile)
+      setIsLoading(false)
+      
+      // Debug log
+      console.log(`Screen width: ${window.innerWidth}px, Using ${mobile ? 'Mobile' : 'Desktop'} layout`)
     }
 
     // Check on mount
@@ -37,6 +43,18 @@ export function ResponsiveLayout({ children }: ResponsiveLayoutProps) {
       clearTimeout(timeoutId)
     }
   }, [])
+
+  // Show loading state briefly to prevent layout shift
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-8 h-8 bg-blue-600 rounded-lg mx-auto mb-2"></div>
+          <p className="text-sm text-gray-600">Loading...</p>
+        </div>
+      </div>
+    )
+  }
 
   // Use mobile layout for tablets and phones, desktop layout for laptops and PCs
   if (isMobile) {

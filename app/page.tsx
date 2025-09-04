@@ -12,7 +12,7 @@ import {
   Users,
   Clock
 } from 'lucide-react'
-import { MainLayout } from '@/components/layout/main-layout'
+import { ResponsiveLayout } from '@/components/layout/responsive-layout'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { formatCurrency } from '@/lib/utils'
@@ -38,7 +38,7 @@ export default function Dashboard() {
   ])
 
   return (
-    <MainLayout>
+    <ResponsiveLayout>
       <div className="space-y-6">
         {/* Header */}
         <div>
@@ -206,6 +206,6 @@ export default function Dashboard() {
           </Card>
         </div>
       </div>
-    </MainLayout>
+    </ResponsiveLayout>
   )
 }

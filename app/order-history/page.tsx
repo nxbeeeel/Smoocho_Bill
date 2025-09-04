@@ -3,7 +3,7 @@
 import React, { useState, useCallback } from 'react'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { db, Order, OrderItem, Product } from '@/lib/database'
-import { MainLayout } from '@/components/layout/main-layout'
+import { ResponsiveLayout } from '@/components/layout/responsive-layout'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -114,65 +114,201 @@ export default function OrderHistoryPage() {
       <!DOCTYPE html>
       <html>
         <head>
-          <title>Order Receipt - ${order.orderNumber}</title>
+          <title>Receipt - ${order.orderNumber}</title>
           <style>
-            body { font-family: Arial, sans-serif; margin: 20px; }
-            .header { text-align: center; border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 20px; }
-            .order-info { margin-bottom: 20px; }
-            .items-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
-            .items-table th, .items-table td { border: 1px solid #000; padding: 8px; text-align: left; }
-            .items-table th { background-color: #f0f0f0; }
-            .totals { text-align: right; margin-top: 20px; }
-            .footer { margin-top: 30px; text-align: center; font-size: 12px; }
+            @page {
+              size: 80mm auto;
+              margin: 0;
+            }
+            * {
+              margin: 0;
+              padding: 0;
+              box-sizing: border-box;
+            }
+            body {
+              font-family: 'Courier New', monospace;
+              font-size: 12px;
+              line-height: 1.2;
+              width: 80mm;
+              max-width: 80mm;
+              margin: 0 auto;
+              padding: 5mm;
+              background: white;
+              color: black;
+            }
+            .receipt {
+              width: 100%;
+            }
+            .header {
+              text-align: center;
+              border-bottom: 1px dashed #000;
+              padding-bottom: 8px;
+              margin-bottom: 8px;
+            }
+            .store-name {
+              font-size: 16px;
+              font-weight: bold;
+              margin-bottom: 2px;
+            }
+            .store-details {
+              font-size: 10px;
+              margin-bottom: 4px;
+            }
+            .order-info {
+              margin-bottom: 8px;
+              font-size: 11px;
+            }
+            .order-info p {
+              margin: 1px 0;
+            }
+            .items {
+              margin-bottom: 8px;
+            }
+            .item-row {
+              display: flex;
+              justify-content: space-between;
+              margin-bottom: 2px;
+              font-size: 11px;
+            }
+            .item-name {
+              flex: 1;
+              margin-right: 4px;
+            }
+            .item-qty {
+              width: 20px;
+              text-align: center;
+            }
+            .item-price {
+              width: 40px;
+              text-align: right;
+            }
+            .item-total {
+              width: 50px;
+              text-align: right;
+              font-weight: bold;
+            }
+            .divider {
+              border-top: 1px dashed #000;
+              margin: 4px 0;
+            }
+            .totals {
+              margin-bottom: 8px;
+            }
+            .total-row {
+              display: flex;
+              justify-content: space-between;
+              margin: 1px 0;
+              font-size: 11px;
+            }
+            .total-label {
+              flex: 1;
+            }
+            .total-amount {
+              font-weight: bold;
+            }
+            .grand-total {
+              font-size: 14px;
+              font-weight: bold;
+              border-top: 1px solid #000;
+              padding-top: 4px;
+              margin-top: 4px;
+            }
+            .footer {
+              text-align: center;
+              margin-top: 8px;
+              border-top: 1px dashed #000;
+              padding-top: 8px;
+              font-size: 10px;
+            }
+            .thank-you {
+              font-weight: bold;
+              margin-bottom: 4px;
+            }
+            .generated-time {
+              font-size: 9px;
+            }
+            @media print {
+              body {
+                margin: 0;
+                padding: 2mm;
+              }
+            }
           </style>
         </head>
         <body>
-          <div class="header">
-            <h1>Order Receipt</h1>
-            <h2>Order #${order.orderNumber}</h2>
-          </div>
-          
-          <div class="order-info">
-            <p><strong>Date:</strong> ${formatDate(order.createdAt)}</p>
-            ${order.customerName ? `<p><strong>Customer:</strong> ${order.customerName}</p>` : ''}
-            ${order.customerPhone ? `<p><strong>Phone:</strong> ${order.customerPhone}</p>` : ''}
-            <p><strong>Payment Method:</strong> ${order.paymentMethod.toUpperCase()}</p>
-            <p><strong>Status:</strong> ${order.paymentStatus.toUpperCase()}</p>
-          </div>
+          <div class="receipt">
+            <div class="header">
+              <div class="store-name">SMOOCHO BILL</div>
+              <div class="store-details">Premium POS System</div>
+              <div class="store-details">Phone: N/A</div>
+              <div class="divider"></div>
+              <div class="store-details" style="font-weight: bold;">BILL #${order.orderNumber}</div>
+            </div>
+            
+            <div class="order-info">
+              <p>Date: ${new Date(order.createdAt).toLocaleDateString('en-IN')}</p>
+              <p>Time: ${new Date(order.createdAt).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })}</p>
+              <p>Order Type: ${order.notes?.includes('Order Type:') ? order.notes.split('Order Type: ')[1] || 'TAKEAWAY' : 'TAKEAWAY'}</p>
+              <p>Payment: ${order.paymentMethod.toUpperCase()}</p>
+              <p>Status: ${order.paymentStatus.toUpperCase()}</p>
+              ${order.customerName ? `<p>Customer: ${order.customerName}</p>` : ''}
+              ${order.customerPhone ? `<p>Phone: ${order.customerPhone}</p>` : ''}
+            </div>
 
-          <table class="items-table">
-            <thead>
-              <tr>
-                <th>Item</th>
-                <th>Qty</th>
-                <th>Price</th>
-                <th>Total</th>
-              </tr>
-            </thead>
-            <tbody>
+            <div class="items">
+              <div class="item-row" style="font-weight: bold; border-bottom: 1px solid #000; padding-bottom: 2px;">
+                <div class="item-name">Item</div>
+                <div class="item-qty">Qty</div>
+                <div class="item-price">Price</div>
+                <div class="item-total">Total</div>
+              </div>
               ${order.items.map(item => `
-                <tr>
-                  <td>${item.productName}</td>
-                  <td>${item.quantity}</td>
-                  <td>${formatCurrency(item.price)}</td>
-                  <td>${formatCurrency(item.total)}</td>
-                </tr>
+                <div class="item-row">
+                  <div class="item-name">${item.productName}</div>
+                  <div class="item-qty">${item.quantity}</div>
+                  <div class="item-price">₹${item.price.toFixed(2)}</div>
+                  <div class="item-total">₹${item.total.toFixed(2)}</div>
+                </div>
               `).join('')}
-            </tbody>
-          </table>
+            </div>
 
-          <div class="totals">
-            <p><strong>Subtotal:</strong> ${formatCurrency(order.subtotal)}</p>
-            ${order.discount > 0 ? `<p><strong>Discount:</strong> ${order.discountType === 'percentage' ? order.discount + '%' : formatCurrency(order.discount)}</p>` : ''}
-            <p><strong>Tax:</strong> ${formatCurrency(order.tax)}</p>
-            <p><strong>Total:</strong> ${formatCurrency(order.total)}</p>
-          </div>
+            <div class="divider"></div>
 
-          ${order.notes ? `<div class="notes"><p><strong>Notes:</strong> ${order.notes}</p></div>` : ''}
+            <div class="totals">
+              <div class="total-row">
+                <div class="total-label">Subtotal:</div>
+                <div class="total-amount">₹${order.subtotal.toFixed(2)}</div>
+              </div>
+              ${order.discount > 0 ? `
+                <div class="total-row">
+                  <div class="total-label">Discount:</div>
+                  <div class="total-amount">${order.discountType === 'percentage' ? order.discount + '%' : '₹' + order.discount.toFixed(2)}</div>
+                </div>
+              ` : ''}
+              <div class="total-row">
+                <div class="total-label">Tax (18%):</div>
+                <div class="total-amount">₹${order.tax.toFixed(2)}</div>
+              </div>
+              <div class="total-row grand-total">
+                <div class="total-label">TOTAL:</div>
+                <div class="total-amount">₹${order.total.toFixed(2)}</div>
+              </div>
+            </div>
 
-          <div class="footer">
-            <p>Thank you for your business!</p>
-            <p>Generated on ${new Date().toLocaleString()}</p>
+            ${order.notes ? `
+              <div class="divider"></div>
+              <div style="font-size: 10px; margin-bottom: 8px;">
+                <strong>Notes:</strong> ${order.notes}
+              </div>
+            ` : ''}
+
+            <div class="footer">
+              <div class="thank-you">Thank you for your business!</div>
+              <div style="margin: 4px 0; font-size: 9px;">Keep this receipt for warranty</div>
+              <div style="margin: 4px 0; font-size: 9px;">For queries: Contact Store</div>
+              <div class="generated-time">Generated: ${new Date().toLocaleString('en-IN')}</div>
+              <div style="margin-top: 4px; font-size: 8px; color: #666;">Powered by Smoocho Bill POS</div>
+            </div>
           </div>
         </body>
       </html>
@@ -180,7 +316,11 @@ export default function OrderHistoryPage() {
 
     printWindow.document.write(printContent)
     printWindow.document.close()
-    printWindow.print()
+    
+    // Auto-print after a short delay
+    setTimeout(() => {
+      printWindow.print()
+    }, 500)
   }
 
   const handleUpdateOrderItem = (itemIndex: number, field: keyof OrderItem, value: any) => {
@@ -308,7 +448,7 @@ export default function OrderHistoryPage() {
   }
 
   return (
-    <MainLayout>
+    <ResponsiveLayout>
       <div className="space-y-6">
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
@@ -720,6 +860,6 @@ export default function OrderHistoryPage() {
           </div>
         )}
       </div>
-    </MainLayout>
+    </ResponsiveLayout>
   )
 }

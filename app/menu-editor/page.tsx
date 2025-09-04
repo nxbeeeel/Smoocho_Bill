@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react'
 import { Plus, Edit, Trash2, RefreshCw, Filter, Image as ImageIcon, Check, ChevronDown, Save, X } from 'lucide-react'
-import { MainLayout } from '@/components/layout/main-layout'
+import { ResponsiveLayout } from '@/components/layout/responsive-layout'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -167,7 +167,7 @@ export default function MenuEditorPage() {
   }
 
   return (
-    <MainLayout>
+    <ResponsiveLayout>
       <div className="space-y-6 p-4">
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -443,6 +443,6 @@ export default function MenuEditorPage() {
           </div>
         </div>
       )}
-    </MainLayout>
+    </ResponsiveLayout>
   )
 }

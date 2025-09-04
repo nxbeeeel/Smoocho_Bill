@@ -2,7 +2,7 @@
 
 import React from 'react'
 import { Save, Bell, Printer, Wifi, Shield, User, Store, QrCode, Link as LinkIcon, CheckCircle, XCircle, Plus, Settings as SettingsIcon, Database, Palette, CreditCard, Download, Upload, Eye, EyeOff, Lock, Unlock, Volume2, VolumeX, Monitor, Smartphone, Globe, Clock, FileText, AlertTriangle } from 'lucide-react'
-import { MainLayout } from '@/components/layout/main-layout'
+import { ResponsiveLayout } from '@/components/layout/responsive-layout'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -842,7 +842,7 @@ export default function SettingsPage() {
   }
 
   return (
-    <MainLayout>
+    <ResponsiveLayout>
       <div className="flex h-full">
         {/* Sidebar Navigation */}
         <div className="w-64 bg-white border-r border-gray-200 p-6">
@@ -1196,6 +1196,6 @@ export default function SettingsPage() {
           </div>
         </div>
       </div>
-    </MainLayout>
+    </ResponsiveLayout>
   )
 }

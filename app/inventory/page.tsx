@@ -14,7 +14,7 @@ import {
   TrendingUp,
   X
 } from 'lucide-react'
-import { MainLayout } from '@/components/layout/main-layout'
+import { ResponsiveLayout } from '@/components/layout/responsive-layout'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -229,7 +229,7 @@ export default function InventoryPage() {
   }
 
   return (
-    <MainLayout>
+    <ResponsiveLayout>
       <div className="space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between">
@@ -609,6 +609,6 @@ export default function InventoryPage() {
           </div>
         )}
       </div>
-    </MainLayout>
+    </ResponsiveLayout>
   )
 }

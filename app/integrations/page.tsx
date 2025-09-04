@@ -2,7 +2,7 @@
 
 import React from 'react'
 import { Link as LinkIcon, Settings, CheckCircle, XCircle, Plus } from 'lucide-react'
-import { MainLayout } from '@/components/layout/main-layout'
+import { ResponsiveLayout } from '@/components/layout/responsive-layout'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 
@@ -15,7 +15,7 @@ export default function IntegrationsPage() {
   ]
 
   return (
-    <MainLayout>
+    <ResponsiveLayout>
       <div className="space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between">
@@ -67,6 +67,6 @@ export default function IntegrationsPage() {
           ))}
         </div>
       </div>
-    </MainLayout>
+    </ResponsiveLayout>
   )
 }

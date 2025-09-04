@@ -142,21 +142,21 @@ export function MobileLayout({ children }: MobileLayoutProps) {
 
       {/* Enhanced Collapsible Sidebar */}
       {sidebarOpen && (
-        <div className="fixed inset-0 z-50">
-          {/* Backdrop with animation */}
+        <>
+          {/* Backdrop */}
           <div 
-            className="absolute inset-0 bg-black bg-opacity-50 transition-opacity duration-300"
+            className="fixed inset-0 bg-black bg-opacity-50 z-40"
             onClick={closeSidebar}
           />
           
-          {/* Sidebar with slide animation */}
-          <div className="absolute right-0 top-0 h-full w-80 bg-white shadow-2xl transform transition-transform duration-300">
+          {/* Sidebar */}
+          <div className="fixed right-0 top-0 h-full w-80 bg-white shadow-2xl z-50 transform transition-transform duration-300 ease-in-out">
             <div className="flex flex-col h-full">
               {/* Sidebar Header */}
-              <div className="flex items-center justify-between p-6 border-b border-gray-200 bg-gray-50">
+              <div className="flex items-center justify-between p-4 border-b border-gray-200 bg-gray-50">
                 <div>
-                  <h2 className="text-xl font-bold text-gray-900">More Options</h2>
-                  <p className="text-sm text-gray-600">Additional features & tools</p>
+                  <h2 className="text-lg font-bold text-gray-900">More Options</h2>
+                  <p className="text-sm text-gray-600">Additional features</p>
                 </div>
                 <button
                   onClick={closeSidebar}
@@ -168,7 +168,7 @@ export function MobileLayout({ children }: MobileLayoutProps) {
 
               {/* Sidebar Navigation */}
               <nav className="flex-1 p-4 overflow-y-auto">
-                <div className="space-y-3">
+                <div className="space-y-2">
                   {secondaryNavigationItems.map((item) => {
                     const Icon = item.icon
                     const isActive = pathname === item.href
@@ -179,20 +179,15 @@ export function MobileLayout({ children }: MobileLayoutProps) {
                         href={item.href}
                         onClick={closeSidebar}
                         className={cn(
-                          "flex items-center px-4 py-4 rounded-xl transition-all duration-200 group",
+                          "flex items-center px-4 py-3 rounded-lg transition-all duration-200",
                           isActive 
-                            ? "bg-blue-50 text-blue-600 border-2 border-blue-200 shadow-sm" 
-                            : "text-gray-700 hover:bg-gray-100 hover:shadow-sm"
+                            ? "bg-blue-50 text-blue-600 border border-blue-200" 
+                            : "text-gray-700 hover:bg-gray-100"
                         )}
                       >
-                        <div className={cn(
-                          "p-3 rounded-lg mr-4 transition-colors",
-                          isActive ? "bg-blue-100" : "bg-gray-100 group-hover:bg-gray-200"
-                        )}>
-                          <Icon className="h-5 w-5" />
-                        </div>
+                        <Icon className="h-5 w-5 mr-3" />
                         <div className="flex-1">
-                          <span className="font-semibold block">{item.name}</span>
+                          <span className="font-medium block">{item.name}</span>
                           <span className="text-sm text-gray-500">{item.description}</span>
                         </div>
                       </Link>
@@ -213,7 +208,7 @@ export function MobileLayout({ children }: MobileLayoutProps) {
               </div>
             </div>
           </div>
-        </div>
+        </>
       )}
     </div>
   )
