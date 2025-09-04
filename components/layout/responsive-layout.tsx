@@ -14,10 +14,10 @@ export function ResponsiveLayout({ children }: ResponsiveLayoutProps) {
 
   React.useEffect(() => {
     const checkScreenSize = () => {
-      // Use 1024px (lg breakpoint) as the threshold
-      // Below 1024px: Mobile layout (tablets and phones)
-      // Above 1024px: Desktop layout (laptops and desktops)
-      const mobile = window.innerWidth < 1024
+      // Use 768px (md breakpoint) as the threshold for better mobile optimization
+      // Below 768px: Mobile layout (phones)
+      // Above 768px: Desktop layout (tablets, laptops and desktops)
+      const mobile = window.innerWidth < 768
       setIsMobile(mobile)
       setIsLoading(false)
       

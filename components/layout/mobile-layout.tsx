@@ -26,15 +26,15 @@ interface MobileLayoutProps {
 
 // Primary navigation items (always visible in bottom nav)
 const primaryNavigationItems = [
-  { name: 'Home', href: '/', icon: Home, shortName: 'Home' },
   { name: 'POS', href: '/pos', icon: ShoppingCart, shortName: 'POS' },
   { name: 'Menu', href: '/menu-editor', icon: MenuIcon, shortName: 'Menu' },
   { name: 'Inventory', href: '/inventory', icon: Package, shortName: 'Stock' },
+  { name: 'Order History', href: '/order-history', icon: History, shortName: 'Orders' },
 ]
 
 // Secondary navigation items (in collapsible sidebar)
 const secondaryNavigationItems = [
-  { name: 'Order History', href: '/order-history', icon: History, description: 'View all orders' },
+  { name: 'Home', href: '/', icon: Home, description: 'Dashboard overview' },
   { name: 'Reports', href: '/reports', icon: BarChart3, description: 'Analytics & insights' },
   { name: 'AI Assistant', href: '/ai', icon: Bot, description: 'Smart assistance' },
   { name: 'Settings', href: '/settings', icon: Settings, description: 'App configuration' },

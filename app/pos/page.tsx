@@ -37,7 +37,6 @@ interface CartItem {
   total: number
 }
 
-
 export default function POSPage() {
   const { toast } = useToast()
   const { settings } = useSettings()
@@ -69,82 +68,10 @@ export default function POSPage() {
     ensureMenuData()
   }, [products.length])
 
-  const categories = ['All', ...Array.from(new Set(activeProducts.map(p => p.category)))]
+  // Get unique categories from products
+  const categories = ['All', ...Array.from(new Set(activeProducts.map(p => p.category).filter(Boolean)))]
 
-  // Function to get product image based on category and name
-  const getProductImage = (product: Product) => {
-    // First check if product has an uploaded image
-    if (product.image && product.image.trim() !== '') {
-      return product.image
-    }
-    
-    const category = product.category
-    const name = product.name.toLowerCase()
-    
-    // Category-based images (fallback)
-    if (category === 'Kunafa Bowls') {
-      if (name.includes('chocolate') || name.includes('choco')) return '🍫'
-      if (name.includes('pistachio')) return '🥜'
-      if (name.includes('lotus')) return '🍪'
-      if (name.includes('nutella')) return '🌰'
-      return '🥣'
-    }
-    
-    if (category === 'Signatures') {
-      if (name.includes('kunafa')) return '⭐'
-      if (name.includes('chocolate')) return '🍫'
-      if (name.includes('caramel')) return '🍯'
-      return '✨'
-    }
-    
-    if (category === 'Choco Desserts') {
-      if (name.includes('brownie')) return '🧁'
-      if (name.includes('cake')) return '🍰'
-      if (name.includes('mousse')) return '🍮'
-      return '🍫'
-    }
-    
-    if (category === 'Crispy Rice Tubs') {
-      if (name.includes('chocolate')) return '🍫'
-      if (name.includes('vanilla')) return '🍦'
-      if (name.includes('strawberry')) return '🍓'
-      return '🍚'
-    }
-    
-    if (category === 'Fruits Choco Mix') {
-      if (name.includes('strawberry')) return '🍓'
-      if (name.includes('banana')) return '🍌'
-      if (name.includes('mango')) return '🥭'
-      if (name.includes('berry')) return '🫐'
-      return '🍇'
-    }
-    
-    if (category === 'Ice Creams') {
-      if (name.includes('vanilla')) return '🍦'
-      if (name.includes('chocolate')) return '🍫'
-      if (name.includes('strawberry')) return '🍓'
-      if (name.includes('mint')) return '🌿'
-      return '🍨'
-    }
-    
-    if (category === 'Drinks') {
-      if (name.includes('coffee') || name.includes('latte')) return '☕'
-      if (name.includes('tea')) return '🍵'
-      if (name.includes('juice')) return '🧃'
-      if (name.includes('shake') || name.includes('smoothie')) return '🥤'
-      return '🥤'
-    }
-    
-    if (category === 'Toppings') {
-      if (name.includes('nuts') || name.includes('almond')) return '🥜'
-      if (name.includes('chocolate')) return '🍫'
-      if (name.includes('fruit')) return '🍓'
-      return '🍌'
-    }
-    
-    return '🍰' // Default dessert emoji
-  }
-
+  // Filter products based on search and category
   const filteredProducts = activeProducts.filter(product => {
     const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase())
     const matchesCategory = selectedCategory === 'All' || product.category === selectedCategory
@@ -197,7 +124,7 @@ export default function POSPage() {
 
   const removeFromCart = (id: number | undefined) => {
     if (!id) return
-    setCart(prevCart => prevCart.filter(item => item.id !== id))
+    setCart(cart.filter(item => item.id !== id))
   }
 
   const clearCart = () => {
@@ -351,138 +278,139 @@ export default function POSPage() {
         <div className="lg:grid lg:grid-cols-4 lg:gap-6 space-y-4 lg:space-y-0">
           {/* Products Section - Takes 3 columns on laptop, full width on mobile */}
           <div className="lg:col-span-3 space-y-4">
-          {/* Mobile-Optimized Header */}
-          <div className="bg-white rounded-lg shadow-sm border p-4">
-            <div className="flex items-center justify-between mb-3">
-              <div>
-                <h1 className="text-2xl font-bold text-slate-900">POS System</h1>
-                <p className="text-sm text-slate-600">{activeProducts.length} items available</p>
-              </div>
-              <Button 
-                variant="outline" 
-                size="sm"
-                onClick={async () => {
-                  await db.reloadMenuData()
-                  window.location.reload()
-                }}
-              >
-                <RefreshCw className="h-4 w-4" />
-                <span className="hidden sm:inline ml-2">Reload</span>
-              </Button>
-            </div>
-            
-            {/* Settings Status - Mobile Friendly */}
-            <div className="flex flex-wrap items-center gap-2 text-xs">
-              <span className="px-2 py-1 bg-green-100 text-green-700 rounded-full">
-                Tax: {settings?.taxRate || 18}%
-              </span>
-              {settings?.storeName && (
-                <span className="px-2 py-1 bg-blue-100 text-blue-700 rounded-full">
-                  {settings.storeName}
-                </span>
-              )}
-              {settings?.upiId && (
-                <span className="px-2 py-1 bg-purple-100 text-purple-700 rounded-full">
-                  UPI: {settings.upiId}
-                </span>
-              )}
-            </div>
-          </div>
-
-          {/* Compact Search Bar */}
-          <div className="relative mb-3">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 h-4 w-4" />
-            <Input
-              placeholder="Search products..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10 h-10 text-sm"
-            />
-          </div>
-
-          {/* Compact Category Filter */}
-          <div className="flex gap-1 overflow-x-auto pb-2 mb-3">
-            {categories.map(category => (
-              <Button
-                key={category}
-                variant={selectedCategory === category ? "default" : "outline"}
-                size="sm"
-                onClick={() => setSelectedCategory(category)}
-                className="whitespace-nowrap text-xs px-3 py-1 h-8"
-              >
-                {category}
-              </Button>
-            ))}
-          </div>
-
-          <div className="space-y-4">
-          {/* Debug Info */}
-          {products.length === 0 && (
-            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-4">
-              <p className="text-yellow-800">No products found in database. Click "Reload Menu" to load Smoocho menu.</p>
-            </div>
-          )}
-            
-          {products.length > 0 && filteredProducts.length === 0 && (
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
-              <p className="text-blue-800">No products match current filters. Try changing category or search term.</p>
-            </div>
-          )}
-
-          {/* Mobile-Optimized Products Grid */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3">
-            {filteredProducts.map(product => {
-              const cartItem = cart.find(item => item.id === product.id)
-              const quantity = cartItem ? cartItem.quantity : 0
-              
-              return (
-                <Card 
-                  key={product.id} 
-                  className="cursor-pointer hover:shadow-md transition-all duration-200 active:scale-95 hover:scale-105 relative"
-                  onClick={() => addToCart(product)}
+            {/* Mobile-Optimized Header */}
+            <div className="bg-white rounded-lg shadow-sm border p-4">
+              <div className="flex items-center justify-between mb-3">
+                <div>
+                  <h1 className="text-2xl font-bold text-slate-900">POS System</h1>
+                  <p className="text-sm text-slate-600">{activeProducts.length} items available</p>
+                </div>
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={async () => {
+                    await db.reloadMenuData()
+                    window.location.reload()
+                  }}
                 >
-                  {/* Permanent Quantity Indicator */}
-                  {quantity > 0 && (
-                    <div className="absolute top-2 right-2 z-10">
-                      <div className="bg-green-500 text-white text-xs font-bold px-2 py-1 rounded-full shadow-lg border-2 border-white">
-                        {quantity}
-                      </div>
-                    </div>
-                  )}
+                  <RefreshCw className="h-4 w-4" />
+                  <span className="hidden sm:inline ml-2">Reload</span>
+                </Button>
+              </div>
+              
+              {/* Settings Status - Mobile Friendly */}
+              <div className="flex flex-wrap items-center gap-2 text-xs">
+                <span className="px-2 py-1 bg-green-100 text-green-700 rounded-full">
+                  Tax: {settings?.taxRate || 18}%
+                </span>
+                {settings?.storeName && (
+                  <span className="px-2 py-1 bg-blue-100 text-blue-700 rounded-full">
+                    {settings.storeName}
+                  </span>
+                )}
+                {settings?.upiId && (
+                  <span className="px-2 py-1 bg-purple-100 text-purple-700 rounded-full">
+                    UPI: {settings.upiId}
+                  </span>
+                )}
+              </div>
+            </div>
+
+            {/* Compact Search Bar */}
+            <div className="relative mb-3">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 h-4 w-4" />
+              <Input
+                placeholder="Search products..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-10 h-10 text-sm"
+              />
+            </div>
+
+            {/* Compact Category Filter */}
+            <div className="flex gap-1 overflow-x-auto pb-2 mb-3">
+              {categories.map(category => (
+                <Button
+                  key={category}
+                  variant={selectedCategory === category ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setSelectedCategory(category)}
+                  className="whitespace-nowrap text-xs px-3 py-1 h-8"
+                >
+                  {category}
+                </Button>
+              ))}
+            </div>
+
+            <div className="space-y-4">
+              {/* Debug Info */}
+              {products.length === 0 && (
+                <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-4">
+                  <p className="text-yellow-800">No products found in database. Click "Reload Menu" to load Smoocho menu.</p>
+                </div>
+              )}
+                
+              {products.length > 0 && filteredProducts.length === 0 && (
+                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
+                  <p className="text-blue-800">No products match current filters. Try changing category or search term.</p>
+                </div>
+              )}
+
+              {/* Mobile-Optimized Products Grid */}
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3">
+                {filteredProducts.map(product => {
+                  const cartItem = cart.find(item => item.id === product.id)
+                  const quantity = cartItem ? cartItem.quantity : 0
                   
-                  <CardContent className="p-3">
-                    <div className="aspect-square bg-gradient-to-br from-slate-100 to-slate-200 rounded-lg mb-3 flex items-center justify-center border border-slate-200 hover:shadow-sm transition-shadow overflow-hidden relative">
-                      <AutoProductImage 
-                        product={product}
-                        className="w-full h-full object-cover"
-                        fallbackClassName="text-3xl drop-shadow-sm"
-                      />
-                      {/* Permanent overlay for items in cart */}
+                  return (
+                    <Card 
+                      key={product.id} 
+                      className="cursor-pointer hover:shadow-md transition-all duration-200 active:scale-95 hover:scale-105 relative"
+                      onClick={() => addToCart(product)}
+                    >
+                      {/* Permanent Quantity Indicator */}
                       {quantity > 0 && (
-                        <div className="absolute inset-0 bg-green-500 bg-opacity-10 rounded-lg"></div>
+                        <div className="absolute top-2 right-2 z-10">
+                          <div className="bg-green-500 text-white text-xs font-bold px-2 py-1 rounded-full shadow-lg border-2 border-white">
+                            {quantity}
+                          </div>
+                        </div>
                       )}
-                    </div>
-                    <h3 className="font-semibold text-sm mb-2 line-clamp-2 leading-tight text-center text-slate-800">{product.name}</h3>
-                    <div className="flex items-center justify-between">
-                      <span className="font-bold text-base text-green-600">
-                        {product.price === 0 ? 'APM' : formatCurrency(product.price)}
-                      </span>
-                      <Button 
-                        size="sm" 
-                        className="h-8 w-8 p-0 bg-green-600 hover:bg-green-700 transition-all duration-200 hover:scale-110 rounded-full shadow-sm"
-                        onClick={(e) => {
-                          e.stopPropagation()
-                          addToCart(product)
-                        }}
-                      >
-                        <Plus className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
-              )
-            })}
-          </div>
+                      
+                      <CardContent className="p-3">
+                        <div className="aspect-square bg-gradient-to-br from-slate-100 to-slate-200 rounded-lg mb-3 flex items-center justify-center border border-slate-200 hover:shadow-sm transition-shadow overflow-hidden relative">
+                          <AutoProductImage 
+                            product={product}
+                            className="w-full h-full object-cover"
+                            fallbackClassName="text-3xl drop-shadow-sm"
+                          />
+                          {/* Permanent overlay for items in cart */}
+                          {quantity > 0 && (
+                            <div className="absolute inset-0 bg-green-500 bg-opacity-10 rounded-lg"></div>
+                          )}
+                        </div>
+                        <h3 className="font-semibold text-sm mb-2 line-clamp-2 leading-tight text-center text-slate-800">{product.name}</h3>
+                        <div className="flex items-center justify-between">
+                          <span className="font-bold text-base text-green-600">
+                            {product.price === 0 ? 'APM' : formatCurrency(product.price)}
+                          </span>
+                          <Button 
+                            size="sm" 
+                            className="h-8 w-8 p-0 bg-green-600 hover:bg-green-700 transition-all duration-200 hover:scale-110 rounded-full shadow-sm"
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              addToCart(product)
+                            }}
+                          >
+                            <Plus className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  )
+                })}
+              </div>
+            </div>
           </div>
 
           {/* Cart Section - Right side on laptop, floating button on mobile */}
@@ -605,261 +533,6 @@ export default function POSPage() {
                 {cart.reduce((total, item) => total + item.quantity, 0)}
               </span>
             </Button>
-          </div>
-        )}
-
-
-      </div>
-
-        {/* Premium Checkout Modal */}
-        {showCheckout && (
-          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-end lg:items-center justify-center z-50 pb-16 lg:pb-0">
-            <Card className="w-full lg:w-[600px] max-h-[90vh] lg:max-h-[80vh] overflow-y-auto rounded-t-2xl lg:rounded-2xl rounded-b-none lg:rounded-b-2xl bg-white shadow-2xl border-2 border-slate-200">
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4 bg-gradient-to-r from-green-50 to-emerald-50 border-b border-green-100 rounded-t-2xl">
-                <div className="flex items-center">
-                  <div className="bg-green-100 p-2 rounded-full mr-3">
-                    <Receipt className="h-6 w-6 text-green-600" />
-                  </div>
-                  <div>
-                    <CardTitle className="text-xl font-bold text-slate-800">Checkout</CardTitle>
-                    <p className="text-sm text-slate-600 mt-1">Complete your order</p>
-                  </div>
-                </div>
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
-                  onClick={() => setShowCheckout(false)}
-                  className="hover:bg-red-50 hover:text-red-600 transition-colors rounded-full"
-                >
-                  <X className="h-5 w-5" />
-                </Button>
-              </CardHeader>
-              <CardContent className="space-y-6 p-6 bg-white">
-                {/* Order Summary */}
-                <div className="space-y-4">
-                  <div className="flex items-center">
-                    <div className="bg-blue-100 p-1.5 rounded-full mr-2">
-                      <ShoppingCart className="h-4 w-4 text-blue-600" />
-                    </div>
-                    <h3 className="font-semibold text-lg text-slate-800">Order Summary</h3>
-                  </div>
-                  <div className="bg-gradient-to-r from-slate-50 to-slate-100 rounded-xl p-4 border border-slate-200">
-                    <div className="space-y-3">
-                      {cart.map(item => (
-                        <div key={item.id} className="flex justify-between items-center py-2 border-b border-slate-200 last:border-0">
-                          <div className="flex-1">
-                            <span className="font-medium text-slate-800">{item.name}</span>
-                            <span className="text-slate-500 ml-2">× {item.quantity}</span>
-                          </div>
-                          <span className="font-semibold text-green-600">{formatCurrency(item.total)}</span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-
-                {/* Payment Method */}
-                <div className="space-y-4">
-                  <div className="flex items-center">
-                    <div className="bg-purple-100 p-1.5 rounded-full mr-2">
-                      <CreditCard className="h-4 w-4 text-purple-600" />
-                    </div>
-                    <h3 className="font-semibold text-lg text-slate-800">Payment Method</h3>
-                  </div>
-                  <div className="grid grid-cols-3 gap-2 sm:gap-3">
-                    <Button
-                      variant={paymentMethod === 'cash' ? 'default' : 'outline'}
-                      onClick={() => setPaymentMethod('cash')}
-                      className={`h-14 sm:h-16 flex-col transition-all duration-200 ${paymentMethod === 'cash' ? 'bg-gradient-to-r from-green-600 to-emerald-600 text-white shadow-lg' : 'hover:bg-green-50 hover:border-green-300'}`}
-                    >
-                      <Banknote className="h-5 w-5 sm:h-6 sm:w-6 mb-0.5 sm:mb-1" />
-                      <span className="text-xs sm:text-sm font-medium">Cash</span>
-                    </Button>
-                    <Button
-                      variant={paymentMethod === 'card' ? 'default' : 'outline'}
-                      onClick={() => setPaymentMethod('card')}
-                      className={`h-14 sm:h-16 flex-col transition-all duration-200 ${paymentMethod === 'card' ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg' : 'hover:bg-blue-50 hover:border-blue-300'}`}
-                    >
-                      <CreditCard className="h-5 w-5 sm:h-6 sm:w-6 mb-0.5 sm:mb-1" />
-                      <span className="text-xs sm:text-sm font-medium">Card</span>
-                    </Button>
-                    <Button
-                      variant={paymentMethod === 'upi' ? 'default' : 'outline'}
-                      onClick={() => setPaymentMethod('upi')}
-                      className={`h-14 sm:h-16 flex-col transition-all duration-200 ${paymentMethod === 'upi' ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-lg' : 'hover:bg-purple-50 hover:border-purple-300'}`}
-                    >
-                      <QrCode className="h-5 w-5 sm:h-6 sm:w-6 mb-0.5 sm:mb-1" />
-                      <span className="text-xs sm:text-sm font-medium">UPI</span>
-                    </Button>
-                  </div>
-                </div>
-
-                {/* Order Type & Customer Details */}
-                <div className="space-y-4">
-                  <div className="flex items-center">
-                    <div className="bg-orange-100 p-1.5 rounded-full mr-2">
-                      <User className="h-4 w-4 text-orange-600" />
-                    </div>
-                    <h3 className="font-semibold text-lg text-slate-800">Order Details</h3>
-                  </div>
-                  
-                  {/* Order Type */}
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium text-slate-700">Order Type</label>
-                    <div className="grid grid-cols-3 gap-2">
-                      <Button
-                        variant={orderType === 'takeaway' ? 'default' : 'outline'}
-                        onClick={() => setOrderType('takeaway')}
-                        className={`h-12 flex-col transition-all duration-200 ${orderType === 'takeaway' ? 'bg-gradient-to-r from-orange-600 to-red-600 text-white shadow-lg' : 'hover:bg-orange-50 hover:border-orange-300'}`}
-                      >
-                        <span className="text-xs font-medium">Takeaway</span>
-                      </Button>
-                      <Button
-                        variant={orderType === 'dine-in' ? 'default' : 'outline'}
-                        onClick={() => setOrderType('dine-in')}
-                        className={`h-12 flex-col transition-all duration-200 ${orderType === 'dine-in' ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg' : 'hover:bg-blue-50 hover:border-blue-300'}`}
-                      >
-                        <span className="text-xs font-medium">Dine-in</span>
-                      </Button>
-                      <Button
-                        variant={orderType === 'delivery' ? 'default' : 'outline'}
-                        onClick={() => setOrderType('delivery')}
-                        className={`h-12 flex-col transition-all duration-200 ${orderType === 'delivery' ? 'bg-gradient-to-r from-green-600 to-emerald-600 text-white shadow-lg' : 'hover:bg-green-50 hover:border-green-300'}`}
-                      >
-                        <span className="text-xs font-medium">Delivery</span>
-                      </Button>
-                    </div>
-                  </div>
-
-                  {/* Customer Details */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <div className="space-y-2">
-                      <label className="text-sm font-medium text-slate-700">Customer Name</label>
-                      <Input
-                        placeholder="Enter customer name"
-                        value={customerName}
-                        onChange={(e) => setCustomerName(e.target.value)}
-                        className="border-2 focus:border-orange-400"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <label className="text-sm font-medium text-slate-700">Phone Number</label>
-                      <Input
-                        placeholder="Enter phone number"
-                        value={customerPhone}
-                        onChange={(e) => setCustomerPhone(e.target.value)}
-                        className="border-2 focus:border-orange-400"
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                {/* Discount & Order Summary */}
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center">
-                      <div className="bg-yellow-100 p-1.5 rounded-full mr-2">
-                        <Percent className="h-4 w-4 text-yellow-600" />
-                      </div>
-                      <h3 className="font-semibold text-lg text-slate-800">Order Summary</h3>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <span className="text-sm text-slate-500">Discount:</span>
-                      <Input
-                        type="number"
-                        placeholder="0"
-                        value={discount}
-                        onChange={(e) => setDiscount(Number(e.target.value))}
-                        className="w-20 h-8 text-center border-2 focus:border-yellow-400"
-                        min="0"
-                        max={discountType === 'percentage' ? "100" : undefined}
-                      />
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => setDiscountType(discountType === 'percentage' ? 'flat' : 'percentage')}
-                        className="h-8 px-2 text-xs"
-                      >
-                        {discountType === 'percentage' ? '%' : '₹'}
-                      </Button>
-                      {discount > 0 && (
-                        <Button 
-                          variant="ghost" 
-                          size="icon"
-                          onClick={() => setDiscount(0)}
-                          className="h-8 w-8 text-slate-400 hover:text-red-500"
-                        >
-                          <X className="h-4 w-4" />
-                        </Button>
-                      )}
-                    </div>
-                  </div>
-                </div>
-                <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl p-4 sm:p-6 border-2 border-green-200">
-                  <div className="space-y-3">
-                    <div className="flex justify-between text-sm sm:text-base text-slate-700">
-                      <span>Subtotal:</span>
-                      <span className="font-medium">{formatCurrency(subtotal)}</span>
-                    </div>
-                    {discountAmount > 0 && (
-                      <div className="flex justify-between text-sm sm:text-base text-green-600">
-                        <span>Discount ({discount}{discountType === 'percentage' ? '%' : '₹'}):</span>
-                        <span className="font-medium">-{formatCurrency(discountAmount)}</span>
-                      </div>
-                    )}
-                    <div className="flex justify-between text-sm sm:text-base text-slate-700">
-                      <span>Tax ({taxRate}%):</span>
-                      <span className="font-medium">{formatCurrency(tax)}</span>
-                    </div>
-                    {deliveryCharge > 0 && (
-                      <div className="flex justify-between text-sm sm:text-base text-slate-700">
-                        <span>Delivery Charge:</span>
-                        <span className="font-medium">{formatCurrency(deliveryCharge)}</span>
-                      </div>
-                    )}
-                    <div className="flex justify-between text-xl sm:text-2xl font-bold border-t border-green-300 pt-3 text-slate-800">
-                      <span>Total:</span>
-                      <span className="text-green-600">{formatCurrency(total)}</span>
-                    </div>
-                  </div>
-                </div>
-
-                {paymentMethod === 'upi' && (
-                  <div className="bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl p-4 sm:p-6 border-2 border-purple-200">
-                    <div className="text-center space-y-4">
-                      <div className="flex items-center justify-center">
-                        <div className="bg-purple-100 p-2 rounded-full mr-2">
-                          <QrCode className="h-5 w-5 text-purple-600" />
-                        </div>
-                        <h4 className="font-semibold text-lg text-slate-800">UPI Payment</h4>
-                      </div>
-                      <div className="p-2 sm:p-4 bg-white rounded-lg border border-purple-100">
-                        <QRGenerator amount={total} upiId={settings?.upiId || 'pay@smoochobill.com'} onClose={() => setPaymentMethod('cash')} />
-                      </div>
-                      <p className="text-sm text-slate-500">Scan the QR code to complete payment</p>
-                    </div>
-                  </div>
-                )}
-
-                {/* Action Buttons */}
-                <div className="grid grid-cols-2 gap-3 pt-4">
-                  <Button 
-                    variant="outline" 
-                    onClick={() => setShowCheckout(false)}
-                    className="h-14 text-base sm:text-lg font-semibold hover:bg-slate-50 border-2"
-                  >
-                    Cancel
-                  </Button>
-                  <Button 
-                    onClick={completeOrder}
-                    className="h-14 text-base sm:text-lg font-semibold bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white shadow-lg hover:shadow-xl transition-all duration-200"
-                  >
-                    <CreditCard className="h-5 w-5 mr-2" />
-                    Pay {formatCurrency(total)}
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
           </div>
         )}
 
@@ -1004,6 +677,196 @@ export default function POSPage() {
                 </div>
               </div>
             </div>
+          </div>
+        )}
+
+        {/* Premium Checkout Modal */}
+        {showCheckout && (
+          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-end lg:items-center justify-center z-50 pb-16 lg:pb-0">
+            <Card className="w-full lg:w-[600px] max-h-[90vh] lg:max-h-[80vh] overflow-y-auto rounded-t-2xl lg:rounded-2xl rounded-b-none lg:rounded-b-2xl bg-white shadow-2xl border-2 border-slate-200">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4 bg-gradient-to-r from-green-50 to-emerald-50 border-b border-green-100 rounded-t-2xl">
+                <div className="flex items-center">
+                  <div className="bg-green-100 p-2 rounded-full mr-3">
+                    <Receipt className="h-6 w-6 text-green-600" />
+                  </div>
+                  <div>
+                    <CardTitle className="text-xl font-bold text-slate-800">Checkout</CardTitle>
+                    <p className="text-sm text-slate-600 mt-1">Complete your order</p>
+                  </div>
+                </div>
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  onClick={() => setShowCheckout(false)}
+                  className="hover:bg-red-50 hover:text-red-600 transition-colors rounded-full"
+                >
+                  <X className="h-5 w-5" />
+                </Button>
+              </CardHeader>
+              <CardContent className="space-y-6 p-6 bg-white">
+                {/* Order Summary */}
+                <div className="space-y-4">
+                  <div className="flex items-center">
+                    <div className="bg-blue-100 p-1.5 rounded-full mr-2">
+                      <ShoppingCart className="h-4 w-4 text-blue-600" />
+                    </div>
+                    <h3 className="font-semibold text-lg text-slate-800">Order Summary</h3>
+                  </div>
+                  <div className="bg-gradient-to-r from-slate-50 to-slate-100 rounded-xl p-4 border border-slate-200">
+                    <div className="space-y-3">
+                      {cart.map(item => (
+                        <div key={item.id} className="flex justify-between items-center py-2 border-b border-slate-200 last:border-0">
+                          <div className="flex-1">
+                            <span className="font-medium text-slate-800">{item.name}</span>
+                            <span className="text-slate-500 ml-2">× {item.quantity}</span>
+                          </div>
+                          <span className="font-semibold text-green-600">{formatCurrency(item.total)}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Payment Method */}
+                <div className="space-y-4">
+                  <div className="flex items-center">
+                    <div className="bg-purple-100 p-1.5 rounded-full mr-2">
+                      <CreditCard className="h-4 w-4 text-purple-600" />
+                    </div>
+                    <h3 className="font-semibold text-lg text-slate-800">Payment Method</h3>
+                  </div>
+                  <div className="grid grid-cols-3 gap-2 sm:gap-3">
+                    <Button
+                      variant={paymentMethod === 'cash' ? 'default' : 'outline'}
+                      onClick={() => setPaymentMethod('cash')}
+                      className={`h-14 sm:h-16 flex-col transition-all duration-200 ${paymentMethod === 'cash' ? 'bg-gradient-to-r from-green-600 to-emerald-600 text-white shadow-lg' : 'hover:bg-green-50 hover:border-green-300'}`}
+                    >
+                      <Banknote className="h-5 w-5 sm:h-6 sm:w-6 mb-0.5 sm:mb-1" />
+                      <span className="text-xs sm:text-sm font-medium">Cash</span>
+                    </Button>
+                    <Button
+                      variant={paymentMethod === 'card' ? 'default' : 'outline'}
+                      onClick={() => setPaymentMethod('card')}
+                      className={`h-14 sm:h-16 flex-col transition-all duration-200 ${paymentMethod === 'card' ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg' : 'hover:bg-blue-50 hover:border-blue-300'}`}
+                    >
+                      <CreditCard className="h-5 w-5 sm:h-6 sm:w-6 mb-0.5 sm:mb-1" />
+                      <span className="text-xs sm:text-sm font-medium">Card</span>
+                    </Button>
+                    <Button
+                      variant={paymentMethod === 'upi' ? 'default' : 'outline'}
+                      onClick={() => setPaymentMethod('upi')}
+                      className={`h-14 sm:h-16 flex-col transition-all duration-200 ${paymentMethod === 'upi' ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-lg' : 'hover:bg-purple-50 hover:border-purple-300'}`}
+                    >
+                      <QrCode className="h-5 w-5 sm:h-6 sm:w-6 mb-0.5 sm:mb-1" />
+                      <span className="text-xs sm:text-sm font-medium">UPI</span>
+                    </Button>
+                  </div>
+                </div>
+
+                {/* Order Type */}
+                <div className="space-y-4">
+                  <div className="flex items-center">
+                    <div className="bg-orange-100 p-1.5 rounded-full mr-2">
+                      <User className="h-4 w-4 text-orange-600" />
+                    </div>
+                    <h3 className="font-semibold text-lg text-slate-800">Order Type</h3>
+                  </div>
+                  <div className="grid grid-cols-3 gap-2 sm:gap-3">
+                    <Button
+                      variant={orderType === 'takeaway' ? 'default' : 'outline'}
+                      onClick={() => setOrderType('takeaway')}
+                      className={`h-12 sm:h-14 flex-col transition-all duration-200 ${orderType === 'takeaway' ? 'bg-gradient-to-r from-orange-600 to-red-600 text-white shadow-lg' : 'hover:bg-orange-50 hover:border-orange-300'}`}
+                    >
+                      <span className="text-xs sm:text-sm font-medium">Takeaway</span>
+                    </Button>
+                    <Button
+                      variant={orderType === 'delivery' ? 'default' : 'outline'}
+                      onClick={() => setOrderType('delivery')}
+                      className={`h-12 sm:h-14 flex-col transition-all duration-200 ${orderType === 'delivery' ? 'bg-gradient-to-r from-blue-600 to-cyan-600 text-white shadow-lg' : 'hover:bg-blue-50 hover:border-blue-300'}`}
+                    >
+                      <span className="text-xs sm:text-sm font-medium">Delivery</span>
+                    </Button>
+                    <Button
+                      variant={orderType === 'dine-in' ? 'default' : 'outline'}
+                      onClick={() => setOrderType('dine-in')}
+                      className={`h-12 sm:h-14 flex-col transition-all duration-200 ${orderType === 'dine-in' ? 'bg-gradient-to-r from-green-600 to-teal-600 text-white shadow-lg' : 'hover:bg-green-50 hover:border-green-300'}`}
+                    >
+                      <span className="text-xs sm:text-sm font-medium">Dine-in</span>
+                    </Button>
+                  </div>
+                </div>
+
+                {/* Customer Details */}
+                <div className="space-y-4">
+                  <div className="flex items-center">
+                    <div className="bg-indigo-100 p-1.5 rounded-full mr-2">
+                      <User className="h-4 w-4 text-indigo-600" />
+                    </div>
+                    <h3 className="font-semibold text-lg text-slate-800">Customer Details</h3>
+                  </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-slate-700 mb-2">Name (Optional)</label>
+                      <Input
+                        placeholder="Customer name"
+                        value={customerName}
+                        onChange={(e) => setCustomerName(e.target.value)}
+                        className="h-10"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-slate-700 mb-2">Phone (Optional)</label>
+                      <Input
+                        placeholder="Phone number"
+                        value={customerPhone}
+                        onChange={(e) => setCustomerPhone(e.target.value)}
+                        className="h-10"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Order Total */}
+                <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl p-6 border-2 border-green-200">
+                  <div className="space-y-3">
+                    <div className="flex justify-between text-slate-700">
+                      <span>Subtotal:</span>
+                      <span className="font-semibold">{formatCurrency(subtotal)}</span>
+                    </div>
+                    {discountAmount > 0 && (
+                      <div className="flex justify-between text-green-600">
+                        <span>Discount ({discount}{discountType === 'percentage' ? '%' : '₹'}):</span>
+                        <span className="font-semibold">-{formatCurrency(discountAmount)}</span>
+                      </div>
+                    )}
+                    <div className="flex justify-between text-slate-700">
+                      <span>Tax ({taxRate}%):</span>
+                      <span className="font-semibold">{formatCurrency(tax)}</span>
+                    </div>
+                    {deliveryCharge > 0 && (
+                      <div className="flex justify-between text-slate-700">
+                        <span>Delivery Charge:</span>
+                        <span className="font-semibold">{formatCurrency(deliveryCharge)}</span>
+                      </div>
+                    )}
+                    <div className="flex justify-between text-2xl font-bold text-slate-800 border-t-2 border-green-300 pt-3">
+                      <span>Total:</span>
+                      <span className="text-green-600">{formatCurrency(total)}</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Complete Order Button */}
+                <Button 
+                  onClick={completeOrder}
+                  className="w-full bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-bold text-lg py-4 shadow-xl hover:shadow-2xl transition-all duration-200"
+                  size="lg"
+                >
+                  <Receipt className="h-6 w-6 mr-3" />
+                  Complete Order - {formatCurrency(total)}
+                </Button>
+              </CardContent>
+            </Card>
           </div>
         )}
       </div>
