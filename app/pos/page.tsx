@@ -519,20 +519,45 @@ export default function POSPage() {
           </div>
         </div>
 
-        {/* Floating Cart Button - Mobile */}
+        {/* Premium Floating Cart Button - Mobile */}
         {cart.length > 0 && (
           <div className="fixed bottom-24 right-4 z-50 lg:hidden">
-            <Button 
-              variant="default" 
-              size="lg" 
-              className="rounded-full h-16 w-16 shadow-2xl bg-green-600 hover:bg-green-700 transition-all duration-200 hover:scale-110"
-              onClick={() => setShowCartModal(true)}
-            >
-              <ShoppingCart className="h-6 w-6" />
-              <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full h-6 w-6 flex items-center justify-center border-2 border-white">
-                {cart.reduce((total, item) => total + item.quantity, 0)}
-              </span>
-            </Button>
+            <div className="relative">
+              {/* Outer glow effect */}
+              <div className="absolute inset-0 bg-gradient-to-r from-green-400 to-emerald-500 rounded-full blur-lg opacity-60 animate-pulse"></div>
+              
+              {/* Main button */}
+              <Button 
+                variant="default" 
+                size="lg" 
+                className="relative rounded-full h-16 w-16 shadow-2xl bg-gradient-to-br from-green-500 via-green-600 to-emerald-600 hover:from-green-600 hover:via-green-700 hover:to-emerald-700 transition-all duration-300 hover:scale-110 border-2 border-white/20 backdrop-blur-sm"
+                onClick={() => setShowCartModal(true)}
+              >
+                {/* Inner shine effect */}
+                <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-white/20 to-transparent"></div>
+                
+                {/* Cart icon with premium styling */}
+                <div className="relative z-10">
+                  <ShoppingCart className="h-6 w-6 text-white drop-shadow-lg" />
+                </div>
+                
+                {/* Premium quantity badge */}
+                <div className="absolute -top-1 -right-1 z-20">
+                  <div className="relative">
+                    {/* Badge glow */}
+                    <div className="absolute inset-0 bg-gradient-to-r from-red-400 to-pink-500 rounded-full blur-sm opacity-80"></div>
+                    
+                    {/* Badge content */}
+                    <div className="relative bg-gradient-to-r from-red-500 to-pink-500 text-white text-xs font-bold rounded-full h-7 w-7 flex items-center justify-center border-2 border-white shadow-lg">
+                      {cart.reduce((total, item) => total + item.quantity, 0)}
+                    </div>
+                  </div>
+                </div>
+                
+                {/* Subtle animation ring */}
+                <div className="absolute inset-0 rounded-full border-2 border-white/30 animate-ping opacity-20"></div>
+              </Button>
+            </div>
           </div>
         )}
 
