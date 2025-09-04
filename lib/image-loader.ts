@@ -142,8 +142,8 @@ export class MenuImageLoader {
     }
 
     try {
-      // Try to load from the images folder
-      const imagePath = `/smoocho bill menu images/${menuItem.filename}`
+      // Try to load from the public images folder
+      const imagePath = `/images/${menuItem.filename}`
       return await this.loadImageAsDataUrl(imagePath)
     } catch (error) {
       console.log(`Image not found for ${itemName}: ${menuItem.filename}`)
@@ -158,7 +158,7 @@ export class MenuImageLoader {
 
     for (const item of menuItems) {
       try {
-        const imagePath = `/smoocho bill menu images/${item.filename}`
+        const imagePath = `/images/${item.filename}`
         const dataUrl = await this.loadImageAsDataUrl(imagePath)
         images.set(item.name, dataUrl)
       } catch (error) {
@@ -177,7 +177,7 @@ export class MenuImageLoader {
 
     for (const item of menuItems) {
       try {
-        const imagePath = `/smoocho bill menu images/${item.filename}`
+        const imagePath = `/images/${item.filename}`
         await this.loadImageAsDataUrl(imagePath)
       } catch (error) {
         missing.push(item.filename)

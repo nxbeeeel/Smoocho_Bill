@@ -27,9 +27,12 @@ export default function ImageTestPage() {
         const results = []
         for (const name of testImages) {
           try {
+            console.log(`Testing image for: ${name}`)
             const image = await menuImageLoader.getImageForMenuItem(name)
+            console.log(`Image result for ${name}:`, image ? 'Found' : 'Not found')
             results.push({ name, found: !!image, image })
           } catch (error) {
+            console.error(`Error loading image for ${name}:`, error)
             results.push({ name, found: false, error: error instanceof Error ? error.message : String(error) })
           }
         }
@@ -108,6 +111,45 @@ export default function ImageTestPage() {
           ) : (
             <div>Loading test results...</div>
           )}
+        </div>
+
+        {/* Direct Image Test */}
+        <div className="bg-white rounded-lg shadow p-6">
+          <h2 className="text-xl font-semibold mb-4">Direct Image Test</h2>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="border rounded-lg p-3">
+              <div className="aspect-square bg-gray-100 rounded-lg mb-2 flex items-center justify-center overflow-hidden">
+                <img 
+                  src="/images/02_white_chocolate_kunafa.jpg" 
+                  alt="White Chocolate Kunafa"
+                  className="w-full h-full object-cover"
+                  onError={(e) => {
+                    console.error('Failed to load direct image:', e)
+                    e.currentTarget.style.display = 'none'
+                  }}
+                  onLoad={() => console.log('Direct image loaded successfully')}
+                />
+              </div>
+              <h3 className="font-medium text-sm">Direct Test</h3>
+              <p className="text-xs text-gray-600">White Chocolate Kunafa</p>
+            </div>
+            <div className="border rounded-lg p-3">
+              <div className="aspect-square bg-gray-100 rounded-lg mb-2 flex items-center justify-center overflow-hidden">
+                <img 
+                  src="/images/03_pista_kunafa.jpg" 
+                  alt="Pista Kunafa"
+                  className="w-full h-full object-cover"
+                  onError={(e) => {
+                    console.error('Failed to load direct image:', e)
+                    e.currentTarget.style.display = 'none'
+                  }}
+                  onLoad={() => console.log('Direct image loaded successfully')}
+                />
+              </div>
+              <h3 className="font-medium text-sm">Direct Test</h3>
+              <p className="text-xs text-gray-600">Pista Kunafa</p>
+            </div>
+          </div>
         </div>
 
         {/* Products with Images */}
