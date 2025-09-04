@@ -28,6 +28,7 @@ interface FormData {
   name: string
   quantity: string
   unit: string
+  customUnit?: string
   costPerUnit: string
   threshold: string
   category: string
@@ -45,6 +46,7 @@ export default function InventoryPage() {
     name: '',
     quantity: '',
     unit: '',
+    customUnit: '',
     costPerUnit: '',
     threshold: '',
     category: '',
@@ -77,6 +79,7 @@ export default function InventoryPage() {
       name: '',
       quantity: '',
       unit: '',
+      customUnit: '',
       costPerUnit: '',
       threshold: '',
       category: '',
@@ -96,6 +99,7 @@ export default function InventoryPage() {
       name: item.name,
       quantity: item.quantity.toString(),
       unit: item.unit,
+      customUnit: item.unit,
       costPerUnit: item.costPerUnit.toString(),
       threshold: item.threshold.toString(),
       category: item.category,
@@ -533,12 +537,37 @@ export default function InventoryPage() {
                   
                   <div>
                     <label className="block text-sm font-medium text-slate-700 mb-2">Unit *</label>
-                    <Input
-                      placeholder="kg, pcs, liters, etc."
+                    <select
                       value={formData.unit}
                       onChange={(e) => handleInputChange('unit', e.target.value)}
-                      className="h-10"
-                    />
+                      className="w-full h-10 px-3 py-2 border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-slate-900"
+                    >
+                      <option value="">Select Unit</option>
+                      <option value="kg">Kilogram (kg)</option>
+                      <option value="g">Gram (g)</option>
+                      <option value="pcs">Pieces (pcs)</option>
+                      <option value="liters">Liters (L)</option>
+                      <option value="ml">Milliliters (ml)</option>
+                      <option value="boxes">Boxes</option>
+                      <option value="packets">Packets</option>
+                      <option value="bottles">Bottles</option>
+                      <option value="cans">Cans</option>
+                      <option value="bags">Bags</option>
+                      <option value="rolls">Rolls</option>
+                      <option value="sheets">Sheets</option>
+                      <option value="meters">Meters (m)</option>
+                      <option value="feet">Feet (ft)</option>
+                      <option value="dozen">Dozen</option>
+                      <option value="custom">Custom (specify below)</option>
+                    </select>
+                    {formData.unit === 'custom' && (
+                      <Input
+                        placeholder="Enter custom unit (e.g., cartons, bundles, etc.)"
+                        value={formData.customUnit || ''}
+                        onChange={(e) => setFormData(prev => ({ ...prev, customUnit: e.target.value, unit: e.target.value }))}
+                        className="h-10 mt-2"
+                      />
+                    )}
                   </div>
                   
                   <div>
