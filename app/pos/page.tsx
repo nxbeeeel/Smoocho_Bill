@@ -53,8 +53,6 @@ export default function POSPage() {
   const [customerName, setCustomerName] = React.useState('')
   const [customerPhone, setCustomerPhone] = React.useState('')
   const [showCartModal, setShowCartModal] = React.useState(false)
-  const [addedItemAnimation, setAddedItemAnimation] = React.useState<{id: number, name: string} | null>(null)
-  const [itemAddedIndicator, setItemAddedIndicator] = React.useState<{id: number, quantity: number} | null>(null)
 
   // Live query for products from database - get all products first, then filter
   const products = useLiveQuery(() => db.products.toArray()) || []
@@ -157,13 +155,11 @@ export default function POSPage() {
     if (!product.id) return
     
     const existingItem = cart.find(item => item.id === product.id)
-    let newQuantity = 1
     
     if (existingItem) {
-      newQuantity = existingItem.quantity + 1
       setCart(cart.map(item => 
         item.id === product.id 
-          ? { ...item, quantity: newQuantity, total: newQuantity * item.price }
+          ? { ...item, quantity: item.quantity + 1, total: (item.quantity + 1) * item.price }
           : item
       ))
     } else {
@@ -175,16 +171,6 @@ export default function POSPage() {
         total: product.price 
       }])
     }
-    
-    // Trigger animations
-    setAddedItemAnimation({ id: product.id, name: product.name })
-    setItemAddedIndicator({ id: product.id, quantity: newQuantity })
-    
-    // Clear animations after 2 seconds
-    setTimeout(() => {
-      setAddedItemAnimation(null)
-      setItemAddedIndicator(null)
-    }, 2000)
     
     // Show success toast
     toast({
@@ -445,52 +431,57 @@ export default function POSPage() {
 
           {/* Mobile-Optimized Products Grid */}
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3">
-            {filteredProducts.map(product => (
-              <Card 
-                key={product.id} 
-                className="cursor-pointer hover:shadow-md transition-all duration-200 active:scale-95 hover:scale-105 relative"
-                onClick={() => addToCart(product)}
-              >
-                {/* Item Added Indicator */}
-                {itemAddedIndicator && itemAddedIndicator.id === product.id && (
-                  <div className="absolute top-2 right-2 z-10 animate-bounce">
-                    <div className="bg-green-500 text-white text-xs font-bold px-2 py-1 rounded-full shadow-lg border-2 border-white">
-                      +{itemAddedIndicator.quantity}
+            {filteredProducts.map(product => {
+              const cartItem = cart.find(item => item.id === product.id)
+              const quantity = cartItem ? cartItem.quantity : 0
+              
+              return (
+                <Card 
+                  key={product.id} 
+                  className="cursor-pointer hover:shadow-md transition-all duration-200 active:scale-95 hover:scale-105 relative"
+                  onClick={() => addToCart(product)}
+                >
+                  {/* Permanent Quantity Indicator */}
+                  {quantity > 0 && (
+                    <div className="absolute top-2 right-2 z-10">
+                      <div className="bg-green-500 text-white text-xs font-bold px-2 py-1 rounded-full shadow-lg border-2 border-white">
+                        {quantity}
+                      </div>
                     </div>
-                  </div>
-                )}
-                
-                <CardContent className="p-3">
-                  <div className="aspect-square bg-gradient-to-br from-slate-100 to-slate-200 rounded-lg mb-3 flex items-center justify-center border border-slate-200 hover:shadow-sm transition-shadow overflow-hidden relative">
-                    <AutoProductImage 
-                      product={product}
-                      className="w-full h-full object-cover"
-                      fallbackClassName="text-3xl drop-shadow-sm"
-                    />
-                    {/* Overlay effect when item is added */}
-                    {itemAddedIndicator && itemAddedIndicator.id === product.id && (
-                      <div className="absolute inset-0 bg-green-500 bg-opacity-20 rounded-lg animate-pulse"></div>
-                    )}
-                  </div>
-                  <h3 className="font-semibold text-sm mb-2 line-clamp-2 leading-tight text-center text-slate-800">{product.name}</h3>
-                  <div className="flex items-center justify-between">
-                    <span className="font-bold text-base text-green-600">
-                      {product.price === 0 ? 'APM' : formatCurrency(product.price)}
-                    </span>
-                    <Button 
-                      size="sm" 
-                      className="h-8 w-8 p-0 bg-green-600 hover:bg-green-700 transition-all duration-200 hover:scale-110 rounded-full shadow-sm"
-                      onClick={(e) => {
-                        e.stopPropagation()
-                        addToCart(product)
-                      }}
-                    >
-                      <Plus className="h-4 w-4" />
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
+                  )}
+                  
+                  <CardContent className="p-3">
+                    <div className="aspect-square bg-gradient-to-br from-slate-100 to-slate-200 rounded-lg mb-3 flex items-center justify-center border border-slate-200 hover:shadow-sm transition-shadow overflow-hidden relative">
+                      <AutoProductImage 
+                        product={product}
+                        className="w-full h-full object-cover"
+                        fallbackClassName="text-3xl drop-shadow-sm"
+                      />
+                      {/* Permanent overlay for items in cart */}
+                      {quantity > 0 && (
+                        <div className="absolute inset-0 bg-green-500 bg-opacity-10 rounded-lg"></div>
+                      )}
+                    </div>
+                    <h3 className="font-semibold text-sm mb-2 line-clamp-2 leading-tight text-center text-slate-800">{product.name}</h3>
+                    <div className="flex items-center justify-between">
+                      <span className="font-bold text-base text-green-600">
+                        {product.price === 0 ? 'APM' : formatCurrency(product.price)}
+                      </span>
+                      <Button 
+                        size="sm" 
+                        className="h-8 w-8 p-0 bg-green-600 hover:bg-green-700 transition-all duration-200 hover:scale-110 rounded-full shadow-sm"
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          addToCart(product)
+                        }}
+                      >
+                        <Plus className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              )
+            })}
           </div>
           </div>
 
@@ -617,21 +608,6 @@ export default function POSPage() {
           </div>
         )}
 
-        {/* Add to Cart Animation */}
-        {addedItemAnimation && (
-          <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50 pointer-events-none">
-            <div className="bg-green-500 text-white px-6 py-3 rounded-full shadow-2xl animate-bounce">
-              <div className="flex items-center space-x-2">
-                <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
-                <span className="font-semibold">Added to Cart!</span>
-                <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
-              </div>
-              <div className="text-center text-sm mt-1 opacity-90">
-                {addedItemAnimation.name}
-              </div>
-            </div>
-          </div>
-        )}
 
       </div>
 
