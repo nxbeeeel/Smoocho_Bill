@@ -2,7 +2,6 @@
 
 import React from 'react'
 import { Save, Bell, Printer, Wifi, Shield, User, Store, QrCode, Link as LinkIcon, CheckCircle, XCircle, Plus, Settings as SettingsIcon, Database, Palette, CreditCard, Download, Upload, Eye, EyeOff, Lock, Unlock, Volume2, VolumeX, Monitor, Smartphone, Globe, Clock, FileText, AlertTriangle } from 'lucide-react'
-import { ResponsiveLayout } from '@/components/layout/responsive-layout'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -850,7 +849,7 @@ export default function SettingsPage() {
   }
 
   return (
-    <ResponsiveLayout>
+    <div className="min-h-screen bg-gray-50">
       <div className="space-y-4 p-4">
         {/* Premium Mobile Header */}
         <div className="bg-white rounded-xl shadow-sm border p-4">
@@ -1206,6 +1205,6 @@ export default function SettingsPage() {
           </div>
         </div>
       </div>
-    </ResponsiveLayout>
+    </div>
   )
 }
