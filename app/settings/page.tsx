@@ -31,6 +31,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { useToast } from '@/hooks/use-toast'
 import { useSettings } from '@/hooks/use-settings'
 import { syncService } from '@/lib/sync-service'
+import { ImageSync } from '@/components/ui/image-sync'
 
 export default function SettingsPage() {
   const { toast } = useToast()
@@ -608,7 +609,12 @@ export default function SettingsPage() {
                 </Button>
               </div>
             </div>
+
+            {/* Image Sync Component */}
+            <div className="mt-6">
+              <ImageSync />
             </div>
+          </div>
         )
 
       default:

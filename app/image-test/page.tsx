@@ -182,6 +182,60 @@ export default function ImageTestPage() {
             <div>Loading products...</div>
           )}
         </div>
+
+        {/* Sync Service Test */}
+        <div className="bg-white rounded-lg shadow p-6">
+          <h2 className="text-xl font-semibold mb-4">Sync Service Test</h2>
+          <div className="space-y-4">
+            <div className="flex gap-2 flex-wrap">
+              <Button
+                onClick={async () => {
+                  try {
+                    const { syncService } = await import('@/lib/sync-service')
+                    const imageData = await syncService.exportStaticImages()
+                    console.log('Exported images:', Object.keys(imageData).length)
+                    alert(`Exported ${Object.keys(imageData).length} images`)
+                  } catch (error) {
+                    console.error('Export failed:', error)
+                    alert('Export failed: ' + (error instanceof Error ? error.message : String(error)))
+                  }
+                }}
+              >
+                Test Export Images
+              </Button>
+              <Button
+                onClick={async () => {
+                  try {
+                    const { syncService } = await import('@/lib/sync-service')
+                    const image = syncService.getStaticImage('02_white_chocolate_kunafa.jpg')
+                    console.log('Retrieved image:', image ? 'Found' : 'Not found')
+                    alert(image ? 'Image found in sync service' : 'Image not found in sync service')
+                  } catch (error) {
+                    console.error('Get image failed:', error)
+                    alert('Get image failed: ' + (error instanceof Error ? error.message : String(error)))
+                  }
+                }}
+                variant="outline"
+              >
+                Test Get Image
+              </Button>
+              <Button
+                onClick={() => {
+                  localStorage.removeItem('smoocho_static_images')
+                  alert('Image cache cleared')
+                }}
+                variant="outline"
+              >
+                Clear Image Cache
+              </Button>
+            </div>
+            <div className="text-sm text-gray-600">
+              <p>• <strong>Export Images:</strong> Tests exporting images from /public/images folder</p>
+              <p>• <strong>Get Image:</strong> Tests retrieving an image from sync service cache</p>
+              <p>• <strong>Clear Cache:</strong> Clears the local image cache</p>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   )

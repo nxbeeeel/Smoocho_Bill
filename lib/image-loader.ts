@@ -142,7 +142,14 @@ export class MenuImageLoader {
     }
 
     try {
-      // Try to load from the public images folder
+      // First try to get from sync service (imported images)
+      const { syncService } = await import('./sync-service')
+      const syncedImage = syncService.getStaticImage(menuItem.filename)
+      if (syncedImage) {
+        return syncedImage
+      }
+
+      // Fallback to loading from the public images folder
       const imagePath = `/images/${menuItem.filename}`
       return await this.loadImageAsDataUrl(imagePath)
     } catch (error) {
@@ -156,8 +163,19 @@ export class MenuImageLoader {
     const images = new Map<string, string>()
     const menuItems = this.getMenuItemsWithImages()
 
+    // Import sync service
+    const { syncService } = await import('./sync-service')
+
     for (const item of menuItems) {
       try {
+        // First try to get from sync service (imported images)
+        const syncedImage = syncService.getStaticImage(item.filename)
+        if (syncedImage) {
+          images.set(item.name, syncedImage)
+          continue
+        }
+
+        // Fallback to loading from the public images folder
         const imagePath = `/images/${item.filename}`
         const dataUrl = await this.loadImageAsDataUrl(imagePath)
         images.set(item.name, dataUrl)

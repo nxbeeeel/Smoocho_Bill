@@ -8,6 +8,7 @@ export interface SyncData {
   inventory: any[]
   lastSync: string
   deviceId: string
+  staticImages?: { [filename: string]: string } // base64 encoded images
 }
 
 export interface SyncResponse {
@@ -53,18 +54,89 @@ class SyncService {
         db.inventory.toArray()
       ])
 
+      // Include static images in the export
+      const imageData = await this.exportStaticImages()
+
       return {
         products,
         orders,
         settings,
         inventory,
         lastSync: new Date().toISOString(),
-        deviceId: this.deviceId
+        deviceId: this.deviceId,
+        staticImages: imageData
       }
     } catch (error) {
       console.error('Failed to export data:', error)
       throw error
     }
+  }
+
+  // Export static images as base64
+  async exportStaticImages(): Promise<{ [filename: string]: string }> {
+    const images: { [filename: string]: string } = {}
+    
+    try {
+      // Import the menu image loader
+      const { menuImageLoader } = await import('./image-loader')
+      const menuItems = menuImageLoader.getMenuItemsWithImages()
+      
+      for (const item of menuItems) {
+        try {
+          const imagePath = `/images/${item.filename}`
+          const response = await fetch(imagePath)
+          if (response.ok) {
+            const blob = await response.blob()
+            const base64 = await this.blobToBase64(blob)
+            images[item.filename] = base64
+            console.log(`Exported image: ${item.filename}`)
+          }
+        } catch (error) {
+          console.log(`Image not found: ${item.filename}`)
+        }
+      }
+      
+      console.log(`Exported ${Object.keys(images).length} images`)
+      return images
+    } catch (error) {
+      console.error('Failed to export static images:', error)
+      return {}
+    }
+  }
+
+  // Convert blob to base64
+  private blobToBase64(blob: Blob): Promise<string> {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader()
+      reader.onload = () => resolve(reader.result as string)
+      reader.onerror = reject
+      reader.readAsDataURL(blob)
+    })
+  }
+
+  // Import static images from base64
+  async importStaticImages(images: { [filename: string]: string }): Promise<void> {
+    try {
+      // Store images in localStorage for now (in a real app, you'd store them in IndexedDB or a proper file system)
+      localStorage.setItem('smoocho_static_images', JSON.stringify(images))
+      console.log(`Imported ${Object.keys(images).length} static images`)
+    } catch (error) {
+      console.error('Failed to import static images:', error)
+    }
+  }
+
+  // Get static image from storage
+  getStaticImage(filename: string): string | null {
+    try {
+      const stored = localStorage.getItem('smoocho_static_images')
+      if (stored) {
+        const images = JSON.parse(stored)
+        return images[filename] || null
+      }
+    } catch (error) {
+      console.error('Failed to get static image:', error)
+    }
+    return null
   }
 
   // Import data from backup/sync
@@ -87,6 +159,11 @@ class SyncService {
         db.settings.bulkAdd(syncData.settings),
         db.inventory.bulkAdd(syncData.inventory)
       ])
+
+      // Import static images if available
+      if (syncData.staticImages) {
+        await this.importStaticImages(syncData.staticImages)
+      }
 
       // Update last sync time
       localStorage.setItem('smoocho_last_sync', syncData.lastSync)
