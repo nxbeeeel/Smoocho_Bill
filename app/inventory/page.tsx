@@ -472,7 +472,7 @@ export default function InventoryPage() {
 
         {/* Add/Edit Modal */}
         {showAddModal && (
-          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-end lg:items-center justify-center z-50 pb-16 lg:pb-0">
+          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-end lg:items-center justify-center z-50 pb-24 lg:pb-0">
             <Card className="w-full lg:w-[600px] max-h-[90vh] lg:max-h-[80vh] overflow-y-auto rounded-t-2xl lg:rounded-2xl rounded-b-none lg:rounded-b-2xl bg-white shadow-2xl border-2 border-slate-200">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4 bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-blue-100 rounded-t-2xl">
                 <div className="flex items-center">

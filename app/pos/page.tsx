@@ -539,7 +539,7 @@ export default function POSPage() {
         {/* Cart Modal - Mobile */}
         {showCartModal && (
           <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-end lg:hidden">
-            <div className="bg-white w-full max-h-[85vh] rounded-t-2xl shadow-2xl transform transition-transform duration-300 ease-out pb-safe">
+            <div className="bg-white w-full max-h-[85vh] rounded-t-2xl shadow-2xl transform transition-transform duration-300 ease-out pb-24">
               <div className="p-4 border-b border-gray-200">
                 <div className="flex items-center justify-between">
                   <h2 className="text-xl font-bold text-slate-800">Cart ({cart.length} items)</h2>
@@ -682,7 +682,7 @@ export default function POSPage() {
 
         {/* Premium Checkout Modal */}
         {showCheckout && (
-          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-end lg:items-center justify-center z-50 pb-16 lg:pb-0">
+          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-end lg:items-center justify-center z-50 pb-24 lg:pb-0">
             <Card className="w-full lg:w-[600px] max-h-[90vh] lg:max-h-[80vh] overflow-y-auto rounded-t-2xl lg:rounded-2xl rounded-b-none lg:rounded-b-2xl bg-white shadow-2xl border-2 border-slate-200">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4 bg-gradient-to-r from-green-50 to-emerald-50 border-b border-green-100 rounded-t-2xl">
                 <div className="flex items-center">
