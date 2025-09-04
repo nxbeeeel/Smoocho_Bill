@@ -35,11 +35,31 @@ class SyncService {
     this.deviceId = this.getOrCreateDeviceId()
   }
 
+  // Safe localStorage access for SSR compatibility
+  private safeLocalStorage = {
+    getItem: (key: string): string | null => {
+      if (typeof window !== 'undefined' && window.localStorage) {
+        return localStorage.getItem(key)
+      }
+      return null
+    },
+    setItem: (key: string, value: string): void => {
+      if (typeof window !== 'undefined' && window.localStorage) {
+        localStorage.setItem(key, value)
+      }
+    },
+    removeItem: (key: string): void => {
+      if (typeof window !== 'undefined' && window.localStorage) {
+        localStorage.removeItem(key)
+      }
+    }
+  }
+
   private getOrCreateDeviceId(): string {
-    let deviceId = localStorage.getItem('smoocho_device_id')
+    let deviceId = this.safeLocalStorage.getItem('smoocho_device_id')
     if (!deviceId) {
       deviceId = 'device_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9)
-      localStorage.setItem('smoocho_device_id', deviceId)
+      this.safeLocalStorage.setItem('smoocho_device_id', deviceId)
     }
     return deviceId
   }
@@ -118,7 +138,7 @@ class SyncService {
   async importStaticImages(images: { [filename: string]: string }): Promise<void> {
     try {
       // Store images in localStorage for now (in a real app, you'd store them in IndexedDB or a proper file system)
-      localStorage.setItem('smoocho_static_images', JSON.stringify(images))
+      this.safeLocalStorage.setItem('smoocho_static_images', JSON.stringify(images))
       console.log(`Imported ${Object.keys(images).length} static images`)
     } catch (error) {
       console.error('Failed to import static images:', error)
@@ -128,7 +148,7 @@ class SyncService {
   // Get static image from storage
   getStaticImage(filename: string): string | null {
     try {
-      const stored = localStorage.getItem('smoocho_static_images')
+      const stored = this.safeLocalStorage.getItem('smoocho_static_images')
       if (stored) {
         const images = JSON.parse(stored)
         return images[filename] || null
@@ -166,7 +186,7 @@ class SyncService {
       }
 
       // Update last sync time
-      localStorage.setItem('smoocho_last_sync', syncData.lastSync)
+      this.safeLocalStorage.setItem('smoocho_last_sync', syncData.lastSync)
       
       console.log('Data imported successfully')
     } catch (error) {
@@ -182,7 +202,7 @@ class SyncService {
       // For now, we'll simulate the sync process
       
       const localData = await this.exportData()
-      const lastSync = localStorage.getItem('smoocho_last_sync')
+      const lastSync = this.safeLocalStorage.getItem('smoocho_last_sync')
       
       // Simulate API call
       const response = await this.simulateCloudSync(localData, lastSync)
@@ -264,7 +284,7 @@ class SyncService {
   // Get sync status
   getSyncStatus(): { lastSync: string | null; deviceId: string } {
     return {
-      lastSync: localStorage.getItem('smoocho_last_sync'),
+      lastSync: this.safeLocalStorage.getItem('smoocho_last_sync'),
       deviceId: this.deviceId
     }
   }
@@ -279,7 +299,7 @@ class SyncService {
         db.inventory.clear()
       ])
       
-      localStorage.removeItem('smoocho_last_sync')
+      this.safeLocalStorage.removeItem('smoocho_last_sync')
       console.log('All data cleared')
     } catch (error) {
       console.error('Failed to clear data:', error)
@@ -290,7 +310,7 @@ class SyncService {
   // Auto-sync (call this periodically)
   async autoSync(): Promise<void> {
     try {
-      const lastSync = localStorage.getItem('smoocho_last_sync')
+      const lastSync = this.safeLocalStorage.getItem('smoocho_last_sync')
       const now = new Date()
       const lastSyncTime = lastSync ? new Date(lastSync) : new Date(0)
       

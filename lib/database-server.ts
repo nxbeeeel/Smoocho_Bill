@@ -18,6 +18,9 @@ const pool = !isSQLite ? new Pool({
 export async function initializeDatabase() {
   try {
     // Test connection
+    if (!pool) {
+      throw new Error('Database pool not initialized')
+    }
     const client = await pool.connect()
     console.log('✅ Database connected successfully')
     client.release()
@@ -33,6 +36,9 @@ export async function initializeDatabase() {
 
 // Create database tables
 async function createTables() {
+  if (!pool) {
+    throw new Error('Database pool not initialized')
+  }
   const client = await pool.connect()
   
   try {

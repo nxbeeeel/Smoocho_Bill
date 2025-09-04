@@ -225,8 +225,7 @@ export function query(text: string, params: any[] = []) {
 
 // Transaction helper
 export function transaction(callback: (db: any) => any) {
-  const transaction = db.transaction(callback)
-  return transaction()
+  return db.transaction(callback)
 }
 
 export default db

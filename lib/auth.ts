@@ -1,6 +1,6 @@
 // Smoocho Bill POS - Authentication Utilities
 // Updated JWT implementation with proper TypeScript types
-import jwt, { SignOptions } from 'jsonwebtoken'
+import jwt from 'jsonwebtoken'
 import bcrypt from 'bcryptjs'
 import { NextRequest } from 'next/server'
 
@@ -45,17 +45,14 @@ export function generateToken(user: Omit<User, 'shopName'>): string {
     role: user.role,
   }
   
-  const options: SignOptions = {
-    expiresIn: JWT_EXPIRES_IN
-  }
-  
-  return jwt.sign(payload, JWT_SECRET, options)
+  // Use any type to bypass TypeScript strict checking for JWT library compatibility
+  return (jwt as any).sign(payload, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN })
 }
 
 // Verify JWT token
 export function verifyToken(token: string): AuthToken | null {
   try {
-    return jwt.verify(token, JWT_SECRET) as AuthToken
+    return (jwt as any).verify(token, JWT_SECRET) as AuthToken
   } catch (error) {
     return null
   }
