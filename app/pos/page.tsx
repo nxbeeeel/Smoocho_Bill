@@ -53,6 +53,7 @@ export default function POSPage() {
   const [customerName, setCustomerName] = React.useState('')
   const [customerPhone, setCustomerPhone] = React.useState('')
   const [showCartModal, setShowCartModal] = React.useState(false)
+  const [addedItemAnimation, setAddedItemAnimation] = React.useState<{id: number, name: string} | null>(null)
 
   // Live query for products from database - get all products first, then filter
   const products = useLiveQuery(() => db.products.toArray()) || []
@@ -170,6 +171,10 @@ export default function POSPage() {
         total: product.price 
       }])
     }
+    
+    // Trigger animation
+    setAddedItemAnimation({ id: product.id, name: product.name })
+    setTimeout(() => setAddedItemAnimation(null), 2000)
     
     // Show success toast
     toast({
@@ -345,9 +350,11 @@ export default function POSPage() {
 
   return (
     <ResponsiveLayout>
-      <div className="space-y-4 p-4 pb-24">
-        {/* Main Content Area - Full Width for Mobile */}
-        <div className="space-y-4">
+      <div className="space-y-4 p-4 pb-24 lg:pb-4">
+        {/* Main Content Area - Responsive Grid Layout */}
+        <div className="lg:grid lg:grid-cols-4 lg:gap-6 space-y-4 lg:space-y-0">
+          {/* Products Section - Takes 3 columns on laptop, full width on mobile */}
+          <div className="lg:col-span-3 space-y-4">
           {/* Mobile-Optimized Header */}
           <div className="bg-white rounded-lg shadow-sm border p-4">
             <div className="flex items-center justify-between mb-3">
@@ -462,12 +469,117 @@ export default function POSPage() {
               </Card>
             ))}
           </div>
+          </div>
 
+          {/* Cart Section - Right side on laptop, floating button on mobile */}
+          <div className="lg:col-span-1">
+            {/* Desktop Cart Sidebar */}
+            {cart.length > 0 && (
+              <div className="hidden lg:block">
+                <Card className="sticky top-4 bg-white shadow-xl border-2 border-slate-200">
+                  <CardHeader className="bg-gradient-to-r from-green-50 to-emerald-50 border-b border-green-100">
+                    <CardTitle className="flex items-center justify-between">
+                      <span className="flex items-center text-slate-800">
+                        <div className="bg-green-100 p-2 rounded-full mr-3">
+                          <ShoppingCart className="h-5 w-5 text-green-600" />
+                        </div>
+                        <div>
+                          <div className="font-semibold">Shopping Cart</div>
+                          <div className="text-sm text-slate-600 font-normal">{cart.length} items</div>
+                        </div>
+                      </span>
+                      <Button 
+                        variant="ghost" 
+                        size="sm" 
+                        onClick={clearCart}
+                        className="hover:bg-red-50 hover:text-red-600 transition-colors"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="p-4">
+                    <div className="space-y-3 max-h-96 overflow-y-auto">
+                      {cart.map(item => (
+                        <div key={item.id} className="flex items-center justify-between p-3 bg-slate-50 rounded-lg border border-slate-100">
+                          <div className="flex-1 min-w-0">
+                            <h4 className="font-semibold text-sm text-slate-800 truncate">{item.name}</h4>
+                            <p className="text-xs text-slate-500">{formatCurrency(item.price)} × {item.quantity}</p>
+                          </div>
+                          <div className="flex items-center space-x-2 bg-white rounded-lg p-1 border border-slate-200">
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              className="h-7 w-7 p-0 hover:bg-red-50 hover:text-red-600"
+                              onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                            >
+                              <Minus className="h-3 w-3" />
+                            </Button>
+                            <span className="w-6 text-center text-sm font-medium text-slate-700">{item.quantity}</span>
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              className="h-7 w-7 p-0 hover:bg-green-50 hover:text-green-600"
+                              onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                            >
+                              <Plus className="h-3 w-3" />
+                            </Button>
+                          </div>
+                          <div className="ml-3 text-right min-w-0">
+                            <p className="font-bold text-sm text-green-600">{formatCurrency(item.total)}</p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                    
+                    {/* Order Summary */}
+                    <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg p-4 mt-4">
+                      <div className="space-y-2 text-sm">
+                        <div className="flex justify-between text-slate-700">
+                          <span>Subtotal:</span>
+                          <span className="font-semibold">{formatCurrency(subtotal)}</span>
+                        </div>
+                        {discountAmount > 0 && (
+                          <div className="flex justify-between text-green-600">
+                            <span>Discount ({discount}{discountType === 'percentage' ? '%' : '₹'}):</span>
+                            <span className="font-semibold">-{formatCurrency(discountAmount)}</span>
+                          </div>
+                        )}
+                        <div className="flex justify-between text-slate-700">
+                          <span>Tax ({taxRate}%):</span>
+                          <span className="font-semibold">{formatCurrency(tax)}</span>
+                        </div>
+                        {deliveryCharge > 0 && (
+                          <div className="flex justify-between text-slate-700">
+                            <span>Delivery:</span>
+                            <span className="font-semibold">{formatCurrency(deliveryCharge)}</span>
+                          </div>
+                        )}
+                      </div>
+                      <div className="flex justify-between text-xl font-bold border-t border-green-200 pt-3 text-slate-800">
+                        <span>Total:</span>
+                        <span className="text-green-600">{formatCurrency(total)}</span>
+                      </div>
+                    </div>
+                    
+                    <Button 
+                      onClick={() => setShowCheckout(true)}
+                      className="w-full bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-200 mt-4"
+                      size="lg"
+                    >
+                      <Receipt className="h-5 w-5 mr-2" />
+                      Proceed to Checkout
+                    </Button>
+                  </CardContent>
+                </Card>
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Floating Cart Button - Mobile */}
         {cart.length > 0 && (
-          <div className="fixed bottom-20 right-4 z-50 lg:hidden">
+          <div className="fixed bottom-24 right-4 z-50 lg:hidden">
             <Button 
               variant="default" 
               size="lg" 
@@ -482,139 +594,22 @@ export default function POSPage() {
           </div>
         )}
 
-        {/* Desktop Cart Sidebar - Premium Design */}
-        {cart.length > 0 && (
-          <div className="hidden lg:block lg:col-span-1">
-            <Card className="sticky top-4 bg-white shadow-xl border-2 border-slate-200">
-              <CardHeader className="bg-gradient-to-r from-green-50 to-emerald-50 border-b border-green-100">
-                <CardTitle className="flex items-center justify-between">
-                  <span className="flex items-center text-slate-800">
-                    <div className="bg-green-100 p-2 rounded-full mr-3">
-                      <ShoppingCart className="h-5 w-5 text-green-600" />
-                    </div>
-                    <div>
-                      <div className="font-semibold">Shopping Cart</div>
-                      <div className="text-sm text-slate-600 font-normal">{cart.length} items</div>
-                    </div>
-                  </span>
-                  <Button 
-                    variant="ghost" 
-                    size="sm" 
-                    onClick={clearCart}
-                    className="hover:bg-red-50 hover:text-red-600 transition-colors"
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="p-4 bg-white">
-                <div className="space-y-3 max-h-96 overflow-y-auto">
-                  {cart.map(item => (
-                    <div key={item.id} className="flex items-center justify-between p-4 bg-gradient-to-r from-slate-50 to-slate-100 rounded-xl border border-slate-200 hover:shadow-md transition-all duration-200">
-                      <div className="flex-1 min-w-0">
-                        <h4 className="font-semibold text-sm text-slate-800 truncate">{item.name}</h4>
-                        <p className="text-xs text-slate-500 mt-1">{formatCurrency(item.price)} each</p>
-                      </div>
-                      <div className="flex items-center space-x-3 bg-white rounded-lg p-2 border border-slate-200 shadow-sm">
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          className="h-8 w-8 p-0 hover:bg-red-50 hover:text-red-600 rounded-full"
-                          onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                        >
-                          <Minus className="h-4 w-4" />
-                        </Button>
-                        <span className="w-8 text-center font-semibold text-slate-700">{item.quantity}</span>
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          className="h-8 w-8 p-0 hover:bg-green-50 hover:text-green-600 rounded-full"
-                          onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                        >
-                          <Plus className="h-4 w-4" />
-                        </Button>
-                      </div>
-                      <div className="ml-4 text-right">
-                        <p className="font-bold text-green-600">{formatCurrency(item.total)}</p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-                
-                {/* Discount Section - Desktop */}
-                <div className="border-t border-slate-200 pt-4 mt-4">
-                  <div className="flex items-center mb-3">
-                    <div className="bg-yellow-100 p-1.5 rounded-full mr-2">
-                      <Percent className="h-4 w-4 text-yellow-600" />
-                    </div>
-                    <span className="font-medium text-slate-700">Apply Discount</span>
-                  </div>
-                  <div className="flex gap-2 mb-4">
-                    <Input
-                      type="number"
-                      placeholder={discountType === 'percentage' ? "Discount %" : "Discount ₹"}
-                      value={discount}
-                      onChange={(e) => setDiscount(Number(e.target.value))}
-                      className="flex-1 h-10 border-2 focus:border-yellow-400"
-                    />
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => setDiscountType(discountType === 'percentage' ? 'flat' : 'percentage')}
-                      className="h-10 px-3"
-                    >
-                      {discountType === 'percentage' ? '%' : '₹'}
-                    </Button>
-                    <Button 
-                      variant="outline" 
-                      size="sm"
-                      onClick={() => setDiscount(0)}
-                      className="h-10 px-4 hover:bg-red-50 hover:border-red-300 hover:text-red-600"
-                    >
-                      Clear
-                    </Button>
-                  </div>
-                </div>
-
-                <div className="space-y-3 bg-gradient-to-r from-green-50 to-emerald-50 -mx-4 px-4 py-4 rounded-b-xl">
-                  <div className="flex justify-between text-slate-700">
-                    <span>Subtotal:</span>
-                    <span className="font-semibold">{formatCurrency(subtotal)}</span>
-                  </div>
-                  {discountAmount > 0 && (
-                    <div className="flex justify-between text-green-600">
-                      <span>Discount ({discount}%):</span>
-                      <span className="font-semibold">-{formatCurrency(discountAmount)}</span>
-                    </div>
-                  )}
-                  <div className="flex justify-between text-slate-700">
-                    <span>Tax ({taxRate}%):</span>
-                    <span className="font-semibold">{formatCurrency(tax)}</span>
-                  </div>
-                  {deliveryCharge > 0 && (
-                    <div className="flex justify-between text-slate-700">
-                      <span>Delivery Charge:</span>
-                      <span className="font-semibold">{formatCurrency(deliveryCharge)}</span>
-                    </div>
-                  )}
-                  <div className="flex justify-between text-xl font-bold border-t border-green-200 pt-3 text-slate-800">
-                    <span>Total:</span>
-                    <span className="text-green-600">{formatCurrency(total)}</span>
-                  </div>
-                </div>
-                
-                <Button 
-                  onClick={() => setShowCheckout(true)}
-                  className="w-full bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-200 mt-4"
-                  size="lg"
-                >
-                  <Receipt className="h-5 w-5 mr-2" />
-                  Proceed to Checkout
-                </Button>
-              </CardContent>
-            </Card>
+        {/* Add to Cart Animation */}
+        {addedItemAnimation && (
+          <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50 pointer-events-none">
+            <div className="bg-green-500 text-white px-6 py-3 rounded-full shadow-2xl animate-bounce">
+              <div className="flex items-center space-x-2">
+                <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
+                <span className="font-semibold">Added to Cart!</span>
+                <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
+              </div>
+              <div className="text-center text-sm mt-1 opacity-90">
+                {addedItemAnimation.name}
+              </div>
+            </div>
           </div>
         )}
+
       </div>
 
         {/* Premium Checkout Modal */}
@@ -872,7 +867,7 @@ export default function POSPage() {
         {/* Cart Modal - Mobile */}
         {showCartModal && (
           <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-end lg:hidden">
-            <div className="bg-white w-full max-h-[80vh] rounded-t-2xl shadow-2xl transform transition-transform duration-300 ease-out">
+            <div className="bg-white w-full max-h-[85vh] rounded-t-2xl shadow-2xl transform transition-transform duration-300 ease-out pb-safe">
               <div className="p-4 border-b border-gray-200">
                 <div className="flex items-center justify-between">
                   <h2 className="text-xl font-bold text-slate-800">Cart ({cart.length} items)</h2>
@@ -988,7 +983,7 @@ export default function POSPage() {
               </div>
               
               {/* Action Buttons */}
-              <div className="p-4 border-t border-gray-200 bg-gray-50">
+              <div className="p-4 pb-6 border-t border-gray-200 bg-gray-50">
                 <div className="grid grid-cols-2 gap-3">
                   <Button 
                     variant="outline" 
