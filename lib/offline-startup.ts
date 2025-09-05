@@ -1,7 +1,6 @@
 'use client'
 
 import { db } from './database'
-import { offlineService } from './offline-service'
 
 interface StartupData {
   products: any[]

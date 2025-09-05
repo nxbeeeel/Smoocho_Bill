@@ -5,7 +5,6 @@ import { StartupScreen, QuickStartupScreen } from '@/components/ui/startup-scree
 import { OfflineIndicator } from '@/components/ui/offline-indicator'
 import { offlineStartupService } from '@/lib/offline-startup'
 import { offlineService } from '@/lib/offline-service'
-import { offlinePersistenceService } from '@/lib/offline-persistence'
 
 interface OfflineAppProps {
   children: React.ReactNode
