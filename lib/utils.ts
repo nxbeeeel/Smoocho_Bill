@@ -31,3 +31,28 @@ export function generateOrderNumber(): string {
   
   return `SMO${year}${month}${day}${hours}${minutes}${seconds}${random}`
 }
+
+// Date formatting
+export function formatDate(date: Date | string): string {
+  const dateObj = typeof date === 'string' ? new Date(date) : date
+  return new Intl.DateTimeFormat('en-IN', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  }).format(dateObj)
+}
+
+// Inventory utility functions
+export function isLowStock(quantity: number, threshold: number): boolean {
+  return quantity <= threshold
+}
+
+export function isExpiringSoon(expiryDate: Date | string, daysAhead: number = 7): boolean {
+  const expiry = typeof expiryDate === 'string' ? new Date(expiryDate) : expiryDate
+  const now = new Date()
+  const diffTime = expiry.getTime() - now.getTime()
+  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
+  return diffDays <= daysAhead && diffDays >= 0
+}
