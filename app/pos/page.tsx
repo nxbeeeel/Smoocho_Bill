@@ -27,7 +27,6 @@ import { useToast } from '@/hooks/use-toast'
 import { useSettings } from '@/hooks/use-settings'
 import { db, Product } from '@/lib/database'
 import { useLiveQuery } from 'dexie-react-hooks'
-import { QRGenerator } from '@/components/ui/qr-generator'
 import { thermalPrinter } from '@/lib/printer'
 
 interface CartItem {
@@ -49,7 +48,7 @@ export default function POSPage() {
   const [orderType, setOrderType] = React.useState<'takeaway' | 'delivery' | 'dine-in'>('takeaway')
   const [discount, setDiscount] = React.useState(0)
   const [discountType, setDiscountType] = React.useState<'flat' | 'percentage'>('percentage')
-  const [showQR, setShowQR] = React.useState(false)
+  // const [showQR, setShowQR] = React.useState(false)
   const [customerName, setCustomerName] = React.useState('')
   const [customerPhone, setCustomerPhone] = React.useState('')
   const [showCartModal, setShowCartModal] = React.useState(false)
@@ -201,7 +200,7 @@ export default function POSPage() {
       setCustomerName('')
       setCustomerPhone('')
       setOrderType('takeaway')
-    } catch (error) {
+    } catch {
       toast({
         title: "Error",
         description: "Failed to process order. Please try again.",
@@ -263,8 +262,7 @@ export default function POSPage() {
           })
         }
       }
-    } catch (error) {
-      console.error('Print error:', error)
+    } catch {
       toast({
         title: "Print Error",
         description: "Failed to print receipt. Please try again.",
@@ -349,7 +347,7 @@ export default function POSPage() {
               {/* Debug Info */}
               {products.length === 0 && (
                 <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-4">
-                  <p className="text-yellow-800">No products found in database. Click "Reload Menu" to load Smoocho menu.</p>
+                  <p className="text-yellow-800">No products found in database. Click &quot;Reload Menu&quot; to load Smoocho menu.</p>
                 </div>
               )}
                 

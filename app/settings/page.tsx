@@ -6,18 +6,9 @@ import {
   Store, 
   CreditCard, 
   Settings as SettingsIcon, 
-  Shield, 
   Eye, 
   Bell, 
   Database,
-  Smartphone,
-  Monitor,
-  Globe,
-  Clock,
-  DollarSign,
-  Truck,
-  Printer,
-  Volume2,
   Wifi,
   Cloud,
   Download,
@@ -35,7 +26,7 @@ import { ImageSync } from '@/components/ui/image-sync'
 
 export default function SettingsPage() {
   const { toast } = useToast()
-  const { settings, updateSetting, updateSettings } = useSettings()
+  const { settings, updateSettings } = useSettings()
   const [localSettings, setLocalSettings] = React.useState(settings || {})
   const [activeTab, setActiveTab] = React.useState('store')
 
@@ -554,7 +545,7 @@ export default function SettingsPage() {
                         title: "Export Successful",
                         description: "Data exported to file successfully.",
                       })
-                    } catch (error) {
+                    } catch {
                       toast({
                         title: "Export Failed",
                         description: "Failed to export data. Please try again.",
@@ -584,7 +575,7 @@ export default function SettingsPage() {
                           })
                           // Refresh the page to show updated data
                           setTimeout(() => window.location.reload(), 1000)
-                        } catch (error) {
+                        } catch {
                           toast({
                             title: "Import Failed",
                             description: "Failed to import data. Please check the file format.",
@@ -620,7 +611,7 @@ export default function SettingsPage() {
                           variant: "destructive"
                         })
                       }
-                    } catch (error) {
+                    } catch {
                       toast({
                         title: "Sync Failed",
                         description: "Failed to sync data. Please try again.",

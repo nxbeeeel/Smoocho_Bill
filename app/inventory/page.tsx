@@ -8,12 +8,8 @@ import {
   Trash2, 
   AlertTriangle,
   Search,
-  Download,
-  Upload,
   Calendar,
-  TrendingUp,
-  X,
-  Filter
+  X
 } from 'lucide-react'
 import { ResponsiveLayout } from '@/components/layout/responsive-layout'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -72,7 +68,7 @@ export default function InventoryPage() {
   // Calculate stats
   const lowStockItems = inventory.filter(item => isLowStock(item.quantity, item.threshold))
   const expiringItems = inventory.filter(item => isExpiringSoon(item.expiryDate))
-  const totalValue = inventory.reduce((sum, item) => sum + (item.quantity * item.costPerUnit), 0)
+  // const totalValue = inventory.reduce((sum, item) => sum + (item.quantity * item.costPerUnit), 0)
 
   const resetForm = () => {
     setFormData({
@@ -127,7 +123,7 @@ export default function InventoryPage() {
         title: "Stock Updated",
         description: "Inventory quantity has been updated successfully."
       })
-    } catch (error) {
+    } catch {
       toast({
         title: "Error",
         description: "Failed to update stock quantity.",
@@ -143,7 +139,7 @@ export default function InventoryPage() {
         title: "Item Deleted",
         description: "Inventory item has been removed successfully."
       })
-    } catch (error) {
+    } catch {
       toast({
         title: "Error",
         description: "Failed to delete inventory item.",
@@ -206,7 +202,7 @@ export default function InventoryPage() {
       }
 
       closeModal()
-    } catch (error) {
+    } catch {
       toast({
         title: "Error",
         description: `Failed to ${editingItem ? 'update' : 'add'} inventory item.`,
@@ -215,35 +211,35 @@ export default function InventoryPage() {
     }
   }
 
-  const exportInventory = () => {
-    const csvContent = [
-      ['Name', 'Quantity', 'Unit', 'Cost per Unit', 'Threshold', 'Category', 'Supplier', 'Expiry Date', 'Total Value'].join(','),
-      ...inventory.map(item => [
-        item.name,
-        item.quantity,
-        item.unit,
-        item.costPerUnit,
-        item.threshold,
-        item.category,
-        item.supplier || '',
-        item.expiryDate ? formatDate(item.expiryDate) : '',
-        (item.quantity * item.costPerUnit).toFixed(2)
-      ].join(','))
-    ].join('\n')
+  // const exportInventory = () => {
+  //   const csvContent = [
+  //     ['Name', 'Quantity', 'Unit', 'Cost per Unit', 'Threshold', 'Category', 'Supplier', 'Expiry Date', 'Total Value'].join(','),
+  //     ...inventory.map(item => [
+  //       item.name,
+  //       item.quantity,
+  //       item.unit,
+  //       item.costPerUnit,
+  //       item.threshold,
+  //       item.category,
+  //       item.supplier || '',
+  //       item.expiryDate ? formatDate(item.expiryDate) : '',
+  //       (item.quantity * item.costPerUnit).toFixed(2)
+  //     ].join(','))
+  //   ].join('\n')
 
-    const blob = new Blob([csvContent], { type: 'text/csv' })
-    const url = window.URL.createObjectURL(blob)
-    const a = document.createElement('a')
-    a.href = url
-    a.download = `inventory-${new Date().toISOString().split('T')[0]}.csv`
-    a.click()
-    window.URL.revokeObjectURL(url)
+  //   const blob = new Blob([csvContent], { type: 'text/csv' })
+  //   const url = window.URL.createObjectURL(blob)
+  //   const a = document.createElement('a')
+  //   a.href = url
+  //   a.download = `inventory-${new Date().toISOString().split('T')[0]}.csv`
+  //   a.click()
+  //   window.URL.revokeObjectURL(url)
 
-    toast({
-      title: "Export Complete",
-      description: "Inventory data has been exported successfully."
-    })
-  }
+  //   toast({
+  //     title: "Export Complete",
+  //     description: "Inventory data has been exported successfully."
+  //   })
+  // }
 
   return (
     <ResponsiveLayout>

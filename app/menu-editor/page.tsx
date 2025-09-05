@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState } from 'react'
-import { Plus, Edit, Trash2, RefreshCw, Filter, Image as ImageIcon, Check, ChevronDown, Save, X } from 'lucide-react'
+import { Plus, Edit, Trash2, RefreshCw, Filter, Save, X } from 'lucide-react'
 import { ResponsiveLayout } from '@/components/layout/responsive-layout'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -12,7 +12,6 @@ import { ImageUpload } from '@/components/ui/image-upload'
 import { AutoProductImage } from '@/components/ui/auto-product-image'
 import { db, Product } from '@/lib/database'
 import { useLiveQuery } from 'dexie-react-hooks'
-import { cn } from '@/lib/utils'
 import { useToast } from '@/hooks/use-toast'
 
 interface ProductFormData {

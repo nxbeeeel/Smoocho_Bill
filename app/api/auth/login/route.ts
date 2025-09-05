@@ -1,6 +1,6 @@
 // Smoocho Bill POS - Login API Route
 import { NextRequest, NextResponse } from 'next/server'
-import { hashPassword, verifyPassword, generateToken } from '@/lib/auth'
+import { verifyPassword, generateToken } from '@/lib/auth'
 import { query } from '@/lib/database-server'
 
 export async function POST(request: NextRequest) {

@@ -1,16 +1,15 @@
 'use client'
 
-import React, { useState, useCallback } from 'react'
+import React, { useState } from 'react'
 import { useLiveQuery } from 'dexie-react-hooks'
-import { db, Order, OrderItem, Product } from '@/lib/database'
+import { db, Order, OrderItem } from '@/lib/database'
 import { ResponsiveLayout } from '@/components/layout/responsive-layout'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { useToast } from '@/hooks/use-toast'
-import { thermalPrinter } from '@/lib/printer'
 import { useSettings } from '@/hooks/use-settings'
 import { 
   Search, 
@@ -32,7 +31,7 @@ import {
 
 export default function OrderHistoryPage() {
   const { toast } = useToast()
-  const { settings } = useSettings()
+  // const { settings } = useSettings()
   const [searchTerm, setSearchTerm] = useState('')
   const [filterStatus, setFilterStatus] = useState<string>('all')
   const [filterPaymentMethod, setFilterPaymentMethod] = useState<string>('all')
