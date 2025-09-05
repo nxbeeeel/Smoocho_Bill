@@ -24,6 +24,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Switch } from '@/components/ui/switch'
+import { CartBadge, PremiumCartBadge } from '@/components/ui/cart-badge'
 import { formatCurrency, calculateTax, generateOrderNumber } from '@/lib/utils'
 import { useToast } from '@/hooks/use-toast'
 import { useSettings } from '@/hooks/use-settings'
@@ -311,31 +312,45 @@ export default function POSPage() {
                   <h1 className="text-2xl font-bold text-white">POS System</h1>
                   <p className="text-sm text-slate-300">{activeProducts.length} items available</p>
                 </div>
-                <Button 
-                  variant="outline" 
-                  size="sm"
-                  className="border-slate-600 text-slate-300 hover:bg-slate-700 hover:text-white"
-                  onClick={async () => {
-                    try {
-                      await db.reloadMenuData()
-                      toast({
-                        title: "Menu Reloaded",
-                        description: "Menu data has been refreshed successfully.",
-                      })
-                      window.location.reload()
-                    } catch (error) {
-                      console.error('Error reloading menu:', error)
-                      toast({
-                        title: "Reload Failed",
-                        description: "Failed to reload menu data. Please try again.",
-                        variant: "destructive"
-                      })
-                    }
-                  }}
-                >
-                  <RefreshCw className="h-4 w-4" />
-                  <span className="hidden sm:inline ml-2">Reload</span>
-                </Button>
+                <div className="flex items-center gap-2">
+                  {/* Cart Badge for Mobile */}
+                  {cart.length > 0 && (
+                    <div className="lg:hidden">
+                      <CartBadge 
+                        count={cart.reduce((total, item) => total + item.quantity, 0)}
+                        size="sm"
+                        variant="emerald"
+                        onClick={() => setShowCartModal(true)}
+                      />
+                    </div>
+                  )}
+                  
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    className="border-slate-600 text-slate-300 hover:bg-slate-700 hover:text-white"
+                    onClick={async () => {
+                      try {
+                        await db.reloadMenuData()
+                        toast({
+                          title: "Menu Reloaded",
+                          description: "Menu data has been refreshed successfully.",
+                        })
+                        window.location.reload()
+                      } catch (error) {
+                        console.error('Error reloading menu:', error)
+                        toast({
+                          title: "Reload Failed",
+                          description: "Failed to reload menu data. Please try again.",
+                          variant: "destructive"
+                        })
+                      }
+                    }}
+                  >
+                    <RefreshCw className="h-4 w-4" />
+                    <span className="hidden sm:inline ml-2">Reload</span>
+                  </Button>
+                </div>
               </div>
               
               {/* Settings Status - Mobile Friendly */}
@@ -515,8 +530,13 @@ export default function POSPage() {
                   <CardHeader className="bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 border-b border-slate-700">
                     <CardTitle className="flex items-center justify-between">
                       <span className="flex items-center text-white">
-                        <div className="bg-gradient-to-r from-emerald-500 to-emerald-600 p-2 rounded-full mr-3 shadow-lg">
-                          <ShoppingCart className="h-5 w-5 text-white" />
+                        <div className="mr-3">
+                          <CartBadge 
+                            count={cart.reduce((total, item) => total + item.quantity, 0)}
+                            size="md"
+                            variant="emerald"
+                            className="bg-gradient-to-r from-emerald-500 to-emerald-600"
+                          />
                         </div>
                         <div>
                           <div className="font-semibold text-white">Shopping Cart</div>
@@ -617,40 +637,12 @@ export default function POSPage() {
         {/* Premium Floating Cart Button - Mobile */}
         {cart.length > 0 && (
           <div className="fixed bottom-24 right-4 z-50 lg:hidden">
-            <div className="relative">
-              {/* Outer glow effect */}
-              <div className="absolute inset-0 bg-gradient-to-r from-blue-400 to-purple-500 rounded-full blur-lg opacity-60 animate-pulse"></div>
-              
-              {/* Main button */}
-              <button 
-                className="relative rounded-full h-16 w-16 shadow-2xl bg-gradient-to-br from-slate-700 via-slate-800 to-slate-900 hover:from-slate-600 hover:via-slate-700 hover:to-slate-800 transition-all duration-300 hover:scale-110 border-2 border-white/20 backdrop-blur-sm cursor-pointer flex items-center justify-center"
-                onClick={() => setShowCartModal(true)}
-              >
-                {/* Inner shine effect */}
-                <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-white/20 to-transparent"></div>
-                
-                {/* Cart icon with premium styling */}
-                <div className="relative z-10">
-                  <ShoppingCart className="h-6 w-6 text-white drop-shadow-lg" />
-                </div>
-                
-                {/* Premium quantity badge */}
-                <div className="absolute -top-1 -right-1 z-20">
-                  <div className="relative">
-                    {/* Badge glow */}
-                    <div className="absolute inset-0 bg-gradient-to-r from-orange-400 to-red-500 rounded-full blur-sm opacity-80"></div>
-                    
-                    {/* Badge content */}
-                    <div className="relative bg-gradient-to-r from-orange-500 to-red-500 text-white text-xs font-bold rounded-full h-7 w-7 flex items-center justify-center border-2 border-white shadow-lg">
-                      {cart.reduce((total, item) => total + item.quantity, 0)}
-                    </div>
-                  </div>
-                </div>
-                
-                {/* Subtle animation ring */}
-                <div className="absolute inset-0 rounded-full border-2 border-white/30 animate-ping opacity-20"></div>
-              </button>
-            </div>
+            <PremiumCartBadge 
+              count={cart.reduce((total, item) => total + item.quantity, 0)}
+              size="md"
+              variant="emerald"
+              onClick={() => setShowCartModal(true)}
+            />
           </div>
         )}
 
