@@ -95,7 +95,7 @@ export class DexieProductRepository implements ProductRepository {
   async findCategories(): Promise<string[]> {
     try {
       const products = await db.products.toArray()
-      const categories = [...new Set(products.map(p => p.category))]
+      const categories = Array.from(new Set(products.map(p => p.category)))
       return categories.sort()
     } catch (error) {
       console.error('Error finding categories:', error)
