@@ -19,30 +19,37 @@ export class FirebaseSyncService {
   private syncInProgress = false
 
   constructor() {
-    this.checkOnlineStatus()
-    this.setupOnlineListener()
+    // Only initialize browser-specific features on client side
+    if (typeof window !== 'undefined') {
+      this.checkOnlineStatus()
+      this.setupOnlineListener()
+    }
   }
 
   private checkOnlineStatus() {
-    this.isOnline = navigator.onLine
+    if (typeof navigator !== 'undefined') {
+      this.isOnline = navigator.onLine
+    }
   }
 
   private setupOnlineListener() {
-    window.addEventListener('online', () => {
-      this.isOnline = true
-      console.log('🌐 Online - Starting sync...')
-      this.syncAllData()
-    })
+    if (typeof window !== 'undefined') {
+      window.addEventListener('online', () => {
+        this.isOnline = true
+        console.log('🌐 Online - Starting sync...')
+        this.syncAllData()
+      })
 
-    window.addEventListener('offline', () => {
-      this.isOnline = false
-      console.log('📴 Offline - Queuing operations...')
-    })
+      window.addEventListener('offline', () => {
+        this.isOnline = false
+        console.log('📴 Offline - Queuing operations...')
+      })
+    }
   }
 
   // Sync all data to Firebase
   async syncAllData() {
-    if (!this.isOnline || this.syncInProgress) return
+    if (typeof window === 'undefined' || !this.isOnline || this.syncInProgress) return
 
     this.syncInProgress = true
     console.log('🔄 Starting full sync to Firebase...')
@@ -140,8 +147,8 @@ export class FirebaseSyncService {
 
   // Add new order to Firebase
   async addOrderToFirebase(order: Order) {
-    if (!this.isOnline) {
-      console.log('📴 Offline - Order will be synced when online')
+    if (typeof window === 'undefined' || !this.isOnline) {
+      console.log('📴 Offline or SSR - Order will be synced when online')
       return
     }
 
@@ -159,7 +166,7 @@ export class FirebaseSyncService {
 
   // Listen to real-time updates from Firebase
   setupRealtimeListeners() {
-    if (!this.isOnline) return
+    if (typeof window === 'undefined' || !this.isOnline) return
 
     // Listen to orders
     const ordersQuery = query(collection(firestoreDb, 'orders'), orderBy('createdAt', 'desc'))
