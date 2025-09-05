@@ -116,38 +116,38 @@ export class SmoochoDB extends Dexie {
     });
 
     // Hooks for automatic timestamps and sync logging
-    this.products.hook('creating', (primKey, obj, trans) => {
+    this.products.hook('creating', (_primKey, obj, _trans) => {
       obj.createdAt = new Date();
       obj.updatedAt = new Date();
     });
 
-    this.products.hook('updating', (modifications, primKey, obj, trans) => {
-      (modifications as any).updatedAt = new Date();
+    this.products.hook('updating', (modifications, _primKey, _obj, _trans) => {
+      (modifications as Record<string, unknown>).updatedAt = new Date();
     });
 
-    this.inventory.hook('creating', (primKey, obj, trans) => {
+    this.inventory.hook('creating', (_primKey, obj, _trans) => {
       obj.createdAt = new Date();
       obj.updatedAt = new Date();
     });
 
-    this.inventory.hook('updating', (modifications, primKey, obj, trans) => {
-      (modifications as any).updatedAt = new Date();
+    this.inventory.hook('updating', (modifications, _primKey, _obj, _trans) => {
+      (modifications as Record<string, unknown>).updatedAt = new Date();
     });
 
-    this.orders.hook('creating', (primKey, obj, trans) => {
+    this.orders.hook('creating', (_primKey, obj, _trans) => {
       obj.createdAt = new Date();
       obj.updatedAt = new Date();
     });
 
-    this.orders.hook('updating', (modifications, primKey, obj, trans) => {
-      (modifications as any).updatedAt = new Date();
+    this.orders.hook('updating', (modifications, _primKey, _obj, _trans) => {
+      (modifications as Record<string, unknown>).updatedAt = new Date();
     });
 
-    this.users.hook('creating', (primKey, obj, trans) => {
+    this.users.hook('creating', (_primKey, obj, _trans) => {
       obj.createdAt = new Date();
     });
 
-    this.recipes.hook('creating', (primKey, obj, trans) => {
+    this.recipes.hook('creating', (_primKey, obj, _trans) => {
       obj.createdAt = new Date();
     });
   }

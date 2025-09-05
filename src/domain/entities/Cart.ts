@@ -1,5 +1,5 @@
 import { CartItem } from './CartItem'
-import { Product } from './Product'
+import { Product, ProductId } from './Product'
 import { Quantity } from './CartItem'
 
 export class Cart {

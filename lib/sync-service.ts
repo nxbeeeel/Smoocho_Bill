@@ -6,7 +6,7 @@
 export interface SyncResult {
   success: boolean
   message: string
-  data?: any
+  data?: Record<string, unknown>
   error?: string
 }
 

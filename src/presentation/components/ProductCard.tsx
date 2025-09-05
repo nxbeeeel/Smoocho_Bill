@@ -1,4 +1,5 @@
 import React from 'react'
+import Image from 'next/image'
 import { Product } from '../../domain/entities/Product'
 import { useCart } from '../hooks/useCart'
 
@@ -48,9 +49,11 @@ export const ProductCard: React.FC<ProductCardProps> = ({
     <div className="bg-white rounded-lg shadow-sm border overflow-hidden hover:shadow-md transition-shadow">
       {product.hasImage() && (
         <div className="aspect-square bg-gray-100">
-          <img
-            src={product.imageUrl}
+          <Image
+            src={product.imageUrl || '/placeholder-image.png'}
             alt={product.name.value}
+            width={300}
+            height={300}
             className="w-full h-full object-cover"
           />
         </div>

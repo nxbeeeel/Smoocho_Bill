@@ -6,7 +6,7 @@ import { db } from '../../../lib/database'
 interface OrderModel {
   id?: number
   orderNumber: string
-  items: any[]
+  items: Record<string, unknown>[]
   subtotal: number
   discount: number
   discountType: 'flat' | 'percentage'

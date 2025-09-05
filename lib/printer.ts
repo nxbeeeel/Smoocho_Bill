@@ -100,7 +100,7 @@ export class ThermalPrinter {
       }
 
       // Check for native printer support (Android/iOS)
-      if (typeof (window as any).print !== 'undefined') {
+      if (typeof (window as Record<string, unknown>).print !== 'undefined') {
         return true
       }
 
@@ -144,7 +144,7 @@ export class ThermalPrinter {
       }
 
       // Method 3: Try native print API
-      if (typeof (window as any).print === 'function') {
+      if (typeof (window as Record<string, unknown>).print === 'function') {
         const success = await this.printViaNative(content, options)
         if (success) return true
       }
@@ -208,7 +208,7 @@ export class ThermalPrinter {
         const server = await device.gatt?.connect()
         if (server) {
           // Convert content to printer commands
-          const printerCommands = this.convertToPrinterCommands(content, options)
+          // const printerCommands = this.convertToPrinterCommands(content, options)
           
           // Send to printer via Bluetooth
           // Implementation would depend on specific printer protocol
@@ -353,7 +353,7 @@ export class ThermalPrinter {
   }
 
   // Generate thermal receipt content
-  generateReceiptContent(order: any, settings: any): string {
+  generateReceiptContent(order: Record<string, unknown>, settings: Record<string, unknown>): string {
     const taxRate = settings?.taxRate || 18
     const deliveryCharge = order.orderType === 'delivery' ? (settings?.deliveryCharge || 0) : 0
     
@@ -386,7 +386,7 @@ export class ThermalPrinter {
           <div style="width: 40px; text-align: right;">Price</div>
           <div style="width: 50px; text-align: right;">Total</div>
         </div>
-        ${order.items.map((item: any) => `
+        ${(order.items as Record<string, unknown>[]).map((item: Record<string, unknown>) => `
           <div style="display: flex; justify-content: space-between; margin-bottom: 2px; font-size: 11px;">
             <div style="flex: 1; margin-right: 4px;">${item.productName}</div>
             <div style="width: 20px; text-align: center;">${item.quantity}</div>

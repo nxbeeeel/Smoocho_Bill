@@ -1,7 +1,6 @@
 'use client'
 
 import React from 'react'
-import Link from 'next/link'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Wifi, WifiOff, RefreshCw } from 'lucide-react'
@@ -19,10 +18,10 @@ export default function OfflinePage() {
             <WifiOff className="h-8 w-8 text-orange-600" />
           </div>
           <CardTitle className="text-2xl font-bold text-gray-900">
-            You're Offline
+            You&apos;re Offline
           </CardTitle>
           <CardDescription className="text-gray-600">
-            It looks like you've lost your internet connection. Don't worry, some features are still available offline.
+            It looks like you&apos;ve lost your internet connection. Don&apos;t worry, some features are still available offline.
           </CardDescription>
         </CardHeader>
         

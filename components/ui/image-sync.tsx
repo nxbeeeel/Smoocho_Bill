@@ -33,7 +33,7 @@ export const ImageSync: React.FC<ImageSyncProps> = ({ className }) => {
       } else {
         setSyncStatus('error')
       }
-    } catch (error) {
+    } catch {
       setSyncStatus('error')
     } finally {
       setIsSyncing(false)

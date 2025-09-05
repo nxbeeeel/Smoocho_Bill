@@ -187,7 +187,7 @@ export default function CleanPOSPage() {
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Payment Method
                 </label>
-                <Select value={paymentMethod} onValueChange={(value: any) => setPaymentMethod(value)}>
+                <Select value={paymentMethod} onValueChange={(value: string) => setPaymentMethod(value as 'cash' | 'card' | 'upi')}>
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
@@ -203,7 +203,7 @@ export default function CleanPOSPage() {
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Order Type
                 </label>
-                <Select value={orderType} onValueChange={(value: any) => setOrderType(value)}>
+                <Select value={orderType} onValueChange={(value: string) => setOrderType(value as 'takeaway' | 'delivery' | 'dine-in')}>
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
