@@ -112,6 +112,11 @@ const SETTINGS_STORAGE_KEY = 'smoocho_settings_backup'
 
 // Helper functions for localStorage backup
 const saveToLocalStorage = (settings: AppSettings) => {
+  // Check if we're in the browser environment
+  if (typeof window === 'undefined' || typeof localStorage === 'undefined') {
+    return
+  }
+  
   try {
     localStorage.setItem(SETTINGS_STORAGE_KEY, JSON.stringify(settings))
     console.log('Settings backed up to localStorage')
@@ -121,6 +126,11 @@ const saveToLocalStorage = (settings: AppSettings) => {
 }
 
 const loadFromLocalStorage = (): AppSettings | null => {
+  // Check if we're in the browser environment
+  if (typeof window === 'undefined' || typeof localStorage === 'undefined') {
+    return null
+  }
+  
   try {
     const stored = localStorage.getItem(SETTINGS_STORAGE_KEY)
     if (stored) {
