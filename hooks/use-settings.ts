@@ -23,11 +23,14 @@ export interface AppSettings {
   soundEnabled: boolean
   notifications: boolean
   autoBackup: boolean
+  autoSync: boolean
   theme: string
   language: string
   timezone: string
   dateFormat: string
   timeFormat: string
+  darkMode: boolean
+  soundEffects: boolean
   
   // Security Settings
   requirePassword: boolean
@@ -76,11 +79,14 @@ const defaultSettings: AppSettings = {
   soundEnabled: true,
   notifications: true,
   autoBackup: false,
+  autoSync: true,
   theme: 'light',
   language: 'en',
   timezone: 'Asia/Kolkata',
   dateFormat: 'DD/MM/YYYY',
   timeFormat: '12h',
+  darkMode: false,
+  soundEffects: true,
   
   // Security Settings
   requirePassword: false,
