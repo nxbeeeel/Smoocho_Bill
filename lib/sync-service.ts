@@ -173,10 +173,10 @@ class SyncService {
   /**
    * Import data from file
    */
-  public async importFromFile(_file: File): Promise<SyncResult> {
+  public async importFromFile(file: File): Promise<SyncResult> {
     try {
       // Implementation for data import
-      console.log('Importing data from file...')
+      console.log('Importing data from file:', file.name)
       return {
         success: true,
         message: 'Data imported successfully'

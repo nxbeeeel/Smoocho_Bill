@@ -65,7 +65,7 @@ export function useProducts(): UseProductsReturn {
     }
   }, [container, fetchProducts])
 
-  const updateProduct = useCallback(async (id: number, _updates: Partial<Product>) => {
+  const updateProduct = useCallback(async (id: number, updates: Partial<Product>) => {
     setLoading(true)
     setError(null)
     try {
@@ -75,8 +75,9 @@ export function useProducts(): UseProductsReturn {
         return false
       }
 
-      // Create updated product (this would need proper update logic)
-      await container.productRepository.update(product)
+      // Create updated product with the provided updates
+      const updatedProduct = { ...product, ...updates }
+      await container.productRepository.update(updatedProduct)
       await fetchProducts() // Refresh the list
       return true
     } catch (err) {

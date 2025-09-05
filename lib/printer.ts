@@ -100,7 +100,7 @@ export class ThermalPrinter {
       }
 
       // Check for native printer support (Android/iOS)
-      if (typeof (window as Record<string, unknown>).print !== 'undefined') {
+      if (typeof (window as unknown as Record<string, unknown>).print !== 'undefined') {
         return true
       }
 
@@ -144,7 +144,7 @@ export class ThermalPrinter {
       }
 
       // Method 3: Try native print API
-      if (typeof (window as Record<string, unknown>).print === 'function') {
+      if (typeof (window as unknown as Record<string, unknown>).print === 'function') {
         const success = await this.printViaNative(content, options)
         if (success) return true
       }
@@ -190,7 +190,7 @@ export class ThermalPrinter {
     return false
   }
 
-  private async printViaBluetooth(content: string, options: PrintOptions): Promise<boolean> {
+  private async printViaBluetooth(_content: string, _options: PrintOptions): Promise<boolean> {
     try {
       if (!navigator.bluetooth) return false
       
