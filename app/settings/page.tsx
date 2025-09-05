@@ -137,7 +137,7 @@ export default function SettingsPage() {
                 <Label htmlFor="storeEmail" className="text-sm font-medium">Email Address</Label>
                 <Input
                   id="storeEmail"
-                  type="email"
+                  type="text"
                   value={String(localSettings.storeEmail || '')}
                   onChange={(e) => setLocalSettings({...localSettings, storeEmail: e.target.value})}
                   placeholder="store@example.com"
@@ -148,10 +148,10 @@ export default function SettingsPage() {
                 <Label htmlFor="storeWebsite" className="text-sm font-medium">Website</Label>
                 <Input
                   id="storeWebsite"
-                  type="url"
+                  type="text"
                   value={String(localSettings.storeWebsite || '')}
                   onChange={(e) => setLocalSettings({...localSettings, storeWebsite: e.target.value})}
-                  placeholder="www.example.com"
+                  placeholder="https://www.example.com"
                   className="w-full"
                 />
               </div>

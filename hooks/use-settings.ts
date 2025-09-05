@@ -60,7 +60,7 @@ const defaultSettings: AppSettings = {
   storeAddress: '123 Main Street, City',
   storePhone: '+91 9876543210',
   storeEmail: 'info@smoochobill.com',
-  storeWebsite: 'www.smoochobill.com',
+  storeWebsite: 'https://www.smoochobill.com',
   storeGST: '22ABCDE1234F1Z5',
   
   // Payment Settings

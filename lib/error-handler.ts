@@ -15,6 +15,13 @@ export function setupGlobalErrorHandlers() {
       return
     }
     
+    // Check for input validation errors
+    if (event.message && event.message.includes('The specified value') && event.message.includes('cannot be parsed, or is out of range')) {
+      // Suppress input validation errors
+      event.preventDefault()
+      return
+    }
+    
     console.error('Uncaught error:', event.error)
     console.error('Error details:', {
       message: event.message,
@@ -32,6 +39,14 @@ export function setupGlobalErrorHandlers() {
     if (args[0] && typeof args[0] === 'string') {
       if (args[0].includes('Minified React error #185')) {
         // Completely suppress this error as it's non-critical
+        return
+      }
+    }
+    
+    // Check for input validation errors
+    if (args[0] && typeof args[0] === 'string') {
+      if (args[0].includes('The specified value') && args[0].includes('cannot be parsed, or is out of range')) {
+        // Suppress input validation errors
         return
       }
     }

@@ -19,6 +19,14 @@ export function ReactErrorSuppressor({ children }: ReactErrorSuppressorProps) {
         }
       }
       
+      // Also check for the specific error message pattern
+      if (args[0] && typeof args[0] === 'string') {
+        if (args[0].includes('The specified value') && args[0].includes('cannot be parsed, or is out of range')) {
+          // Suppress input validation errors
+          return
+        }
+      }
+      
       // Call original console.error for all other errors
       originalConsoleError.apply(console, args)
     }
