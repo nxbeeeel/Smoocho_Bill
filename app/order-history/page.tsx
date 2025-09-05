@@ -531,8 +531,8 @@ export default function OrderHistoryPage() {
               </CardContent>
             </Card>
           ) : (
-            filteredOrders.map((order) => (
-              <Card key={order.id} className="hover:shadow-md transition-shadow">
+            filteredOrders.map((order, index) => (
+              <Card key={order.id || `order-${index}`} className="hover:shadow-md transition-shadow">
                 <CardContent className="p-4">
                   <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
                     <div className="flex-1">
@@ -671,7 +671,7 @@ export default function OrderHistoryPage() {
                       
                       <div className="space-y-3">
                         {editingOrder.items.map((item, index) => (
-                          <div key={index} className="flex items-center gap-4 p-3 border rounded-lg">
+                          <div key={item.productId || `item-${index}`} className="flex items-center gap-4 p-3 border rounded-lg">
                             <div className="flex-1">
                               <Select
                                 value={item.productId.toString()}
@@ -681,8 +681,8 @@ export default function OrderHistoryPage() {
                                   <SelectValue />
                                 </SelectTrigger>
                                 <SelectContent>
-                                  {products.map(product => (
-                                    <SelectItem key={product.id} value={product.id!.toString()}>
+                                  {products.map((product, productIndex) => (
+                                    <SelectItem key={product.id || `product-${productIndex}`} value={product.id!.toString()}>
                                       {product.name}
                                     </SelectItem>
                                   ))}
@@ -805,7 +805,7 @@ export default function OrderHistoryPage() {
                       <h3 className="text-lg font-semibold mb-4">Order Items</h3>
                       <div className="space-y-2">
                         {selectedOrder.items.map((item, index) => (
-                          <div key={index} className="flex justify-between items-center p-3 border rounded-lg">
+                          <div key={item.productId || `selected-item-${index}`} className="flex justify-between items-center p-3 border rounded-lg">
                             <div>
                               <p className="font-medium">{item.productName}</p>
                               <p className="text-sm text-gray-600">Qty: {item.quantity} × {formatCurrency(item.price)}</p>

@@ -332,9 +332,9 @@ export default function POSPage() {
 
             {/* Compact Category Filter */}
             <div className="flex gap-1 overflow-x-auto pb-2 mb-3">
-              {categories.map(category => (
+              {categories.map((category, index) => (
                 <Button
-                  key={category}
+                  key={category || `category-${index}`}
                   variant={selectedCategory === category ? "default" : "outline"}
                   size="sm"
                   onClick={() => setSelectedCategory(category)}
@@ -361,13 +361,13 @@ export default function POSPage() {
 
               {/* Mobile-Optimized Products Grid */}
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3">
-                {filteredProducts.map(product => {
+                {filteredProducts.map((product, index) => {
                   const cartItem = cart.find(item => item.id === product.id)
                   const quantity = cartItem ? cartItem.quantity : 0
                   
                   return (
                     <Card 
-                      key={product.id} 
+                      key={product.id || `product-${index}`} 
                       className="cursor-pointer hover:shadow-md transition-all duration-200 active:scale-95 hover:scale-105 relative"
                       onClick={() => addToCart(product)}
                     >
