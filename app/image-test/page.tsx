@@ -75,7 +75,7 @@ export default function ImageTestPage() {
                 <p><strong>Missing Files:</strong></p>
                 <ul className="list-disc list-inside ml-4">
                   {imageStatus.missingFiles.map((file: string, index: number) => (
-                    <li key={index} className="text-red-600">{file}</li>
+                    <li key={`missing-file-${file}-${index}`} className="text-red-600">{file}</li>
                   ))}
                 </ul>
               </div>
@@ -92,7 +92,7 @@ export default function ImageTestPage() {
         {testResults ? (
           <div className="space-y-2">
             {testResults.map((result: any, index: number) => (
-              <div key={index} className="flex items-center space-x-4 p-2 border rounded">
+              <div key={result.name || `test-result-${index}`} className="flex items-center space-x-4 p-2 border rounded">
                 <span className="font-medium">{result.name}</span>
                 <span className={`px-2 py-1 rounded text-sm ${
                   result.found ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'

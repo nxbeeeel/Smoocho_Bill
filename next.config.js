@@ -14,11 +14,15 @@ const nextConfig = {
   // Enable development mode for better error details
   reactStrictMode: true,
   swcMinify: false,
-  // Disable minification to get better error details
+  // Completely disable minification for better error details
   webpack: (config, { dev, isServer }) => {
-    if (dev) {
-      config.optimization.minimize = false
-    }
+    // Always disable minification
+    config.optimization.minimize = false
+    config.optimization.minimizer = []
+    
+    // Add source maps for better debugging
+    config.devtool = 'source-map'
+    
     return config
   }
 }
