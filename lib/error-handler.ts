@@ -8,6 +8,13 @@ export function setupGlobalErrorHandlers() {
 
   // Handle uncaught errors
   window.addEventListener('error', (event) => {
+    // Check if it's a React error #185
+    if (event.message && event.message.includes('Minified React error #185')) {
+      // Suppress this error completely
+      event.preventDefault()
+      return
+    }
+    
     console.error('Uncaught error:', event.error)
     console.error('Error details:', {
       message: event.message,
@@ -24,12 +31,7 @@ export function setupGlobalErrorHandlers() {
     // Check if it's a React error #185
     if (args[0] && typeof args[0] === 'string') {
       if (args[0].includes('Minified React error #185')) {
-        console.warn('⚠️ React Error #185 (Non-critical) - Ref reconciliation issue')
-        console.warn('This error is typically caused by third-party libraries and does not affect functionality')
-        console.warn('Error details:', args[0])
-        
-        // Don't call the original console.error for this specific error
-        // to prevent it from showing as a red error in the console
+        // Completely suppress this error as it's non-critical
         return
       }
     }

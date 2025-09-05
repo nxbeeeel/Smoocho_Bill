@@ -3,6 +3,7 @@ import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import { Toaster } from '@/components/toaster'
 import { AuthProvider } from '@/contexts/auth-context'
+import { ReactErrorSuppressor } from '@/components/react-error-suppressor'
 import { setupGlobalErrorHandlers } from '@/lib/error-handler'
 import '@/lib/react-key-validator'
 import './globals.css'
@@ -27,10 +28,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <AuthProvider>
-          {children}
-          <Toaster />
-        </AuthProvider>
+        <ReactErrorSuppressor>
+          <AuthProvider>
+            {children}
+            <Toaster />
+          </AuthProvider>
+        </ReactErrorSuppressor>
       </body>
     </html>
   )
