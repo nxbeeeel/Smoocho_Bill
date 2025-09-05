@@ -2,6 +2,7 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react'
 import { useToast } from '@/hooks/use-toast'
+import { cloudSyncService } from '@/lib/cloud-sync-service'
 
 interface User {
   id: string
@@ -61,6 +62,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             localStorage.setItem('user', JSON.stringify(userData))
           }
           setUser(userData)
+          
+          // Initialize cloud sync service for existing user
+          cloudSyncService.initialize(userData.id, deviceId)
         }
       } catch (error) {
         console.error('Auth check failed:', error)
@@ -93,6 +97,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         localStorage.setItem('user', JSON.stringify(userData))
         setUser(userData)
         
+        // Initialize cloud sync service
+        cloudSyncService.initialize(userData.id, deviceId)
+        
         toast({
           title: "Login Successful",
           description: `Welcome back, ${userData.username}!`,
@@ -121,6 +128,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }
 
   const logout = () => {
+    // Stop cloud sync service
+    cloudSyncService.destroy()
+    
     localStorage.removeItem('user')
     setUser(null)
     toast({

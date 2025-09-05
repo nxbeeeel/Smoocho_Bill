@@ -126,7 +126,7 @@ export function isExpiringSoon(expiryDate: Date | undefined, daysThreshold: numb
 
 // Network status check
 export function isOnline(): boolean {
-  return navigator.onLine
+  return typeof window !== 'undefined' ? navigator.onLine : false
 }
 
 // Local storage helpers

@@ -125,7 +125,11 @@ const loadFromLocalStorage = (): AppSettings | null => {
     const stored = localStorage.getItem(SETTINGS_STORAGE_KEY)
     if (stored) {
       const parsed = JSON.parse(stored)
-      console.log('Settings loaded from localStorage backup')
+      // Only log once to avoid spam
+      if (!window.settingsLoadedFromBackup) {
+        console.log('Settings loaded from localStorage backup')
+        window.settingsLoadedFromBackup = true
+      }
       return parsed
     }
   } catch (error) {
@@ -167,7 +171,11 @@ export function useSettings() {
     const backupSettings = loadFromLocalStorage()
     if (backupSettings) {
       Object.assign(settings, backupSettings)
-      console.log('Using localStorage backup for settings')
+      // Only log once to avoid spam
+      if (!window.usingLocalStorageBackup) {
+        console.log('Using localStorage backup for settings')
+        window.usingLocalStorageBackup = true
+      }
     }
   }
   

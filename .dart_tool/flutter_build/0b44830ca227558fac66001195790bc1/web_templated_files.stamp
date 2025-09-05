@@ -1,0 +1,1 @@
+{"inputs":["N:\\smoocho bill\\web\\*\\index.html","N:\\smoocho bill\\web\\flutter_bootstrap.js","C:\\flutter\\bin\\cache\\engine.stamp"],"outputs":["N:\\smoocho bill\\build\\web\\*\\index.html","N:\\smoocho bill\\build\\web\\flutter_bootstrap.js"],"buildKey":"[{\"compileTarget\":\"dart2js\",\"renderer\":\"canvaskit\",\"mainJsPath\":\"main.dart.js\"},{}]"}

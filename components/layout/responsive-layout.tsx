@@ -15,7 +15,7 @@ export function ResponsiveLayout({ children }: ResponsiveLayoutProps) {
 
   React.useEffect(() => {
     const checkScreenSize = () => {
-      const width = window.innerWidth
+      const width = typeof window !== 'undefined' ? window.innerWidth : 1024
       let type: 'mobile' | 'tablet' | 'desktop'
       
       if (width < 768) {
@@ -43,11 +43,15 @@ export function ResponsiveLayout({ children }: ResponsiveLayoutProps) {
       timeoutId = setTimeout(checkScreenSize, 100)
     }
 
-    window.addEventListener('resize', debouncedCheck)
+    if (typeof window !== 'undefined') {
+      window.addEventListener('resize', debouncedCheck)
+    }
 
     // Cleanup
     return () => {
-      window.removeEventListener('resize', debouncedCheck)
+      if (typeof window !== 'undefined') {
+        window.removeEventListener('resize', debouncedCheck)
+      }
       clearTimeout(timeoutId)
     }
   }, [])

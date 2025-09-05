@@ -144,24 +144,8 @@ export class AutoImageLoader {
 
   // Find a similar image that actually exists
   private findSimilarImage(filename: string): string | null {
-    // Map of expected filenames to actual existing filenames
-    const imageMap: { [key: string]: string } = {
-      '01_hazelnut_kunafa.jpg': '02_white_chocolate_kunafa.jpg', // Use white chocolate as fallback
-      '02_white_chocolate_kunafa.jpg': '02_white_chocolate_kunafa.jpg',
-      '03_pista_kunafa.jpg': '03_pista_kunafa.jpg',
-      '04_biscoff_kunafa.jpg': '04_biscoff_kunafa.jpg',
-      '05_hazelnut_white_kunafa.jpg': '05_hazelnut_white_kunafa.jpg',
-      // For missing images, use the closest available one
-      '06_biscoff_hazelnut_kunafa.jpg': '04_biscoff_kunafa.jpg',
-      '07_pista_white_kunafa.jpg': '03_pista_kunafa.jpg',
-      '08_hazelnut_pista_kunafa.jpg': '03_pista_kunafa.jpg',
-      '09_biscoff_white_kunafa.jpg': '04_biscoff_kunafa.jpg',
-      '10_pista_biscoff_kunafa.jpg': '03_pista_kunafa.jpg',
-      '11_coffee_hazelnut_kunafa.jpg': '02_white_chocolate_kunafa.jpg',
-      '12_pista_coffee_kunafa.jpg': '03_pista_kunafa.jpg',
-    }
-    
-    return imageMap[filename] || null
+    // All images now exist - return the filename as is
+    return filename
   }
 
   // Try to load cloud image
