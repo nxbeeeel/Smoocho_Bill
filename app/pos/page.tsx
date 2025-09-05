@@ -299,15 +299,16 @@ export default function POSPage() {
           {/* Products Section - Takes 3 columns on laptop, full width on mobile */}
           <div className="lg:col-span-3 space-y-4">
             {/* Mobile-Optimized Header */}
-            <div className="bg-white rounded-lg shadow-sm border p-4">
+            <div className="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 rounded-lg shadow-lg border border-slate-700 p-4">
               <div className="flex items-center justify-between mb-3">
                 <div>
-                  <h1 className="text-2xl font-bold text-slate-900">POS System</h1>
-                  <p className="text-sm text-slate-600">{activeProducts.length} items available</p>
+                  <h1 className="text-2xl font-bold text-white">POS System</h1>
+                  <p className="text-sm text-slate-300">{activeProducts.length} items available</p>
                 </div>
                 <Button 
                   variant="outline" 
                   size="sm"
+                  className="border-slate-600 text-slate-300 hover:bg-slate-700 hover:text-white"
                   onClick={async () => {
                     try {
                       await db.reloadMenuData()
@@ -333,16 +334,16 @@ export default function POSPage() {
               
               {/* Settings Status - Mobile Friendly */}
               <div className="flex flex-wrap items-center gap-2 text-xs">
-                <span className="px-2 py-1 bg-green-100 text-green-700 rounded-full">
+                <span className="px-2 py-1 bg-emerald-500/20 text-emerald-300 rounded-full border border-emerald-500/30">
                   Tax: {settings?.taxRate || 18}%
                 </span>
                 {settings?.storeName && (
-                  <span className="px-2 py-1 bg-blue-100 text-blue-700 rounded-full">
+                  <span className="px-2 py-1 bg-amber-500/20 text-amber-300 rounded-full border border-amber-500/30">
                     {settings.storeName}
                   </span>
                 )}
                 {settings?.upiId && (
-                  <span className="px-2 py-1 bg-purple-100 text-purple-700 rounded-full">
+                  <span className="px-2 py-1 bg-orange-500/20 text-orange-300 rounded-full border border-orange-500/30">
                     UPI: {settings.upiId}
                   </span>
                 )}
@@ -356,7 +357,7 @@ export default function POSPage() {
                 placeholder="Search products..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10 h-10 text-sm"
+                className="pl-10 h-10 text-sm bg-slate-900 border-slate-700 text-white placeholder-slate-400 focus:border-emerald-500 focus:ring-emerald-500/20"
               />
             </div>
 
@@ -368,7 +369,11 @@ export default function POSPage() {
                   variant={selectedCategory === category ? "default" : "outline"}
                   size="sm"
                   onClick={() => setSelectedCategory(category)}
-                  className="whitespace-nowrap text-xs px-3 py-1 h-8"
+                  className={`whitespace-nowrap text-xs px-3 py-1 h-8 ${
+                    selectedCategory === category 
+                      ? 'bg-emerald-600 hover:bg-emerald-700 text-white shadow-lg' 
+                      : 'border-slate-700 text-slate-300 hover:bg-slate-800 hover:text-white bg-slate-900'
+                  }`}
                 >
                   {category}
                 </Button>
@@ -378,21 +383,21 @@ export default function POSPage() {
             <div className="space-y-4">
               {/* Debug Info */}
               {isLoadingProducts && (
-                <div className="bg-blue-50 border border-blue-200 rounded-lg p-8 mb-4 text-center">
-                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
-                  <p className="text-blue-800">Loading menu items...</p>
+                <div className="bg-slate-900 border border-slate-700 rounded-lg p-8 mb-4 text-center">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-500 mx-auto mb-4"></div>
+                  <p className="text-emerald-300">Loading menu items...</p>
                 </div>
               )}
 
               {!isLoadingProducts && products.length === 0 && (
-                <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-4">
-                  <p className="text-yellow-800">No products found in database. Click &quot;Reload Menu&quot; to load Smoocho menu.</p>
+                <div className="bg-amber-900/30 border border-amber-700 rounded-lg p-4 mb-4">
+                  <p className="text-amber-200">No products found in database. Click &quot;Reload Menu&quot; to load Smoocho menu.</p>
                 </div>
               )}
                 
               {!isLoadingProducts && products.length > 0 && filteredProducts.length === 0 && (
-                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
-                  <p className="text-blue-800">No products match current filters. Try changing category or search term.</p>
+                <div className="bg-slate-900 border border-slate-700 rounded-lg p-4 mb-4">
+                  <p className="text-slate-300">No products match current filters. Try changing category or search term.</p>
                 </div>
               )}
 
@@ -406,38 +411,38 @@ export default function POSPage() {
                   return (
                     <Card 
                       key={product.id || `product-${index}`} 
-                      className="cursor-pointer hover:shadow-md transition-all duration-200 active:scale-95 hover:scale-105 relative"
+                      className="cursor-pointer hover:shadow-xl transition-all duration-200 active:scale-95 hover:scale-105 relative bg-slate-900 border-slate-800 hover:border-emerald-500 shadow-lg"
                       onClick={() => addToCart(product)}
                     >
                       {/* Permanent Quantity Indicator */}
                       {quantity > 0 && (
                         <div className="absolute top-2 right-2 z-10">
-                          <div className="bg-green-500 text-white text-xs font-bold px-2 py-1 rounded-full shadow-lg border-2 border-white">
+                          <div className="bg-emerald-500 text-white text-xs font-bold px-2 py-1 rounded-full shadow-lg border-2 border-slate-900">
                             {quantity}
                           </div>
                         </div>
                       )}
                       
                       <CardContent className="p-3">
-                        <div className="aspect-square bg-gradient-to-br from-slate-100 to-slate-200 rounded-lg mb-3 flex items-center justify-center border border-slate-200 hover:shadow-sm transition-shadow overflow-hidden relative">
+                        <div className="aspect-square bg-gradient-to-br from-slate-800 to-slate-900 rounded-lg mb-3 flex items-center justify-center border border-slate-700 hover:shadow-sm transition-shadow overflow-hidden relative">
                           <AutoProductImage 
                             product={product}
                             className="w-full h-full object-cover"
-                            fallbackClassName="text-3xl drop-shadow-sm"
+                            fallbackClassName="text-3xl drop-shadow-sm text-slate-400"
                           />
                           {/* Permanent overlay for items in cart */}
                           {quantity > 0 && (
-                            <div className="absolute inset-0 bg-green-500 bg-opacity-10 rounded-lg"></div>
+                            <div className="absolute inset-0 bg-emerald-500 bg-opacity-20 rounded-lg"></div>
                           )}
                         </div>
-                        <h3 className="font-semibold text-sm mb-2 line-clamp-2 leading-tight text-center text-slate-800">{product.name}</h3>
+                        <h3 className="font-semibold text-sm mb-2 line-clamp-2 leading-tight text-center text-white">{product.name}</h3>
                         <div className="flex items-center justify-between">
-                          <span className="font-bold text-base text-green-600">
+                          <span className="font-bold text-base text-emerald-400">
                             {product.price === 0 ? 'APM' : formatCurrency(product.price)}
                           </span>
                           <Button 
                             size="sm" 
-                            className="h-8 w-8 p-0 bg-green-600 hover:bg-green-700 transition-all duration-200 hover:scale-110 rounded-full shadow-sm"
+                            className="h-8 w-8 p-0 bg-emerald-600 hover:bg-emerald-700 transition-all duration-200 hover:scale-110 rounded-full shadow-lg"
                             onClick={(e) => {
                               e.stopPropagation()
                               addToCart(product)
@@ -460,11 +465,11 @@ export default function POSPage() {
             {/* Desktop Cart Sidebar */}
             {cart.length > 0 && (
               <div className="hidden lg:block">
-                <Card className="sticky top-4 bg-gradient-to-br from-slate-50 to-slate-100 shadow-2xl border-2 border-slate-300/50 backdrop-blur-sm h-fit max-h-[calc(100vh-2rem)]">
-                  <CardHeader className="bg-gradient-to-r from-slate-800 to-slate-900 border-b border-slate-700">
+                <Card className="sticky top-4 bg-gradient-to-br from-slate-900 to-slate-800 shadow-2xl border-2 border-slate-700 backdrop-blur-sm h-fit max-h-[calc(100vh-2rem)]">
+                  <CardHeader className="bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 border-b border-slate-700">
                     <CardTitle className="flex items-center justify-between">
                       <span className="flex items-center text-white">
-                        <div className="bg-gradient-to-r from-blue-500 to-purple-600 p-2 rounded-full mr-3 shadow-lg">
+                        <div className="bg-gradient-to-r from-emerald-500 to-emerald-600 p-2 rounded-full mr-3 shadow-lg">
                           <ShoppingCart className="h-5 w-5 text-white" />
                         </div>
                         <div>
@@ -482,36 +487,36 @@ export default function POSPage() {
                       </Button>
                     </CardTitle>
                   </CardHeader>
-                  <CardContent className="p-4 bg-gradient-to-br from-slate-50 to-slate-100">
+                  <CardContent className="p-4 bg-gradient-to-br from-slate-900 to-slate-800">
                     <div className="space-y-3 max-h-[50vh] overflow-y-auto">
                       {cart.map((item, index) => (
-                        <div key={item.id || `cart-item-${index}`} className="flex items-center justify-between p-4 bg-white/80 backdrop-blur-sm rounded-lg border border-slate-200/50 shadow-sm">
+                        <div key={item.id || `cart-item-${index}`} className="flex items-center justify-between p-4 bg-slate-800/80 backdrop-blur-sm rounded-lg border border-slate-700/50 shadow-sm">
                           <div className="flex-1 min-w-0 mr-4">
-                            <h4 className="font-semibold text-sm text-slate-800 truncate">{item.name}</h4>
-                            <p className="text-xs text-slate-500">{formatCurrency(item.price)} × {item.quantity}</p>
+                            <h4 className="font-semibold text-sm text-white truncate">{item.name}</h4>
+                            <p className="text-xs text-slate-400">{formatCurrency(item.price)} × {item.quantity}</p>
                           </div>
                           <div className="flex items-center space-x-3">
-                            <div className="flex items-center space-x-2 bg-gradient-to-r from-slate-100 to-slate-200 rounded-lg p-1 border border-slate-300/50">
+                            <div className="flex items-center space-x-2 bg-gradient-to-r from-slate-800 to-slate-900 rounded-lg p-1 border border-slate-700/50">
                               <Button
                                 size="sm"
                                 variant="ghost"
-                                className="h-8 w-8 p-0 hover:bg-red-500/20 hover:text-red-600 text-slate-600"
+                                className="h-8 w-8 p-0 hover:bg-red-500/20 hover:text-red-400 text-slate-400"
                                 onClick={() => updateQuantity(item.id, item.quantity - 1)}
                               >
                                 <Minus className="h-4 w-4" />
                               </Button>
-                              <span className="w-8 text-center text-sm font-medium text-slate-700">{item.quantity}</span>
+                              <span className="w-8 text-center text-sm font-medium text-white">{item.quantity}</span>
                               <Button
                                 size="sm"
                                 variant="ghost"
-                                className="h-8 w-8 p-0 hover:bg-blue-500/20 hover:text-blue-600 text-slate-600"
+                                className="h-8 w-8 p-0 hover:bg-emerald-500/20 hover:text-emerald-400 text-slate-400"
                                 onClick={() => updateQuantity(item.id, item.quantity + 1)}
                               >
                                 <Plus className="h-4 w-4" />
                               </Button>
                             </div>
                             <div className="text-right min-w-0">
-                              <p className="font-bold text-sm text-blue-600">{formatCurrency(item.total)}</p>
+                              <p className="font-bold text-sm text-emerald-400">{formatCurrency(item.total)}</p>
                             </div>
                           </div>
                         </div>
@@ -519,14 +524,14 @@ export default function POSPage() {
                     </div>
                     
                     {/* Order Summary */}
-                    <div className="bg-gradient-to-r from-slate-800 to-slate-900 rounded-lg p-4 mt-4 border border-slate-700">
+                    <div className="bg-gradient-to-r from-slate-800 via-slate-900 to-slate-800 rounded-lg p-4 mt-4 border border-slate-700">
                       <div className="space-y-2 text-sm">
                         <div className="flex justify-between text-slate-300">
                           <span>Subtotal:</span>
                           <span className="font-semibold text-white">{formatCurrency(subtotal)}</span>
                         </div>
                         {discountAmount > 0 && (
-                          <div className="flex justify-between text-orange-400">
+                          <div className="flex justify-between text-amber-400">
                             <span>Discount ({discount}{discountType === 'percentage' ? '%' : '₹'}):</span>
                             <span className="font-semibold">-{formatCurrency(discountAmount)}</span>
                           </div>
@@ -544,13 +549,13 @@ export default function POSPage() {
                       </div>
                       <div className="flex justify-between text-xl font-bold border-t border-slate-600 pt-3 text-white">
                         <span>Total:</span>
-                        <span className="text-blue-400">{formatCurrency(total)}</span>
+                        <span className="text-emerald-400">{formatCurrency(total)}</span>
                       </div>
                     </div>
                     
                     <Button 
                       onClick={() => setShowCheckout(true)}
-                      className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-200 mt-4"
+                      className="w-full bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800 text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-200 mt-4"
                       size="lg"
                     >
                       <Receipt className="h-5 w-5 mr-2" />
