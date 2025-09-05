@@ -18,6 +18,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { Switch } from '@/components/ui/switch'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { useToast } from '@/hooks/use-toast'
 import { useSettings } from '@/hooks/use-settings'
@@ -269,6 +270,46 @@ export default function SettingsPage() {
                 </Select>
               </div>
             </div>
+            
+            {/* System Toggle Settings */}
+            <div className="space-y-4">
+              <h3 className="text-lg font-semibold text-slate-800">System Preferences</h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="flex items-center space-x-2">
+                  <Switch 
+                    id="auto-sync" 
+                    checked={localSettings.autoSync || false}
+                    onCheckedChange={(checked) => setLocalSettings({...localSettings, autoSync: checked})}
+                  />
+                  <Label htmlFor="auto-sync" className="text-sm font-medium">Auto Sync</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Switch 
+                    id="notifications" 
+                    checked={localSettings.notifications || true}
+                    onCheckedChange={(checked) => setLocalSettings({...localSettings, notifications: checked})}
+                  />
+                  <Label htmlFor="notifications" className="text-sm font-medium">Notifications</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Switch 
+                    id="dark-mode" 
+                    checked={localSettings.darkMode || false}
+                    onCheckedChange={(checked) => setLocalSettings({...localSettings, darkMode: checked})}
+                  />
+                  <Label htmlFor="dark-mode" className="text-sm font-medium">Dark Mode</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Switch 
+                    id="sound-effects" 
+                    checked={localSettings.soundEffects || true}
+                    onCheckedChange={(checked) => setLocalSettings({...localSettings, soundEffects: checked})}
+                  />
+                  <Label htmlFor="sound-effects" className="text-sm font-medium">Sound Effects</Label>
+                </div>
+              </div>
+            </div>
+            
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="timezone" className="text-sm font-medium">Timezone</Label>

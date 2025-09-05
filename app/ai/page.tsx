@@ -5,6 +5,8 @@ import { Bot, Send, Mic, MicOff, Sparkles, MessageSquare } from 'lucide-react'
 import { ResponsiveLayout } from '@/components/layout/responsive-layout'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
+import { Label } from '@/components/ui/label'
+import { Switch } from '@/components/ui/switch'
 
 interface Message {
   id: string
@@ -25,6 +27,12 @@ export default function AIAssistantPage() {
   const [inputMessage, setInputMessage] = useState('')
   const [isListening, setIsListening] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
+  const [aiSettings, setAiSettings] = useState({
+    voiceEnabled: true,
+    autoResponse: false,
+    smartSuggestions: true,
+    darkMode: false
+  })
 
   const handleSendMessage = async () => {
     if (!inputMessage.trim()) return
@@ -91,7 +99,7 @@ export default function AIAssistantPage() {
     <ResponsiveLayout>
       <div className="space-y-6 h-full flex flex-col">
         {/* Header */}
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
               <Bot className="h-6 w-6 text-white" />
@@ -101,9 +109,31 @@ export default function AIAssistantPage() {
               <p className="text-gray-600">Your intelligent business companion</p>
             </div>
           </div>
-          <div className="flex items-center gap-2">
-            <Sparkles className="h-5 w-5 text-yellow-500" />
-            <span className="text-sm text-gray-600">Powered by AI</span>
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2">
+              <Sparkles className="h-5 w-5 text-yellow-500" />
+              <span className="text-sm text-gray-600">Powered by AI</span>
+            </div>
+            
+            {/* AI Settings */}
+            <div className="flex flex-wrap items-center gap-3">
+              <div className="flex items-center space-x-2">
+                <Switch 
+                  id="voice-enabled" 
+                  checked={aiSettings.voiceEnabled}
+                  onCheckedChange={(checked) => setAiSettings({...aiSettings, voiceEnabled: checked})}
+                />
+                <Label htmlFor="voice-enabled" className="text-sm">Voice</Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <Switch 
+                  id="smart-suggestions" 
+                  checked={aiSettings.smartSuggestions}
+                  onCheckedChange={(checked) => setAiSettings({...aiSettings, smartSuggestions: checked})}
+                />
+                <Label htmlFor="smart-suggestions" className="text-sm">Smart Suggestions</Label>
+              </div>
+            </div>
           </div>
         </div>
 

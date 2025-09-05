@@ -15,6 +15,8 @@ import {
 import { ResponsiveLayout } from '@/components/layout/responsive-layout'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
+import { Label } from '@/components/ui/label'
+import { Switch } from '@/components/ui/switch'
 import { formatCurrency } from '@/lib/utils'
 
 export default function Dashboard() {
@@ -23,6 +25,13 @@ export default function Dashboard() {
     todayOrders: 47,
     lowStockItems: 3,
     activeUsers: 2
+  })
+
+  const [dashboardSettings, setDashboardSettings] = React.useState({
+    showLowStock: true,
+    showRecentOrders: true,
+    autoRefresh: false,
+    darkMode: false
   })
 
   const [recentOrders] = React.useState([
@@ -41,9 +50,39 @@ export default function Dashboard() {
     <ResponsiveLayout>
       <div className="space-y-6">
         {/* Header */}
-        <div>
-          <h1 className="text-3xl font-bold text-slate-900">Dashboard</h1>
-          <p className="text-slate-600">Welcome to Smoocho Premium POS System</p>
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div>
+            <h1 className="text-3xl font-bold text-slate-900">Dashboard</h1>
+            <p className="text-slate-600">Welcome to Smoocho Premium POS System</p>
+          </div>
+          
+          {/* Dashboard Controls */}
+          <div className="flex flex-wrap items-center gap-4">
+            <div className="flex items-center space-x-2">
+              <Switch 
+                id="show-low-stock" 
+                checked={dashboardSettings.showLowStock}
+                onCheckedChange={(checked) => setDashboardSettings({...dashboardSettings, showLowStock: checked})}
+              />
+              <Label htmlFor="show-low-stock" className="text-sm">Show Low Stock</Label>
+            </div>
+            <div className="flex items-center space-x-2">
+              <Switch 
+                id="show-recent-orders" 
+                checked={dashboardSettings.showRecentOrders}
+                onCheckedChange={(checked) => setDashboardSettings({...dashboardSettings, showRecentOrders: checked})}
+              />
+              <Label htmlFor="show-recent-orders" className="text-sm">Show Recent Orders</Label>
+            </div>
+            <div className="flex items-center space-x-2">
+              <Switch 
+                id="auto-refresh" 
+                checked={dashboardSettings.autoRefresh}
+                onCheckedChange={(checked) => setDashboardSettings({...dashboardSettings, autoRefresh: checked})}
+              />
+              <Label htmlFor="auto-refresh" className="text-sm">Auto Refresh</Label>
+            </div>
+          </div>
         </div>
 
         {/* Stats Cards */}

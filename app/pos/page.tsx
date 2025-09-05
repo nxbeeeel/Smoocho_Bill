@@ -22,6 +22,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { AutoProductImage } from '@/components/ui/auto-product-image'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Switch } from '@/components/ui/switch'
 import { formatCurrency, calculateTax, generateOrderNumber } from '@/lib/utils'
 import { useToast } from '@/hooks/use-toast'
 import { useSettings } from '@/hooks/use-settings'
@@ -52,6 +54,10 @@ export default function POSPage() {
   const [customerName, setCustomerName] = React.useState('')
   const [customerPhone, setCustomerPhone] = React.useState('')
   const [showCartModal, setShowCartModal] = React.useState(false)
+  const [autoPrint, setAutoPrint] = React.useState(true)
+  const [soundEnabled, setSoundEnabled] = React.useState(true)
+  const [showPrices, setShowPrices] = React.useState(true)
+  const [compactView, setCompactView] = React.useState(false)
 
   // Live query for products from database - get all products first, then filter
   const products = useLiveQuery(() => db.products.toArray()) || []
@@ -347,6 +353,46 @@ export default function POSPage() {
                     UPI: {settings.upiId}
                   </span>
                 )}
+              </div>
+              
+              {/* POS Controls */}
+              <div className="flex flex-wrap items-center gap-4 mt-3 pt-3 border-t border-slate-700">
+                <div className="flex items-center space-x-2">
+                  <Switch 
+                    id="auto-print" 
+                    checked={autoPrint}
+                    onCheckedChange={setAutoPrint}
+                    className="data-[state=checked]:bg-emerald-600"
+                  />
+                  <Label htmlFor="auto-print" className="text-xs text-slate-300">Auto Print</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Switch 
+                    id="sound-enabled" 
+                    checked={soundEnabled}
+                    onCheckedChange={setSoundEnabled}
+                    className="data-[state=checked]:bg-emerald-600"
+                  />
+                  <Label htmlFor="sound-enabled" className="text-xs text-slate-300">Sound</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Switch 
+                    id="show-prices" 
+                    checked={showPrices}
+                    onCheckedChange={setShowPrices}
+                    className="data-[state=checked]:bg-emerald-600"
+                  />
+                  <Label htmlFor="show-prices" className="text-xs text-slate-300">Show Prices</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Switch 
+                    id="compact-view" 
+                    checked={compactView}
+                    onCheckedChange={setCompactView}
+                    className="data-[state=checked]:bg-emerald-600"
+                  />
+                  <Label htmlFor="compact-view" className="text-xs text-slate-300">Compact View</Label>
+                </div>
               </div>
             </div>
 

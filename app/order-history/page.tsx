@@ -8,6 +8,7 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { Switch } from '@/components/ui/switch'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { useToast } from '@/hooks/use-toast'
 import { 
@@ -38,6 +39,10 @@ export default function OrderHistoryPage() {
   const [isEditing, setIsEditing] = useState(false)
   const [editingOrder, setEditingOrder] = useState<Order | null>(null)
   const [showOrderModal, setShowOrderModal] = useState(false)
+  const [showCompletedOrders, setShowCompletedOrders] = useState(true)
+  const [showPendingOrders, setShowPendingOrders] = useState(true)
+  const [autoRefresh, setAutoRefresh] = useState(false)
+  const [compactView, setCompactView] = useState(false)
 
   // Fetch orders from database
   const orders = useLiveQuery(() => db.orders.orderBy('createdAt').reverse().toArray()) || []
@@ -508,6 +513,42 @@ export default function OrderHistoryPage() {
               <div className="flex items-center gap-2 text-sm text-gray-600">
                 <Filter className="h-4 w-4" />
                 <span>{filteredOrders.length} orders</span>
+              </div>
+            </div>
+            
+            {/* Order History Controls */}
+            <div className="flex flex-wrap items-center gap-4 mt-4 pt-4 border-t border-gray-200">
+              <div className="flex items-center space-x-2">
+                <Switch 
+                  id="show-completed" 
+                  checked={showCompletedOrders}
+                  onCheckedChange={setShowCompletedOrders}
+                />
+                <Label htmlFor="show-completed" className="text-sm">Show Completed</Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <Switch 
+                  id="show-pending" 
+                  checked={showPendingOrders}
+                  onCheckedChange={setShowPendingOrders}
+                />
+                <Label htmlFor="show-pending" className="text-sm">Show Pending</Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <Switch 
+                  id="auto-refresh" 
+                  checked={autoRefresh}
+                  onCheckedChange={setAutoRefresh}
+                />
+                <Label htmlFor="auto-refresh" className="text-sm">Auto Refresh</Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <Switch 
+                  id="compact-view" 
+                  checked={compactView}
+                  onCheckedChange={setCompactView}
+                />
+                <Label htmlFor="compact-view" className="text-sm">Compact View</Label>
               </div>
             </div>
           </CardContent>
