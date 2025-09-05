@@ -190,6 +190,7 @@ export class ThermalPrinter {
     return false
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   private async printViaBluetooth(_content: string, _options: PrintOptions): Promise<boolean> {
     try {
       if (!navigator.bluetooth) return false
@@ -372,8 +373,8 @@ export class ThermalPrinter {
       <div style="margin-bottom: 8px; font-size: 11px;">
         <p style="margin: 1px 0;">Date: ${new Date().toLocaleDateString('en-IN')}</p>
         <p style="margin: 1px 0;">Time: ${new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })}</p>
-        <p style="margin: 1px 0;">Order Type: ${order.orderType?.toUpperCase() || 'TAKEAWAY'}</p>
-        <p style="margin: 1px 0;">Payment: ${order.paymentMethod?.toUpperCase() || 'CASH'}</p>
+        <p style="margin: 1px 0;">Order Type: ${(order.orderType as string)?.toUpperCase() || 'TAKEAWAY'}</p>
+        <p style="margin: 1px 0;">Payment: ${(order.paymentMethod as string)?.toUpperCase() || 'CASH'}</p>
         <p style="margin: 1px 0;">Status: PAID</p>
         ${order.customerName ? `<p style="margin: 1px 0;">Customer: ${order.customerName}</p>` : ''}
         ${order.customerPhone ? `<p style="margin: 1px 0;">Phone: ${order.customerPhone}</p>` : ''}

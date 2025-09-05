@@ -18,6 +18,7 @@ export default function CleanProductsPage() {
   const { products, categories, loading, createProduct, updateProduct, deleteProduct } = useProducts()
   
   const [showCreateDialog, setShowCreateDialog] = useState(false)
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [editingProduct] = useState<Product | null>(null)
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedCategory, setSelectedCategory] = useState('All')
