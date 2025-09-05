@@ -355,17 +355,17 @@ export class ThermalPrinter {
 
   // Generate thermal receipt content
   generateReceiptContent(order: Record<string, unknown>, settings: Record<string, unknown>): string {
-    const taxRate = settings?.taxRate || 18
-    const deliveryCharge = (order.orderType as string) === 'delivery' ? (settings?.deliveryCharge || 0) : 0
+    const taxRate = (settings?.taxRate as number) || 18
+    const deliveryCharge = (order.orderType as string) === 'delivery' ? ((settings?.deliveryCharge as number) || 0) : 0
     
     return `
       <div style="text-align: center; border-bottom: 1px dashed #000; padding-bottom: 8px; margin-bottom: 8px;">
-        <div style="font-size: 16px; font-weight: bold; margin-bottom: 2px;">${settings?.storeName || 'SMOOCHO BILL'}</div>
-        <div style="font-size: 10px; margin-bottom: 4px;">${settings?.storeAddress || 'Premium POS System'}</div>
-        <div style="font-size: 10px; margin-bottom: 4px;">Phone: ${settings?.storePhone || 'N/A'}</div>
-        ${settings?.storeEmail ? `<div style="font-size: 10px; margin-bottom: 4px;">Email: ${settings.storeEmail}</div>` : ''}
-        ${settings?.storeWebsite ? `<div style="font-size: 10px; margin-bottom: 4px;">Web: ${settings.storeWebsite}</div>` : ''}
-        ${settings?.storeGST ? `<div style="font-size: 10px; margin-bottom: 4px;">GST: ${settings.storeGST}</div>` : ''}
+        <div style="font-size: 16px; font-weight: bold; margin-bottom: 2px;">${(settings?.storeName as string) || 'SMOOCHO BILL'}</div>
+        <div style="font-size: 10px; margin-bottom: 4px;">${(settings?.storeAddress as string) || 'Premium POS System'}</div>
+        <div style="font-size: 10px; margin-bottom: 4px;">Phone: ${(settings?.storePhone as string) || 'N/A'}</div>
+        ${settings?.storeEmail ? `<div style="font-size: 10px; margin-bottom: 4px;">Email: ${settings.storeEmail as string}</div>` : ''}
+        ${settings?.storeWebsite ? `<div style="font-size: 10px; margin-bottom: 4px;">Web: ${settings.storeWebsite as string}</div>` : ''}
+        ${settings?.storeGST ? `<div style="font-size: 10px; margin-bottom: 4px;">GST: ${settings.storeGST as string}</div>` : ''}
         <div style="border-top: 1px dashed #000; margin: 4px 0;"></div>
         <div style="font-size: 10px; font-weight: bold;">BILL #${order.orderNumber as string}</div>
       </div>
@@ -428,9 +428,9 @@ export class ThermalPrinter {
 
       <div style="text-align: center; margin-top: 8px; border-top: 1px dashed #000; padding-top: 8px; font-size: 10px;">
         <div style="font-weight: bold; margin-bottom: 4px;">Thank you for your visit!</div>
-        ${settings?.upiId ? `<div style="margin: 4px 0; font-size: 9px;">UPI ID: ${settings.upiId}</div>` : ''}
+        ${settings?.upiId ? `<div style="margin: 4px 0; font-size: 9px;">UPI ID: ${settings.upiId as string}</div>` : ''}
         <div style="margin: 4px 0; font-size: 9px;">Keep this receipt for warranty</div>
-        <div style="margin: 4px 0; font-size: 9px;">For queries: ${settings?.storePhone || 'Contact Store'}</div>
+        <div style="margin: 4px 0; font-size: 9px;">For queries: ${(settings?.storePhone as string) || 'Contact Store'}</div>
         <div style="font-size: 9px;">Generated: ${new Date().toLocaleString('en-IN')}</div>
         <div style="margin-top: 4px; font-size: 8px; color: #666;">Powered by Smoocho Bill POS</div>
       </div>
