@@ -306,11 +306,11 @@ export default function POSPage() {
           {/* Products Section - Takes 3 columns on laptop, full width on mobile */}
           <div className="lg:col-span-3 space-y-4">
             {/* Mobile-Optimized Header */}
-            <div className="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 rounded-lg shadow-lg border border-slate-700 p-4">
+            <div className="bg-gradient-to-br from-background via-secondary to-background rounded-lg shadow-lg border border-border p-4">
               <div className="flex items-center justify-between mb-3">
                 <div>
-                  <h1 className="text-2xl font-bold text-white">POS System</h1>
-                  <p className="text-sm text-slate-300">{activeProducts.length} items available</p>
+                  <h1 className="text-2xl font-bold text-foreground">POS System</h1>
+                  <p className="text-sm text-muted-foreground">{activeProducts.length} items available</p>
                 </div>
                 <div className="flex items-center gap-2">
                   {/* Cart Badge for Mobile */}
@@ -328,7 +328,7 @@ export default function POSPage() {
                   <Button 
                     variant="outline" 
                     size="sm"
-                    className="border-slate-600 text-slate-300 hover:bg-slate-700 hover:text-white"
+                    className="border-border text-muted-foreground hover:bg-secondary hover:text-foreground"
                     onClick={async () => {
                       try {
                         await db.reloadMenuData()
@@ -355,23 +355,23 @@ export default function POSPage() {
               
               {/* Settings Status - Mobile Friendly */}
               <div className="flex flex-wrap items-center gap-2 text-xs">
-                <span className="px-2 py-1 bg-emerald-500/20 text-emerald-300 rounded-full border border-emerald-500/30">
+                <span className="px-2 py-1 bg-primary/20 text-primary rounded-full border border-primary/30">
                   Tax: {settings?.taxRate || 18}%
                 </span>
                 {settings?.storeName && (
-                  <span className="px-2 py-1 bg-amber-500/20 text-amber-300 rounded-full border border-amber-500/30">
+                  <span className="px-2 py-1 bg-accent/20 text-accent rounded-full border border-accent/30">
                     {settings.storeName}
                   </span>
                 )}
                 {settings?.upiId && (
-                  <span className="px-2 py-1 bg-orange-500/20 text-orange-300 rounded-full border border-orange-500/30">
+                  <span className="px-2 py-1 bg-secondary/20 text-secondary-foreground rounded-full border border-secondary/30">
                     UPI: {settings.upiId}
                   </span>
                 )}
               </div>
               
               {/* POS Controls */}
-              <div className="flex flex-wrap items-center gap-4 mt-3 pt-3 border-t border-slate-700">
+              <div className="flex flex-wrap items-center gap-4 mt-3 pt-3 border-t border-border">
                 <div className="flex items-center space-x-2">
                   <Switch 
                     id="auto-print" 
@@ -379,34 +379,34 @@ export default function POSPage() {
                     onCheckedChange={setAutoPrint}
                     className="data-[state=checked]:bg-emerald-600"
                   />
-                  <Label htmlFor="auto-print" className="text-xs text-slate-300">Auto Print</Label>
+                  <Label htmlFor="auto-print" className="text-xs text-muted-foreground">Auto Print</Label>
                 </div>
                 <div className="flex items-center space-x-2">
                   <Switch 
                     id="sound-enabled" 
                     checked={soundEnabled}
                     onCheckedChange={setSoundEnabled}
-                    className="data-[state=checked]:bg-emerald-600"
+                    className="data-[state=checked]:bg-primary"
                   />
-                  <Label htmlFor="sound-enabled" className="text-xs text-slate-300">Sound</Label>
+                  <Label htmlFor="sound-enabled" className="text-xs text-muted-foreground">Sound</Label>
                 </div>
                 <div className="flex items-center space-x-2">
                   <Switch 
                     id="show-prices" 
                     checked={showPrices}
                     onCheckedChange={setShowPrices}
-                    className="data-[state=checked]:bg-emerald-600"
+                    className="data-[state=checked]:bg-primary"
                   />
-                  <Label htmlFor="show-prices" className="text-xs text-slate-300">Show Prices</Label>
+                  <Label htmlFor="show-prices" className="text-xs text-muted-foreground">Show Prices</Label>
                 </div>
                 <div className="flex items-center space-x-2">
                   <Switch 
                     id="compact-view" 
                     checked={compactView}
                     onCheckedChange={setCompactView}
-                    className="data-[state=checked]:bg-emerald-600"
+                    className="data-[state=checked]:bg-primary"
                   />
-                  <Label htmlFor="compact-view" className="text-xs text-slate-300">Compact View</Label>
+                  <Label htmlFor="compact-view" className="text-xs text-muted-foreground">Compact View</Label>
                 </div>
               </div>
             </div>

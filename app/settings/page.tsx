@@ -53,10 +53,19 @@ export default function SettingsPage() {
 
   const handleSave = async () => {
     try {
+      console.log('Saving settings:', localSettings)
       if (!localSettings || typeof localSettings !== 'object') {
         throw new Error('Invalid settings data')
       }
+      
+      // Show loading toast
+      toast({
+        title: "Saving Settings",
+        description: "Please wait while settings are being saved...",
+      })
+      
       await updateSettings(localSettings)
+      
       toast({
         title: "Settings Saved",
         description: "Your settings have been saved successfully.",
@@ -65,7 +74,7 @@ export default function SettingsPage() {
       console.error('Error saving settings:', error)
       toast({
         title: "Error",
-        description: "Failed to save settings. Please try again.",
+        description: `Failed to save settings: ${error instanceof Error ? error.message : 'Unknown error'}`,
         variant: "destructive"
       })
     }
