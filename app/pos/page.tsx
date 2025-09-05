@@ -56,18 +56,37 @@ export default function POSPage() {
   // Live query for products from database - get all products first, then filter
   const products = useLiveQuery(() => db.products.toArray()) || []
   const activeProducts = products.filter(p => p.isActive)
+  const [isLoadingProducts, setIsLoadingProducts] = React.useState(true)
 
   // Ensure menu data is loaded on component mount (only once)
   React.useEffect(() => {
     const ensureMenuData = async () => {
-      const productCount = await db.products.count()
-      if (productCount === 0) {
-        console.log('No products found in POS - Ensuring menu data is loaded...')
-        await db.ensureMenuData()
+      try {
+        const productCount = await db.products.count()
+        if (productCount === 0) {
+          console.log('No products found in POS - Ensuring menu data is loaded...')
+          await db.ensureMenuData()
+        }
+        setIsLoadingProducts(false)
+      } catch (error) {
+        console.error('Error ensuring menu data:', error)
+        toast({
+          title: "Menu Loading Error",
+          description: "Failed to load menu data. Please refresh the page.",
+          variant: "destructive"
+        })
+        setIsLoadingProducts(false)
       }
     }
     ensureMenuData()
   }, []) // Empty dependency array - run only once on mount
+
+  // Update loading state when products are loaded
+  React.useEffect(() => {
+    if (products.length > 0) {
+      setIsLoadingProducts(false)
+    }
+  }, [products])
 
   // Get unique categories from products
   const categories = ['All', ...Array.from(new Set(activeProducts.map(p => p.category).filter(Boolean)))]
@@ -276,7 +295,7 @@ export default function POSPage() {
       <ResponsiveLayout>
       <div className="space-y-4 p-4 pb-24 lg:pb-4">
         {/* Main Content Area - Responsive Grid Layout */}
-        <div className="lg:grid lg:grid-cols-4 lg:gap-6 space-y-4 lg:space-y-0">
+        <div className="lg:grid lg:grid-cols-5 lg:gap-6 space-y-4 lg:space-y-0">
           {/* Products Section - Takes 3 columns on laptop, full width on mobile */}
           <div className="lg:col-span-3 space-y-4">
             {/* Mobile-Optimized Header */}
@@ -290,8 +309,21 @@ export default function POSPage() {
                   variant="outline" 
                   size="sm"
                   onClick={async () => {
-                    await db.reloadMenuData()
-                    window.location.reload()
+                    try {
+                      await db.reloadMenuData()
+                      toast({
+                        title: "Menu Reloaded",
+                        description: "Menu data has been refreshed successfully.",
+                      })
+                      window.location.reload()
+                    } catch (error) {
+                      console.error('Error reloading menu:', error)
+                      toast({
+                        title: "Reload Failed",
+                        description: "Failed to reload menu data. Please try again.",
+                        variant: "destructive"
+                      })
+                    }
                   }}
                 >
                   <RefreshCw className="h-4 w-4" />
@@ -345,20 +377,28 @@ export default function POSPage() {
 
             <div className="space-y-4">
               {/* Debug Info */}
-              {products.length === 0 && (
+              {isLoadingProducts && (
+                <div className="bg-blue-50 border border-blue-200 rounded-lg p-8 mb-4 text-center">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
+                  <p className="text-blue-800">Loading menu items...</p>
+                </div>
+              )}
+
+              {!isLoadingProducts && products.length === 0 && (
                 <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-4">
                   <p className="text-yellow-800">No products found in database. Click &quot;Reload Menu&quot; to load Smoocho menu.</p>
                 </div>
               )}
                 
-              {products.length > 0 && filteredProducts.length === 0 && (
+              {!isLoadingProducts && products.length > 0 && filteredProducts.length === 0 && (
                 <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
                   <p className="text-blue-800">No products match current filters. Try changing category or search term.</p>
                 </div>
               )}
 
               {/* Mobile-Optimized Products Grid */}
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3">
+              {!isLoadingProducts && (
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3">
                 {filteredProducts.map((product, index) => {
                   const cartItem = cart.find(item => item.id === product.id)
                   const quantity = cartItem ? cartItem.quantity : 0
@@ -410,16 +450,17 @@ export default function POSPage() {
                     </Card>
                   )
                 })}
-              </div>
+                </div>
+              )}
             </div>
           </div>
 
           {/* Cart Section - Right side on laptop, floating button on mobile */}
-          <div className="lg:col-span-1">
+          <div className="lg:col-span-2">
             {/* Desktop Cart Sidebar */}
             {cart.length > 0 && (
               <div className="hidden lg:block">
-                <Card className="sticky top-4 bg-gradient-to-br from-slate-50 to-slate-100 shadow-2xl border-2 border-slate-300/50 backdrop-blur-sm">
+                <Card className="sticky top-4 bg-gradient-to-br from-slate-50 to-slate-100 shadow-2xl border-2 border-slate-300/50 backdrop-blur-sm h-fit max-h-[calc(100vh-2rem)]">
                   <CardHeader className="bg-gradient-to-r from-slate-800 to-slate-900 border-b border-slate-700">
                     <CardTitle className="flex items-center justify-between">
                       <span className="flex items-center text-white">
@@ -442,34 +483,36 @@ export default function POSPage() {
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="p-4 bg-gradient-to-br from-slate-50 to-slate-100">
-                    <div className="space-y-3 max-h-96 overflow-y-auto">
+                    <div className="space-y-3 max-h-[50vh] overflow-y-auto">
                       {cart.map((item, index) => (
-                        <div key={item.id || `cart-item-${index}`} className="flex items-center justify-between p-3 bg-white/80 backdrop-blur-sm rounded-lg border border-slate-200/50 shadow-sm">
-                          <div className="flex-1 min-w-0">
+                        <div key={item.id || `cart-item-${index}`} className="flex items-center justify-between p-4 bg-white/80 backdrop-blur-sm rounded-lg border border-slate-200/50 shadow-sm">
+                          <div className="flex-1 min-w-0 mr-4">
                             <h4 className="font-semibold text-sm text-slate-800 truncate">{item.name}</h4>
                             <p className="text-xs text-slate-500">{formatCurrency(item.price)} × {item.quantity}</p>
                           </div>
-                          <div className="flex items-center space-x-2 bg-gradient-to-r from-slate-100 to-slate-200 rounded-lg p-1 border border-slate-300/50">
-                            <Button
-                              size="sm"
-                              variant="ghost"
-                              className="h-7 w-7 p-0 hover:bg-red-500/20 hover:text-red-600 text-slate-600"
-                              onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                            >
-                              <Minus className="h-3 w-3" />
-                            </Button>
-                            <span className="w-6 text-center text-sm font-medium text-slate-700">{item.quantity}</span>
-                            <Button
-                              size="sm"
-                              variant="ghost"
-                              className="h-7 w-7 p-0 hover:bg-blue-500/20 hover:text-blue-600 text-slate-600"
-                              onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                            >
-                              <Plus className="h-3 w-3" />
-                            </Button>
-                          </div>
-                          <div className="ml-3 text-right min-w-0">
-                            <p className="font-bold text-sm text-blue-600">{formatCurrency(item.total)}</p>
+                          <div className="flex items-center space-x-3">
+                            <div className="flex items-center space-x-2 bg-gradient-to-r from-slate-100 to-slate-200 rounded-lg p-1 border border-slate-300/50">
+                              <Button
+                                size="sm"
+                                variant="ghost"
+                                className="h-8 w-8 p-0 hover:bg-red-500/20 hover:text-red-600 text-slate-600"
+                                onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                              >
+                                <Minus className="h-4 w-4" />
+                              </Button>
+                              <span className="w-8 text-center text-sm font-medium text-slate-700">{item.quantity}</span>
+                              <Button
+                                size="sm"
+                                variant="ghost"
+                                className="h-8 w-8 p-0 hover:bg-blue-500/20 hover:text-blue-600 text-slate-600"
+                                onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                              >
+                                <Plus className="h-4 w-4" />
+                              </Button>
+                            </div>
+                            <div className="text-right min-w-0">
+                              <p className="font-bold text-sm text-blue-600">{formatCurrency(item.total)}</p>
+                            </div>
                           </div>
                         </div>
                       ))}
