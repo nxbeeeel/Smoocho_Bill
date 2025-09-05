@@ -142,7 +142,7 @@ export function ImageSync({ className }: ImageSyncProps) {
             </div>
             <div className="text-xs text-yellow-700 max-h-32 overflow-y-auto">
               {imageStatus.missingFiles.slice(0, 10).map((file, index) => (
-                <div key={index} className="truncate">{file}</div>
+                <div key={`missing-file-${file}-${index}`} className="truncate">{file}</div>
               ))}
               {imageStatus.missingFiles.length > 10 && (
                 <div className="text-yellow-600">... and {imageStatus.missingFiles.length - 10} more</div>

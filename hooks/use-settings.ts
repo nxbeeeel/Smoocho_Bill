@@ -144,30 +144,33 @@ export function useSettings() {
   // Convert database settings to object
   const settings: AppSettings = { ...defaultSettings }
   
-  settingsData.forEach(setting => {
-    const key = setting.key as keyof AppSettings
-    if (key in settings) {
-      const value = setting.value
-      
-      // Parse different data types
-      if (key === 'taxRate' || key === 'minOrderAmount' || key === 'deliveryCharge' || key === 'sessionTimeout' || key === 'backupRetention') {
-        settings[key] = parseFloat(value) || 0
-      } else if (key === 'printerEnabled' || key === 'soundEnabled' || key === 'notifications' || key === 'autoBackup' || key === 'requirePassword' || key === 'twoFactorAuth' || key === 'showImages' || key === 'showPrices' || key === 'showStock' || key === 'compactMode' || key === 'emailNotifications' || key === 'smsNotifications' || key === 'pushNotifications' || key === 'lowStockAlert' || key === 'dailyReport' || key === 'cloudBackup' || key === 'localBackup') {
-        settings[key] = value === 'true'
-      } else if (key === 'paymentMethods') {
-        try {
-          settings[key] = JSON.parse(value)
-        } catch {
-          settings[key] = ['cash', 'card', 'upi', 'wallet']
+  // Safety check for settingsData
+  if (Array.isArray(settingsData)) {
+    settingsData.forEach(setting => {
+      const key = setting.key as keyof AppSettings
+      if (key in settings) {
+        const value = setting.value
+        
+        // Parse different data types
+        if (key === 'taxRate' || key === 'minOrderAmount' || key === 'deliveryCharge' || key === 'sessionTimeout' || key === 'backupRetention') {
+          settings[key] = parseFloat(value) || 0
+        } else if (key === 'printerEnabled' || key === 'soundEnabled' || key === 'notifications' || key === 'autoBackup' || key === 'requirePassword' || key === 'twoFactorAuth' || key === 'showImages' || key === 'showPrices' || key === 'showStock' || key === 'compactMode' || key === 'emailNotifications' || key === 'smsNotifications' || key === 'pushNotifications' || key === 'lowStockAlert' || key === 'dailyReport' || key === 'cloudBackup' || key === 'localBackup') {
+          settings[key] = value === 'true'
+        } else if (key === 'paymentMethods') {
+          try {
+            settings[key] = JSON.parse(value)
+          } catch {
+            settings[key] = ['cash', 'card', 'upi', 'wallet']
+          }
+        } else {
+          settings[key] = value as any
         }
-      } else {
-        settings[key] = value as any
       }
-    }
-  })
+    })
+  }
   
   // If no settings from database, try localStorage backup
-  if (settingsData.length === 0) {
+  if (!Array.isArray(settingsData) || settingsData.length === 0) {
     const backupSettings = loadFromLocalStorage()
     if (backupSettings) {
       Object.assign(settings, backupSettings)
