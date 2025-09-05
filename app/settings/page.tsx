@@ -111,6 +111,7 @@ export default function SettingsPage() {
                 <Label htmlFor="storeName" className="text-sm font-medium">Store Name</Label>
                 <Input
                   id="storeName"
+                  type="text"
                   value={localSettings.storeName || ''}
                   onChange={(e) => setLocalSettings({...localSettings, storeName: e.target.value})}
                   placeholder="Enter store name"
@@ -133,6 +134,7 @@ export default function SettingsPage() {
               <Label htmlFor="storeAddress" className="text-sm font-medium">Store Address</Label>
               <Input
                 id="storeAddress"
+                type="text"
                 value={localSettings.storeAddress || ''}
                 onChange={(e) => setLocalSettings({...localSettings, storeAddress: e.target.value})}
                 placeholder="Enter complete store address"
@@ -155,6 +157,7 @@ export default function SettingsPage() {
                 <Label htmlFor="storeWebsite" className="text-sm font-medium">Website</Label>
                 <Input
                   id="storeWebsite"
+                  type="url"
                   value={localSettings.storeWebsite || ''}
                   onChange={(e) => setLocalSettings({...localSettings, storeWebsite: e.target.value})}
                   placeholder="www.example.com"
@@ -166,6 +169,7 @@ export default function SettingsPage() {
               <Label htmlFor="storeGST" className="text-sm font-medium">GST Number</Label>
               <Input
                 id="storeGST"
+                type="text"
                 value={localSettings.storeGST || ''}
                 onChange={(e) => setLocalSettings({...localSettings, storeGST: e.target.value})}
                 placeholder="22ABCDE1234F1Z5"
@@ -208,6 +212,7 @@ export default function SettingsPage() {
               <Label htmlFor="upiId" className="text-sm font-medium">UPI ID</Label>
               <Input
                 id="upiId"
+                type="text"
                 value={localSettings.upiId || ''}
                 onChange={(e) => setLocalSettings({...localSettings, upiId: e.target.value})}
                 placeholder="yourname@upi"
