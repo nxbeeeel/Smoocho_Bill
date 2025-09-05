@@ -113,8 +113,8 @@ export default function SettingsPage() {
                 <Input
                   id="storeName"
                   type="text"
-                  value={String(localSettings.storeName || '')}
-                  onChange={(e) => setLocalSettings({...localSettings, storeName: e.target.value})}
+                  value={String(localSettings.businessName || '')}
+                  onChange={(e) => setLocalSettings({...localSettings, businessName: e.target.value})}
                   placeholder="Enter store name"
                   className="w-full"
                 />
@@ -124,8 +124,8 @@ export default function SettingsPage() {
                 <Input
                   id="storePhone"
                   type="tel"
-                  value={localSettings.storePhone || ''}
-                  onChange={(e) => setLocalSettings({...localSettings, storePhone: e.target.value})}
+                  value={localSettings.businessPhone || ''}
+                  onChange={(e) => setLocalSettings({...localSettings, businessPhone: e.target.value})}
                   placeholder="+91 9876543210"
                   className="w-full"
                 />
@@ -136,8 +136,8 @@ export default function SettingsPage() {
               <Input
                 id="storeAddress"
                 type="text"
-                value={String(localSettings.storeAddress || '')}
-                onChange={(e) => setLocalSettings({...localSettings, storeAddress: e.target.value})}
+                value={String(localSettings.businessAddress || '')}
+                onChange={(e) => setLocalSettings({...localSettings, businessAddress: e.target.value})}
                 placeholder="Enter complete store address"
                 className="w-full"
               />
@@ -148,8 +148,8 @@ export default function SettingsPage() {
                 <Input
                   id="storeEmail"
                   type="text"
-                  value={String(localSettings.storeEmail || '')}
-                  onChange={(e) => setLocalSettings({...localSettings, storeEmail: e.target.value})}
+                  value={String(localSettings.businessEmail || '')}
+                  onChange={(e) => setLocalSettings({...localSettings, businessEmail: e.target.value})}
                   placeholder="store@example.com"
                   className="w-full"
                 />
@@ -159,8 +159,8 @@ export default function SettingsPage() {
                 <Input
                   id="storeWebsite"
                   type="text"
-                  value={String(localSettings.storeWebsite || '')}
-                  onChange={(e) => setLocalSettings({...localSettings, storeWebsite: e.target.value})}
+                  value={String(localSettings.businessWebsite || '')}
+                  onChange={(e) => setLocalSettings({...localSettings, businessWebsite: e.target.value})}
                   placeholder="https://www.example.com"
                   className="w-full"
                 />
@@ -171,8 +171,8 @@ export default function SettingsPage() {
               <Input
                 id="storeGST"
                 type="text"
-                value={String(localSettings.storeGST || '')}
-                onChange={(e) => setLocalSettings({...localSettings, storeGST: e.target.value})}
+                value={String(localSettings.businessGST || '')}
+                onChange={(e) => setLocalSettings({...localSettings, businessGST: e.target.value})}
                 placeholder="22ABCDE1234F1Z5"
                 className="w-full"
               />
@@ -226,8 +226,8 @@ export default function SettingsPage() {
               <Input
                   id="minOrderAmount"
                   type="number"
-                  value={localSettings.minOrderAmount || 0}
-                  onChange={(e) => setLocalSettings({...localSettings, minOrderAmount: Number(e.target.value)})}
+                  value={localSettings.minimumOrderAmount || 0}
+                  onChange={(e) => setLocalSettings({...localSettings, minimumOrderAmount: Number(e.target.value)})}
                   placeholder="0"
                   className="w-full"
               />

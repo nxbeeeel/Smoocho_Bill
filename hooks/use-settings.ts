@@ -3,15 +3,56 @@
 import { useState, useEffect, useCallback } from 'react'
 
 export interface AppSettings {
+  // Core Application Settings
   autoSync: boolean
   darkMode: boolean
   soundEffects: boolean
-  taxRate: number
-  currency: string
+  
+  // Business Information
   businessName: string
   businessAddress: string
   businessPhone: string
   businessEmail: string
+  businessWebsite: string
+  businessGST: string
+  
+  // Financial Settings
+  taxRate: number
+  currency: string
+  minimumOrderAmount: number
+  deliveryCharge: number
+  upiId: string
+  
+  // Display Settings
+  theme: string
+  language: string
+  timezone: string
+  dateFormat: string
+  
+  // Feature Toggles
+  printerEnabled: boolean
+  soundEnabled: boolean
+  autoBackup: boolean
+  showImages: boolean
+  showPrices: boolean
+  showStock: boolean
+  compactMode: boolean
+  
+  // Notification Settings
+  notifications: boolean
+  emailNotifications: boolean
+  smsNotifications: boolean
+  pushNotifications: boolean
+  lowStockAlert: boolean
+  dailyReport: boolean
+  
+  // Backup Settings
+  backupFrequency: string
+  backupRetention: number
+  cloudBackup: boolean
+  localBackup: boolean
+  
+  // Legacy Settings (for backward compatibility)
   printerSettings: {
     enabled: boolean
     paperSize: string
@@ -25,15 +66,56 @@ export interface AppSettings {
 }
 
 const defaultSettings: AppSettings = {
+  // Core Application Settings
   autoSync: true,
   darkMode: false,
   soundEffects: true,
-  taxRate: 18,
-  currency: 'INR',
+  
+  // Business Information
   businessName: 'Smoocho Bill',
   businessAddress: '',
   businessPhone: '',
   businessEmail: '',
+  businessWebsite: '',
+  businessGST: '',
+  
+  // Financial Settings
+  taxRate: 18,
+  currency: 'INR',
+  minimumOrderAmount: 0,
+  deliveryCharge: 0,
+  upiId: '',
+  
+  // Display Settings
+  theme: 'light',
+  language: 'en',
+  timezone: 'Asia/Kolkata',
+  dateFormat: 'DD/MM/YYYY',
+  
+  // Feature Toggles
+  printerEnabled: false,
+  soundEnabled: true,
+  autoBackup: false,
+  showImages: true,
+  showPrices: true,
+  showStock: true,
+  compactMode: false,
+  
+  // Notification Settings
+  notifications: true,
+  emailNotifications: false,
+  smsNotifications: false,
+  pushNotifications: true,
+  lowStockAlert: true,
+  dailyReport: false,
+  
+  // Backup Settings
+  backupFrequency: 'daily',
+  backupRetention: 30,
+  cloudBackup: false,
+  localBackup: true,
+  
+  // Legacy Settings (for backward compatibility)
   printerSettings: {
     enabled: false,
     paperSize: '80mm',
@@ -93,11 +175,15 @@ export function useSettings() {
     localStorage.setItem('app-settings', JSON.stringify(defaultSettings))
   }, [])
 
+  // Legacy method for backward compatibility
+  const updateSettings = saveSettings
+
   return {
     settings,
     loading,
     error,
     updateSetting,
+    updateSettings, // Legacy method
     saveSettings,
     resetToDefaults
   }
