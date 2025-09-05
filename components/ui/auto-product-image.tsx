@@ -19,7 +19,6 @@ export function AutoProductImage({ product, className = "w-full h-full object-co
     const loadImage = async () => {
       try {
         setIsLoading(true)
-        setHasError(false)
 
         // First check if product has an uploaded image
         if (product.image && product.image.trim() !== '') {
@@ -43,7 +42,6 @@ export function AutoProductImage({ product, className = "w-full h-full object-co
         // Use fallback emoji
         const fallbackEmoji = autoImageLoader.getFallbackEmoji(product.category)
         setImageSrc(fallbackEmoji)
-        setHasError(true)
       } finally {
         setIsLoading(false)
       }
@@ -68,7 +66,6 @@ export function AutoProductImage({ product, className = "w-full h-full object-co
         alt={product.name}
         className={className}
         onError={() => {
-          setHasError(true)
           const fallbackEmoji = autoImageLoader.getFallbackEmoji(product.category)
           setImageSrc(fallbackEmoji)
         }}
