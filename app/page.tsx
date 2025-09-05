@@ -181,7 +181,7 @@ export default function Dashboard() {
             <CardContent>
               <div className="space-y-4">
                 {lowStockItems.map((item, index) => (
-                  <div key={index} className="flex items-center justify-between">
+                  <div key={item.id || `low-stock-${index}`} className="flex items-center justify-between">
                     <div>
                       <p className="text-sm font-medium">{item.name}</p>
                       <p className="text-xs text-muted-foreground">

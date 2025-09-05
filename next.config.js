@@ -10,6 +10,16 @@ const nextConfig = {
   trailingSlash: true,
   images: {
     unoptimized: true
+  },
+  // Enable development mode for better error details
+  reactStrictMode: true,
+  swcMinify: false,
+  // Disable minification to get better error details
+  webpack: (config, { dev, isServer }) => {
+    if (dev) {
+      config.optimization.minimize = false
+    }
+    return config
   }
 }
 
