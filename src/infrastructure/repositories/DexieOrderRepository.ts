@@ -120,10 +120,19 @@ export class DexieOrderRepository implements OrderRepository {
   }
 
   private toDomainEntity(model: OrderModel): Order {
+    // Convert database items to domain OrderItems
+    const orderItems = model.items.map((item: Record<string, unknown>) => ({
+      productId: { value: item.productId as number },
+      productName: { value: item.productName as string },
+      quantity: item.quantity as number,
+      price: { value: item.price as number },
+      total: item.total as number
+    }))
+
     return new Order(
       { value: model.id! },
       new OrderNumber(model.orderNumber),
-      model.items,
+      orderItems,
       { value: model.subtotal },
       { value: model.discount },
       model.discountType,
@@ -142,10 +151,19 @@ export class DexieOrderRepository implements OrderRepository {
   }
 
   private toDatabaseModel(order: Order): OrderModel {
+    // Convert domain OrderItems to database format
+    const databaseItems = order.items.map(item => ({
+      productId: item.productId.value,
+      productName: item.productName.value,
+      quantity: item.quantity,
+      price: item.price.value,
+      total: item.total
+    }))
+
     return {
       id: order.id.value || undefined,
       orderNumber: order.orderNumber.value,
-      items: order.items,
+      items: databaseItems,
       subtotal: order.subtotal.value,
       discount: order.discount.value,
       discountType: order.discountType,
