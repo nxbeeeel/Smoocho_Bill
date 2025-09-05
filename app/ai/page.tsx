@@ -111,7 +111,7 @@ export default function AIAssistantPage() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           {quickActions.map((action, index) => (
             <Button
-              key={action.title || `action-${index}`}
+              key={action.label || `action-${index}`}
               variant="outline"
               size="sm"
               onClick={action.action}
