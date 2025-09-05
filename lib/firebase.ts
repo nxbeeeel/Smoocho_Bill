@@ -2,14 +2,15 @@ import { initializeApp } from 'firebase/app'
 import { getFirestore } from 'firebase/firestore'
 import { getAuth } from 'firebase/auth'
 
-// Firebase configuration - REPLACE WITH YOUR ACTUAL CONFIG
+// Firebase configuration
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY_HERE", // Replace with your actual API key
-  authDomain: "YOUR_PROJECT_ID.firebaseapp.com", // Replace with your project ID
-  projectId: "YOUR_PROJECT_ID", // Replace with your project ID
-  storageBucket: "YOUR_PROJECT_ID.appspot.com", // Replace with your project ID
-  messagingSenderId: "YOUR_SENDER_ID", // Replace with your sender ID
-  appId: "YOUR_APP_ID" // Replace with your app ID
+  apiKey: "AIzaSyBj7tgf_gqUzNRwge4D2cxWuxr3zKOHNXk",
+  authDomain: "beloop-pos.firebaseapp.com",
+  projectId: "beloop-pos",
+  storageBucket: "beloop-pos.firebasestorage.app",
+  messagingSenderId: "400302967243",
+  appId: "1:400302967243:web:e239108515e94b2ab74e4e",
+  measurementId: "G-S70VL8QCBH"
 }
 
 // Initialize Firebase
