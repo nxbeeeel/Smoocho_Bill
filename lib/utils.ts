@@ -49,7 +49,8 @@ export function isLowStock(quantity: number, threshold: number): boolean {
   return quantity <= threshold
 }
 
-export function isExpiringSoon(expiryDate: Date | string, daysAhead: number = 7): boolean {
+export function isExpiringSoon(expiryDate: Date | string | undefined, daysAhead: number = 7): boolean {
+  if (!expiryDate) return false
   const expiry = typeof expiryDate === 'string' ? new Date(expiryDate) : expiryDate
   const now = new Date()
   const diffTime = expiry.getTime() - now.getTime()
