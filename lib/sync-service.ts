@@ -94,7 +94,10 @@ class SyncService {
       return {
         success: !hasErrors,
         message: hasErrors ? 'Sync completed with errors' : 'Sync completed successfully',
-        data: results
+        data: {
+          syncResults: results,
+          timestamp: new Date().toISOString()
+        }
       }
     } catch (error) {
       this.syncInProgress = false
