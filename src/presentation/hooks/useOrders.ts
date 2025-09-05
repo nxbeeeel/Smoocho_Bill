@@ -1,17 +1,7 @@
 import { useState, useCallback, useEffect } from 'react'
 import { Order } from '../../domain/entities/Order'
 import { ServiceContainer } from '../../application/services/ServiceContainer'
-
-export interface CreateOrderRequest {
-  paymentMethod: 'cash' | 'card' | 'upi'
-  orderType: 'takeaway' | 'delivery' | 'dine-in'
-  discount: number
-  discountType: 'flat' | 'percentage'
-  taxRate: number
-  deliveryCharge: number
-  customerName?: string
-  customerPhone?: string
-}
+import { CreateOrderRequest } from '../../application/use-cases/order/CreateOrderUseCase'
 
 export interface UseOrdersReturn {
   orders: Order[]

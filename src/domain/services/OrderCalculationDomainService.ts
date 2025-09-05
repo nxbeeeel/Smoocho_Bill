@@ -10,7 +10,7 @@
 import { CartItemEntity } from '../entities/CartItemEntity'
 import { MoneyValueObject } from '../value-objects/MoneyValueObject'
 
-export interface OrderCalculationRequest {
+export interface DomainOrderCalculationRequest {
   readonly cartItems: CartItemEntity[]
   readonly discountAmount: MoneyValueObject
   readonly discountType: 'flat' | 'percentage'
@@ -18,7 +18,7 @@ export interface OrderCalculationRequest {
   readonly deliveryCharge: MoneyValueObject
 }
 
-export interface OrderCalculationResult {
+export interface DomainOrderCalculationResult {
   readonly subtotal: MoneyValueObject
   readonly discountAmount: MoneyValueObject
   readonly taxableAmount: MoneyValueObject
@@ -35,7 +35,7 @@ export class OrderCalculationDomainService {
   /**
    * Business Logic: Calculate complete order totals
    */
-  public calculateOrderTotals(request: OrderCalculationRequest): OrderCalculationResult {
+  public calculateOrderTotals(request: DomainOrderCalculationRequest): DomainOrderCalculationResult {
     this.validateCalculationRequest(request)
 
     // Calculate subtotal
@@ -117,7 +117,7 @@ export class OrderCalculationDomainService {
   /**
    * Business Logic: Validate calculation request
    */
-  private validateCalculationRequest(request: OrderCalculationRequest): void {
+  private validateCalculationRequest(request: DomainOrderCalculationRequest): void {
     if (!request.cartItems || request.cartItems.length === 0) {
       throw new Error('Cart items are required for calculation')
     }
