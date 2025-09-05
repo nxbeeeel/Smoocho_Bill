@@ -112,7 +112,7 @@ export default function SettingsPage() {
                 <Input
                   id="storeName"
                   type="text"
-                  value={localSettings.storeName || ''}
+                  value={String(localSettings.storeName || '')}
                   onChange={(e) => setLocalSettings({...localSettings, storeName: e.target.value})}
                   placeholder="Enter store name"
                   className="w-full"
@@ -135,7 +135,7 @@ export default function SettingsPage() {
               <Input
                 id="storeAddress"
                 type="text"
-                value={localSettings.storeAddress || ''}
+                value={String(localSettings.storeAddress || '')}
                 onChange={(e) => setLocalSettings({...localSettings, storeAddress: e.target.value})}
                 placeholder="Enter complete store address"
                 className="w-full"
@@ -147,7 +147,7 @@ export default function SettingsPage() {
                 <Input
                   id="storeEmail"
                   type="email"
-                  value={localSettings.storeEmail || ''}
+                  value={String(localSettings.storeEmail || '')}
                   onChange={(e) => setLocalSettings({...localSettings, storeEmail: e.target.value})}
                   placeholder="store@example.com"
                   className="w-full"
@@ -158,7 +158,7 @@ export default function SettingsPage() {
                 <Input
                   id="storeWebsite"
                   type="url"
-                  value={localSettings.storeWebsite || ''}
+                  value={String(localSettings.storeWebsite || '')}
                   onChange={(e) => setLocalSettings({...localSettings, storeWebsite: e.target.value})}
                   placeholder="www.example.com"
                   className="w-full"
@@ -170,7 +170,7 @@ export default function SettingsPage() {
               <Input
                 id="storeGST"
                 type="text"
-                value={localSettings.storeGST || ''}
+                value={String(localSettings.storeGST || '')}
                 onChange={(e) => setLocalSettings({...localSettings, storeGST: e.target.value})}
                 placeholder="22ABCDE1234F1Z5"
                 className="w-full"
@@ -213,7 +213,7 @@ export default function SettingsPage() {
               <Input
                 id="upiId"
                 type="text"
-                value={localSettings.upiId || ''}
+                value={String(localSettings.upiId || '')}
                 onChange={(e) => setLocalSettings({...localSettings, upiId: e.target.value})}
                 placeholder="yourname@upi"
                 className="w-full"
