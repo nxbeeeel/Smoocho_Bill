@@ -126,9 +126,9 @@ const loadFromLocalStorage = (): AppSettings | null => {
     if (stored) {
       const parsed = JSON.parse(stored)
       // Only log once to avoid spam
-      if (!window.settingsLoadedFromBackup) {
+      if (!(window as any).settingsLoadedFromBackup) {
         console.log('Settings loaded from localStorage backup')
-        window.settingsLoadedFromBackup = true
+        ;(window as any).settingsLoadedFromBackup = true
       }
       return parsed
     }
@@ -172,9 +172,9 @@ export function useSettings() {
     if (backupSettings) {
       Object.assign(settings, backupSettings)
       // Only log once to avoid spam
-      if (!window.usingLocalStorageBackup) {
+      if (!(window as any).usingLocalStorageBackup) {
         console.log('Using localStorage backup for settings')
-        window.usingLocalStorageBackup = true
+        ;(window as any).usingLocalStorageBackup = true
       }
     }
   }
