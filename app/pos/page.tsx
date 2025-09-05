@@ -445,8 +445,8 @@ export default function POSPage() {
                   </CardHeader>
                   <CardContent className="p-4 bg-gradient-to-br from-slate-50 to-slate-100">
                     <div className="space-y-3 max-h-96 overflow-y-auto">
-                      {cart.map(item => (
-                        <div key={item.id} className="flex items-center justify-between p-3 bg-white/80 backdrop-blur-sm rounded-lg border border-slate-200/50 shadow-sm">
+                      {cart.map((item, index) => (
+                        <div key={item.id || `cart-item-${index}`} className="flex items-center justify-between p-3 bg-white/80 backdrop-blur-sm rounded-lg border border-slate-200/50 shadow-sm">
                           <div className="flex-1 min-w-0">
                             <h4 className="font-semibold text-sm text-slate-800 truncate">{item.name}</h4>
                             <p className="text-xs text-slate-500">{formatCurrency(item.price)} × {item.quantity}</p>
@@ -582,8 +582,8 @@ export default function POSPage() {
               
               <div className="p-4 max-h-96 overflow-y-auto">
                 <div className="space-y-3">
-                  {cart.map(item => (
-                    <div key={item.id} className="flex items-center justify-between p-3 bg-slate-50 rounded-lg border border-slate-100">
+                  {cart.map((item, index) => (
+                    <div key={item.id || `cart-item-${index}`} className="flex items-center justify-between p-3 bg-slate-50 rounded-lg border border-slate-100">
                       <div className="flex-1 min-w-0">
                         <h4 className="font-semibold text-sm text-slate-800 truncate">{item.name}</h4>
                         <p className="text-xs text-slate-500">{formatCurrency(item.price)} × {item.quantity}</p>
@@ -740,8 +740,8 @@ export default function POSPage() {
                   </div>
                   <div className="bg-gradient-to-r from-slate-50 to-slate-100 rounded-xl p-4 border border-slate-200">
                     <div className="space-y-3">
-                      {cart.map(item => (
-                        <div key={item.id} className="flex justify-between items-center py-2 border-b border-slate-200 last:border-0">
+                      {cart.map((item, index) => (
+                        <div key={item.id || `cart-item-${index}`} className="flex justify-between items-center py-2 border-b border-slate-200 last:border-0">
                           <div className="flex-1">
                             <span className="font-medium text-slate-800">{item.name}</span>
                             <span className="text-slate-500 ml-2">× {item.quantity}</span>
