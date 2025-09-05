@@ -85,7 +85,7 @@ export function AggressiveErrorSuppressor({ children }: AggressiveErrorSuppresso
     // Override window.onerror
     const originalOnError = window.onerror
     window.onerror = (message, source, lineno, colno, error) => {
-      if (message && (message.includes('185') || message.includes('Minified React error'))) {
+      if (message && typeof message === 'string' && (message.includes('185') || message.includes('Minified React error'))) {
         return true
       }
       if (originalOnError) {
