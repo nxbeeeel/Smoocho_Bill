@@ -1,11 +1,11 @@
 import { Product } from './Product'
 
-export interface CartItemId {
-  value: number
+export class CartItemId {
+  constructor(public readonly value: number) {}
 }
 
-export interface Quantity {
-  value: number
+export class Quantity {
+  constructor(public readonly value: number) {}
 }
 
 export class CartItem {

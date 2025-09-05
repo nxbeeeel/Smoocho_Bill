@@ -65,7 +65,7 @@ export function useProducts(): UseProductsReturn {
     }
   }, [container, fetchProducts])
 
-  const updateProduct = useCallback(async (id: number, updates: Partial<Product>) => {
+  const updateProduct = useCallback(async (id: number, _updates: Partial<Product>) => {
     setLoading(true)
     setError(null)
     try {

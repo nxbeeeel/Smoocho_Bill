@@ -1,4 +1,4 @@
-import { Product, ProductId, ProductName, ProductPrice, ProductCategory } from '../../../domain/entities/Product'
+import { Product, ProductName, ProductPrice, ProductCategory } from '../../../domain/entities/Product'
 import { ProductRepository } from '../../../domain/repositories/ProductRepository'
 
 export interface CreateProductRequest {

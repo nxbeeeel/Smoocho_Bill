@@ -2,7 +2,22 @@ const withPWA = require('next-pwa')({
   dest: 'public',
   register: true,
   skipWaiting: true,
-  disable: process.env.NODE_ENV === 'development'
+  disable: process.env.NODE_ENV === 'development',
+  // Optimize PWA configuration
+  buildExcludes: [/middleware-manifest\.json$/],
+  runtimeCaching: [
+    {
+      urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
+      handler: 'CacheFirst',
+      options: {
+        cacheName: 'google-fonts',
+        expiration: {
+          maxEntries: 4,
+          maxAgeSeconds: 365 * 24 * 60 * 60 // 365 days
+        }
+      }
+    }
+  ]
 })
 
 /** @type {import('next').NextConfig} */
@@ -11,17 +26,21 @@ const nextConfig = {
   images: {
     unoptimized: true
   },
-  // Enable development mode for better error details
+  // Enable production optimizations
   reactStrictMode: true,
-  swcMinify: false,
-  // Completely disable minification for better error details
+  swcMinify: true, // Enable SWC minification
+  // Enable production optimizations
   webpack: (config, { dev, isServer }) => {
-    // Always disable minification
-    config.optimization.minimize = false
-    config.optimization.minimizer = []
-    
-    // Add source maps for better debugging
-    config.devtool = 'source-map'
+    // Only disable minification in development for debugging
+    if (dev) {
+      config.optimization.minimize = false
+      config.optimization.minimizer = []
+      config.devtool = 'source-map'
+    } else {
+      // Enable production optimizations
+      config.optimization.minimize = true
+      config.devtool = false
+    }
     
     return config
   }

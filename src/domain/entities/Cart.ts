@@ -1,6 +1,5 @@
 import { CartItem } from './CartItem'
 import { Product } from './Product'
-import { ProductId, ProductName, ProductPrice } from './Product'
 import { Quantity } from './CartItem'
 
 export class Cart {

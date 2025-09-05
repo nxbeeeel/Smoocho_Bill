@@ -1,6 +1,5 @@
 import { Product } from '../../../domain/entities/Product'
 import { Cart } from '../../../domain/entities/Cart'
-import { ProductId } from '../../../domain/entities/Product'
 import { Quantity } from '../../../domain/entities/CartItem'
 
 export interface AddToCartRequest {

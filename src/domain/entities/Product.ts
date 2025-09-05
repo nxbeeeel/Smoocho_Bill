@@ -1,17 +1,17 @@
-export interface ProductId {
-  value: number
+export class ProductId {
+  constructor(public readonly value: number) {}
 }
 
-export interface ProductName {
-  value: string
+export class ProductName {
+  constructor(public readonly value: string) {}
 }
 
-export interface ProductPrice {
-  value: number
+export class ProductPrice {
+  constructor(public readonly value: number) {}
 }
 
-export interface ProductCategory {
-  value: string
+export class ProductCategory {
+  constructor(public readonly value: string) {}
 }
 
 export class Product {

@@ -4,6 +4,8 @@ import React from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { cn } from '@/lib/utils'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
 
 const navigation = [
   { name: 'POS System', href: '/pos-clean', icon: '🛒' },
@@ -12,7 +14,7 @@ const navigation = [
   { name: 'Settings', href: '/settings', icon: '⚙️' },
 ]
 
-export default function CleanLayout({ children }: { children: React.ReactNode }) {
+export default function CleanLayoutPage() {
   const pathname = usePathname()
 
   return (
@@ -51,7 +53,66 @@ export default function CleanLayout({ children }: { children: React.ReactNode })
       </nav>
 
       {/* Main Content */}
-      <main>{children}</main>
+      <main className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+        <div className="text-center mb-8">
+          <h1 className="text-3xl font-bold text-gray-900 mb-4">
+            Clean Architecture Dashboard
+          </h1>
+          <p className="text-lg text-gray-600">
+            Professional POS system built with enterprise-grade architecture
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {navigation.map((item) => (
+            <Card key={item.name} className="hover:shadow-lg transition-shadow">
+              <CardHeader>
+                <CardTitle className="flex items-center">
+                  <span className="text-2xl mr-3">{item.icon}</span>
+                  {item.name}
+                </CardTitle>
+                <CardDescription>
+                  Access the {item.name.toLowerCase()} module
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Button asChild className="w-full">
+                  <Link href={item.href}>
+                    Open {item.name}
+                  </Link>
+                </Button>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+
+        <div className="mt-12 text-center">
+          <Card>
+            <CardHeader>
+              <CardTitle>Architecture Overview</CardTitle>
+              <CardDescription>
+                Built with Clean Architecture principles and SOLID design patterns
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                <div className="p-4 bg-blue-50 rounded-lg">
+                  <h3 className="font-semibold text-blue-900">Domain Layer</h3>
+                  <p className="text-blue-700">Business entities and rules</p>
+                </div>
+                <div className="p-4 bg-green-50 rounded-lg">
+                  <h3 className="font-semibold text-green-900">Application Layer</h3>
+                  <p className="text-green-700">Use cases and services</p>
+                </div>
+                <div className="p-4 bg-purple-50 rounded-lg">
+                  <h3 className="font-semibold text-purple-900">Infrastructure Layer</h3>
+                  <p className="text-purple-700">Data persistence and external services</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </main>
 
       {/* Footer */}
       <footer className="bg-white border-t mt-auto">

@@ -1,12 +1,12 @@
 import { CartItem } from './CartItem'
 import { ProductId, ProductName, ProductPrice } from './Product'
 
-export interface OrderId {
-  value: number
+export class OrderId {
+  constructor(public readonly value: number) {}
 }
 
-export interface OrderNumber {
-  value: string
+export class OrderNumber {
+  constructor(public readonly value: string) {}
 }
 
 export interface OrderItem {

@@ -18,7 +18,7 @@ export default function CleanProductsPage() {
   const { products, categories, loading, createProduct, updateProduct, deleteProduct } = useProducts()
   
   const [showCreateDialog, setShowCreateDialog] = useState(false)
-  const [editingProduct, setEditingProduct] = useState<Product | null>(null)
+  const [editingProduct] = useState<Product | null>(null)
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedCategory, setSelectedCategory] = useState('All')
 

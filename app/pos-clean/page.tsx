@@ -15,8 +15,8 @@ export default function CleanPOSPage() {
   const { toast } = useToast()
   
   // Clean architecture hooks
-  const { products, categories, loading: productsLoading, fetchProducts } = useProducts()
-  const { items: cartItems, itemCount, totalPrice, isEmpty, addToCart, clearCart } = useCart()
+  const { products, categories, loading: productsLoading } = useProducts()
+  const { itemCount, totalPrice, isEmpty, addToCart } = useCart()
   const { createOrder, loading: orderLoading } = useOrders()
   
   // UI state only
