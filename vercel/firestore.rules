@@ -1,0 +1,53 @@
+// Firestore Security Rules for Beloop POS
+// File: firestore.rules
+
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Users collection - only authenticated users can read/write their own data
+    match /users/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+      allow read: if request.auth != null && request.auth.token.role == 'admin';
+    }
+    
+    // Products collection - authenticated users can read, admins can write
+    match /products/{productId} {
+      allow read: if request.auth != null;
+      allow write: if request.auth != null && request.auth.token.role == 'admin';
+    }
+    
+    // Orders collection - authenticated users can read/write
+    match /orders/{orderId} {
+      allow read, write: if request.auth != null;
+      allow read: if request.auth != null && request.auth.token.role == 'admin';
+    }
+    
+    // Inventory collection - authenticated users can read, admins can write
+    match /inventory/{inventoryId} {
+      allow read: if request.auth != null;
+      allow write: if request.auth != null && request.auth.token.role == 'admin';
+    }
+    
+    // Sync logs collection - authenticated users can read/write
+    match /sync_logs/{logId} {
+      allow read, write: if request.auth != null;
+    }
+    
+    // Settings collection - only admins can read/write
+    match /settings/{settingId} {
+      allow read, write: if request.auth != null && request.auth.token.role == 'admin';
+    }
+    
+    // Reports collection - authenticated users can read, admins can write
+    match /reports/{reportId} {
+      allow read: if request.auth != null;
+      allow write: if request.auth != null && request.auth.token.role == 'admin';
+    }
+    
+    // Default rule - deny all other access
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
