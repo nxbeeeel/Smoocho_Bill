@@ -121,6 +121,7 @@ export default function SettingsPage() {
                 <Label htmlFor="storePhone" className="text-sm font-medium">Phone Number</Label>
                 <Input
                   id="storePhone"
+                  type="tel"
                   value={localSettings.storePhone || ''}
                   onChange={(e) => setLocalSettings({...localSettings, storePhone: e.target.value})}
                   placeholder="+91 9876543210"

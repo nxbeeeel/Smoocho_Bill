@@ -652,6 +652,7 @@ export default function OrderHistoryPage() {
                       <div>
                         <Label>Customer Phone</Label>
                         <Input
+                          type="tel"
                           value={editingOrder.customerPhone || ''}
                           onChange={(e) => setEditingOrder({...editingOrder, customerPhone: e.target.value})}
                         />

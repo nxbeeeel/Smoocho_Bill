@@ -843,6 +843,7 @@ export default function POSPage() {
                     <div>
                       <label className="block text-sm font-medium text-slate-700 mb-2">Phone (Optional)</label>
                       <Input
+                        type="tel"
                         placeholder="Phone number"
                         value={customerPhone}
                         onChange={(e) => setCustomerPhone(e.target.value)}
