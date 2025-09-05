@@ -356,7 +356,7 @@ export class ThermalPrinter {
   // Generate thermal receipt content
   generateReceiptContent(order: Record<string, unknown>, settings: Record<string, unknown>): string {
     const taxRate = settings?.taxRate || 18
-    const deliveryCharge = order.orderType === 'delivery' ? (settings?.deliveryCharge || 0) : 0
+    const deliveryCharge = (order.orderType as string) === 'delivery' ? (settings?.deliveryCharge || 0) : 0
     
     return `
       <div style="text-align: center; border-bottom: 1px dashed #000; padding-bottom: 8px; margin-bottom: 8px;">
@@ -367,7 +367,7 @@ export class ThermalPrinter {
         ${settings?.storeWebsite ? `<div style="font-size: 10px; margin-bottom: 4px;">Web: ${settings.storeWebsite}</div>` : ''}
         ${settings?.storeGST ? `<div style="font-size: 10px; margin-bottom: 4px;">GST: ${settings.storeGST}</div>` : ''}
         <div style="border-top: 1px dashed #000; margin: 4px 0;"></div>
-        <div style="font-size: 10px; font-weight: bold;">BILL #${order.orderNumber}</div>
+        <div style="font-size: 10px; font-weight: bold;">BILL #${order.orderNumber as string}</div>
       </div>
       
       <div style="margin-bottom: 8px; font-size: 11px;">
@@ -376,8 +376,8 @@ export class ThermalPrinter {
         <p style="margin: 1px 0;">Order Type: ${(order.orderType as string)?.toUpperCase() || 'TAKEAWAY'}</p>
         <p style="margin: 1px 0;">Payment: ${(order.paymentMethod as string)?.toUpperCase() || 'CASH'}</p>
         <p style="margin: 1px 0;">Status: PAID</p>
-        ${order.customerName ? `<p style="margin: 1px 0;">Customer: ${order.customerName}</p>` : ''}
-        ${order.customerPhone ? `<p style="margin: 1px 0;">Phone: ${order.customerPhone}</p>` : ''}
+        ${order.customerName ? `<p style="margin: 1px 0;">Customer: ${order.customerName as string}</p>` : ''}
+        ${order.customerPhone ? `<p style="margin: 1px 0;">Phone: ${order.customerPhone as string}</p>` : ''}
       </div>
 
       <div style="margin-bottom: 8px;">
@@ -389,10 +389,10 @@ export class ThermalPrinter {
         </div>
         ${(order.items as Record<string, unknown>[]).map((item: Record<string, unknown>) => `
           <div style="display: flex; justify-content: space-between; margin-bottom: 2px; font-size: 11px;">
-            <div style="flex: 1; margin-right: 4px;">${item.productName}</div>
-            <div style="width: 20px; text-align: center;">${item.quantity}</div>
-            <div style="width: 40px; text-align: right;">₹${item.price.toFixed(2)}</div>
-            <div style="width: 50px; text-align: right; font-weight: bold;">₹${item.total.toFixed(2)}</div>
+            <div style="flex: 1; margin-right: 4px;">${item.productName as string}</div>
+            <div style="width: 20px; text-align: center;">${item.quantity as number}</div>
+            <div style="width: 40px; text-align: right;">₹${(item.price as number).toFixed(2)}</div>
+            <div style="width: 50px; text-align: right; font-weight: bold;">₹${(item.total as number).toFixed(2)}</div>
           </div>
         `).join('')}
       </div>
@@ -402,12 +402,12 @@ export class ThermalPrinter {
       <div style="margin-bottom: 8px;">
         <div style="display: flex; justify-content: space-between; margin: 1px 0; font-size: 11px;">
           <div style="flex: 1;">Subtotal:</div>
-          <div style="font-weight: bold;">₹${order.subtotal.toFixed(2)}</div>
+          <div style="font-weight: bold;">₹${(order.subtotal as number).toFixed(2)}</div>
         </div>
-        ${order.discount > 0 ? `
+        ${(order.discount as number) > 0 ? `
           <div style="display: flex; justify-content: space-between; margin: 1px 0; font-size: 11px;">
             <div style="flex: 1;">Discount:</div>
-            <div style="font-weight: bold;">${order.discountType === 'percentage' ? order.discount + '%' : '₹' + order.discount.toFixed(2)}</div>
+            <div style="font-weight: bold;">${(order.discountType as string) === 'percentage' ? (order.discount as number) + '%' : '₹' + (order.discount as number).toFixed(2)}</div>
           </div>
         ` : ''}
         ${deliveryCharge > 0 ? `
@@ -418,11 +418,11 @@ export class ThermalPrinter {
         ` : ''}
         <div style="display: flex; justify-content: space-between; margin: 1px 0; font-size: 11px;">
           <div style="flex: 1;">Tax (${taxRate}%):</div>
-          <div style="font-weight: bold;">₹${order.tax.toFixed(2)}</div>
+          <div style="font-weight: bold;">₹${(order.tax as number).toFixed(2)}</div>
         </div>
         <div style="display: flex; justify-content: space-between; font-size: 14px; font-weight: bold; border-top: 1px solid #000; padding-top: 4px; margin-top: 4px;">
           <div>TOTAL:</div>
-          <div>₹${order.total.toFixed(2)}</div>
+          <div>₹${(order.total as number).toFixed(2)}</div>
         </div>
       </div>
 
