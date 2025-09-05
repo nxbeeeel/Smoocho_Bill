@@ -55,7 +55,7 @@ export class DexieOrderRepository implements OrderRepository {
   async update(order: Order): Promise<Order> {
     try {
       const model = this.toDatabaseModel(order)
-      await db.orders.update(order.id.value, model)
+      await db.orders.put(model)
       return order
     } catch (error) {
       console.error('Error updating order:', error)
