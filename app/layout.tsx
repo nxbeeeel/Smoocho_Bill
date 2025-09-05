@@ -5,7 +5,10 @@ import { Toaster } from '@/components/toaster'
 import { AuthProvider } from '@/contexts/auth-context'
 import { ReactErrorSuppressor } from '@/components/react-error-suppressor'
 import { AggressiveErrorSuppressor } from '@/components/aggressive-error-suppressor'
+import { ThemeProvider } from '@/components/theme-provider'
+import { ThemeToggle } from '@/components/ui/theme-toggle'
 import { setupGlobalErrorHandlers } from '@/lib/error-handler'
+import { firebaseSync } from '@/lib/firebase-sync'
 import '@/lib/react-key-validator'
 import '@/lib/early-error-suppression'
 import '@/lib/ultimate-error-suppression'
@@ -26,6 +29,8 @@ export default function RootLayout({
   // Initialize error handlers
   if (typeof window !== 'undefined') {
     setupGlobalErrorHandlers()
+    // Initialize Firebase sync
+    firebaseSync.setupRealtimeListeners()
   }
 
   return (
@@ -107,14 +112,25 @@ export default function RootLayout({
             />
           </head>
           <body className={inter.className}>
-            <AggressiveErrorSuppressor>
-              <ReactErrorSuppressor>
-                <AuthProvider>
-                  {children}
-                  <Toaster />
-                </AuthProvider>
-              </ReactErrorSuppressor>
-            </AggressiveErrorSuppressor>
+            <ThemeProvider
+              attribute="class"
+              defaultTheme="system"
+              enableSystem
+              disableTransitionOnChange
+            >
+              <AggressiveErrorSuppressor>
+                <ReactErrorSuppressor>
+                  <AuthProvider>
+                    {/* Top Theme Toggle Bar */}
+                    <div className="fixed top-0 right-0 z-50 p-2">
+                      <ThemeToggle />
+                    </div>
+                    {children}
+                    <Toaster />
+                  </AuthProvider>
+                </ReactErrorSuppressor>
+              </AggressiveErrorSuppressor>
+            </ThemeProvider>
           </body>
         </html>
   )

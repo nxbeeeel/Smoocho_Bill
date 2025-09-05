@@ -47,6 +47,11 @@ export default function OrderHistoryPage() {
   // Fetch orders from database
   const orders = useLiveQuery(() => db.orders.orderBy('createdAt').reverse().toArray()) || []
   const products = useLiveQuery(() => db.products.toArray()) || []
+  
+  // Debug logging
+  React.useEffect(() => {
+    console.log('Orders fetched:', orders.length, orders)
+  }, [orders])
 
   // Filter orders based on search and filters
   const filteredOrders = orders.filter(order => {

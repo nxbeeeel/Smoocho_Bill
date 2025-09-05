@@ -31,6 +31,7 @@ import { useSettings } from '@/hooks/use-settings'
 import { db, Product } from '@/lib/database'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { thermalPrinter } from '@/lib/printer'
+import { firebaseSync } from '@/lib/firebase-sync'
 
 interface CartItem {
   id: number | undefined
@@ -208,8 +209,14 @@ export default function POSPage() {
     }
 
     try {
+      console.log('Creating order:', order)
+      
       // Save order to database
-      await db.orders.add(order)
+      const orderId = await db.orders.add(order)
+      console.log('Order saved with ID:', orderId)
+      
+      // Sync to Firebase
+      await firebaseSync.addOrderToFirebase({ ...order, id: orderId })
       
       // Generate and print bill
       await generateBill(order)
@@ -226,10 +233,11 @@ export default function POSPage() {
       setCustomerName('')
       setCustomerPhone('')
       setOrderType('takeaway')
-    } catch {
+    } catch (error) {
+      console.error('Error creating order:', error)
       toast({
         title: "Error",
-        description: "Failed to process order. Please try again.",
+        description: `Failed to process order: ${error instanceof Error ? error.message : 'Unknown error'}`,
         variant: "destructive"
       })
     }
