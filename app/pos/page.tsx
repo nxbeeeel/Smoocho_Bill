@@ -28,23 +28,21 @@ import { CartBadge, PremiumCartBadge } from '@/components/ui/cart-badge'
 import { formatCurrency, calculateTax, generateOrderNumber } from '@/lib/utils'
 import { useToast } from '@/hooks/use-toast'
 import { useSettings } from '@/hooks/use-settings'
-import { db, Product } from '@/lib/database'
-import { useLiveQuery } from 'dexie-react-hooks'
+import { useCart } from '@/hooks/use-cart'
+import { useProducts } from '@/hooks/use-products'
+import { useOrders } from '@/hooks/use-orders'
 import { thermalPrinter } from '@/lib/printer'
-import { firebaseSync } from '@/lib/firebase-sync'
-
-interface CartItem {
-  id: number | undefined
-  name: string
-  price: number
-  quantity: number
-  total: number
-}
 
 export default function POSPage() {
   const { toast } = useToast()
   const { settings } = useSettings()
-  const [cart, setCart] = React.useState<CartItem[]>([])
+  
+  // Use custom hooks for business logic
+  const cart = useCart()
+  const { products, categories, loading: productsLoading, fetchProducts, fetchCategories } = useProducts()
+  const { createOrder, loading: orderLoading } = useOrders()
+  
+  // UI state only
   const [searchTerm, setSearchTerm] = React.useState('')
   const [selectedCategory, setSelectedCategory] = React.useState('All')
   const [showCheckout, setShowCheckout] = React.useState(false)
@@ -52,7 +50,6 @@ export default function POSPage() {
   const [orderType, setOrderType] = React.useState<'takeaway' | 'delivery' | 'dine-in'>('takeaway')
   const [discount, setDiscount] = React.useState(0)
   const [discountType, setDiscountType] = React.useState<'flat' | 'percentage'>('percentage')
-  // const [showQR, setShowQR] = React.useState(false)
   const [customerName, setCustomerName] = React.useState('')
   const [customerPhone, setCustomerPhone] = React.useState('')
   const [showCartModal, setShowCartModal] = React.useState(false)
@@ -61,50 +58,37 @@ export default function POSPage() {
   const [showPrices, setShowPrices] = React.useState(true)
   const [compactView, setCompactView] = React.useState(false)
 
-  // Live query for products from database - get all products first, then filter
-  const products = useLiveQuery(() => db.products.toArray()) || []
+  // Filter products based on UI state
   const activeProducts = products.filter(p => p.isActive)
-  const [isLoadingProducts, setIsLoadingProducts] = React.useState(true)
-
-  // Ensure menu data is loaded on component mount (only once)
-  React.useEffect(() => {
-    const ensureMenuData = async () => {
-      try {
-        const productCount = await db.products.count()
-        if (productCount === 0) {
-          console.log('No products found in POS - Ensuring menu data is loaded...')
-          await db.ensureMenuData()
-        }
-        setIsLoadingProducts(false)
-      } catch (error) {
-        console.error('Error ensuring menu data:', error)
-        toast({
-          title: "Menu Loading Error",
-          description: "Failed to load menu data. Please refresh the page.",
-          variant: "destructive"
-        })
-        setIsLoadingProducts(false)
-      }
-    }
-    ensureMenuData()
-  }, []) // Empty dependency array - run only once on mount
-
-  // Update loading state when products are loaded
-  React.useEffect(() => {
-    if (products.length > 0) {
-      setIsLoadingProducts(false)
-    }
-  }, [products])
-
-  // Get unique categories from products
-  const categories = ['All', ...Array.from(new Set(activeProducts.map(p => p.category).filter(Boolean)))]
-
-  // Filter products based on search and category
   const filteredProducts = activeProducts.filter(product => {
     const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase())
     const matchesCategory = selectedCategory === 'All' || product.category === selectedCategory
     return matchesSearch && matchesCategory
   })
+
+  // Load data on component mount
+  React.useEffect(() => {
+    const loadData = async () => {
+      try {
+        await Promise.all([
+          fetchProducts(),
+          fetchCategories()
+        ])
+      } catch (error) {
+        console.error('Error loading data:', error)
+        toast({
+          title: "Data Loading Error",
+          description: "Failed to load data. Please refresh the page.",
+          variant: "destructive"
+        })
+      }
+    }
+
+    loadData()
+  }, [fetchProducts, fetchCategories, toast])
+
+  // Get unique categories from products
+  const allCategories = ['All', ...categories]
 
   const addToCart = (product: Product) => {
     if (!product.id) return
