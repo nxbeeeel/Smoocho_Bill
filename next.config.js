@@ -85,14 +85,7 @@ const withPWA = require('next-pwa')({
   ],
   
   // Additional PWA features
-  publicExcludes: ['!robots.txt', '!sitemap.xml'],
-  
-  // Workbox configuration
-  workboxOptions: {
-    disableDevLogs: true,
-    clientsClaim: true,
-    skipWaiting: true
-  }
+  publicExcludes: ['!robots.txt', '!sitemap.xml']
 })
 
 /** @type {import('next').NextConfig} */
