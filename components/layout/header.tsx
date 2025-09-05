@@ -25,7 +25,7 @@ interface HeaderProps {
 }
 
 export function Header({ onToggleSidebar, user }: HeaderProps) {
-  const [notifications, setNotifications] = React.useState([
+  const [notifications] = React.useState([
     { id: 1, title: 'Low stock', message: 'Milk (2 liters remaining)', type: 'warning', time: '10 minutes ago' },
     { id: 2, title: 'New order', message: '#SMO240101001 completed', type: 'info', time: '1 hour ago' }
   ])

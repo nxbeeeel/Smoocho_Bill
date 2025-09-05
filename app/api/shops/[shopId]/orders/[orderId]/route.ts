@@ -19,7 +19,7 @@ export const PUT = requireAuth(async (request: NextRequest, user, { params }: { 
 
     // Build dynamic update query
     const fields: string[] = []
-    const values: any[] = []
+    const values: (string | number | boolean)[] = []
     let paramCount = 1
 
     Object.keys(updateData).forEach(key => {

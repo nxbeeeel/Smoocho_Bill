@@ -35,7 +35,7 @@ export function ImageSync({ className }: ImageSyncProps) {
     try {
       const status = await menuImageLoader.getImageStatusReport()
       setImageStatus(status)
-    } catch (error) {
+    } catch {
       toast({
         title: "Error",
         description: "Failed to check image status.",
@@ -71,7 +71,7 @@ export function ImageSync({ className }: ImageSyncProps) {
 
       // Refresh image status
       await checkImageStatus()
-    } catch (error) {
+    } catch {
       toast({
         title: "Sync Failed",
         description: "Failed to sync images. Please try again.",
@@ -91,7 +91,7 @@ export function ImageSync({ className }: ImageSyncProps) {
         description: "Image cache has been cleared.",
       })
       await checkImageStatus()
-    } catch (error) {
+    } catch {
       toast({
         title: "Error",
         description: "Failed to clear image cache.",
@@ -209,8 +209,8 @@ export function ImageSync({ className }: ImageSyncProps) {
             <div className="text-sm text-blue-800">
               <div className="font-medium mb-1">How to sync images between devices:</div>
               <ol className="list-decimal list-inside space-y-1 text-xs">
-                <li>On the device with images, click "Sync Images"</li>
-                <li>Export the data using "Export Data" in Backup section</li>
+                <li>On the device with images, click &quot;Sync Images&quot;</li>
+                <li>Export the data using &quot;Export Data&quot; in Backup section</li>
                 <li>On the other device, import the data file</li>
                 <li>Images will be automatically synced with the data</li>
               </ol>

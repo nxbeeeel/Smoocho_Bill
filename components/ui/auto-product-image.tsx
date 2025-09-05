@@ -13,7 +13,7 @@ interface AutoProductImageProps {
 export function AutoProductImage({ product, className = "w-full h-full object-cover", fallbackClassName = "text-4xl" }: AutoProductImageProps) {
   const [imageSrc, setImageSrc] = useState<string>('')
   const [isLoading, setIsLoading] = useState(true)
-  const [hasError, setHasError] = useState(false)
+  // const [hasError, setHasError] = useState(false)
 
   useEffect(() => {
     const loadImage = async () => {

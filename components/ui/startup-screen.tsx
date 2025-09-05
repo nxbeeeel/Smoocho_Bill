@@ -84,21 +84,21 @@ export function StartupScreen({ onReady, onError }: StartupScreenProps) {
     }
   }
 
-  const getStatusColor = () => {
-    switch (status.phase) {
-      case 'checking':
-      case 'loading':
-        return 'text-blue-600'
-      case 'syncing':
-        return 'text-green-600'
-      case 'ready':
-        return 'text-green-600'
-      case 'error':
-        return 'text-red-600'
-      default:
-        return 'text-blue-600'
-    }
-  }
+  // const getStatusColor = () => {
+  //   switch (status.phase) {
+  //     case 'checking':
+  //     case 'loading':
+  //       return 'text-blue-600'
+  //     case 'syncing':
+  //       return 'text-green-600'
+  //     case 'ready':
+  //       return 'text-green-600'
+  //     case 'error':
+  //       return 'text-red-600'
+  //     default:
+  //       return 'text-blue-600'
+  //   }
+  // }
 
   const getConnectionStatus = () => {
     if (navigator.onLine) {

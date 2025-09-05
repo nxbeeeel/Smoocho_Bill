@@ -2,7 +2,6 @@
 
 import React, { useState, useCallback } from 'react'
 import { Upload, X } from 'lucide-react'
-import { Button } from './button'
 
 export interface ImageUploadProps {
   value?: string
@@ -12,7 +11,7 @@ export interface ImageUploadProps {
 }
 
 export function ImageUpload({ value, onChange, disabled, className = '' }: ImageUploadProps) {
-  const [isLoading, setIsLoading] = useState(false)
+  const [isLoading] = useState(false)
   const [preview, setPreview] = useState<string | null>(value || null)
 
   const handleFileChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {

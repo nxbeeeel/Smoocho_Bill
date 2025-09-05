@@ -25,7 +25,7 @@ export const GET = requireAuth(async (request: NextRequest, user, { params }: { 
     }
 
     let queryText = 'SELECT * FROM orders WHERE shop_id = $1'
-    let queryParams: any[] = [shopId]
+    const queryParams: (string | number)[] = [shopId]
     let paramCount = 2
 
     if (startDate && endDate) {
