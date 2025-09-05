@@ -1,27 +1,6 @@
 import { Order, OrderId, OrderNumber } from '../../domain/entities/Order'
 import { OrderRepository } from '../../domain/repositories/OrderRepository'
-import { db } from '../../../lib/database'
-
-// Database model interface
-interface OrderModel {
-  id?: number
-  orderNumber: string
-  items: Record<string, unknown>[]
-  subtotal: number
-  discount: number
-  discountType: 'flat' | 'percentage'
-  tax: number
-  total: number
-  paymentMethod: 'cash' | 'card' | 'upi'
-  paymentStatus: 'pending' | 'completed' | 'failed'
-  orderType: 'takeaway' | 'delivery' | 'dine-in'
-  customerName?: string
-  customerPhone?: string
-  notes?: string
-  cashierId: number
-  createdAt: Date
-  updatedAt: Date
-}
+import { db, Order as DatabaseOrder } from '../../../lib/database'
 
 export class DexieOrderRepository implements OrderRepository {
   async findById(id: OrderId): Promise<Order | null> {
@@ -119,14 +98,14 @@ export class DexieOrderRepository implements OrderRepository {
     }
   }
 
-  private toDomainEntity(model: OrderModel): Order {
+  private toDomainEntity(model: DatabaseOrder): Order {
     // Convert database items to domain OrderItems
-    const orderItems = model.items.map((item: Record<string, unknown>) => ({
-      productId: { value: item.productId as number },
-      productName: { value: item.productName as string },
-      quantity: item.quantity as number,
-      price: { value: item.price as number },
-      total: item.total as number
+    const orderItems = model.items.map(item => ({
+      productId: { value: item.productId },
+      productName: { value: item.productName },
+      quantity: item.quantity,
+      price: { value: item.price },
+      total: item.total
     }))
 
     return new Order(
@@ -150,7 +129,7 @@ export class DexieOrderRepository implements OrderRepository {
     )
   }
 
-  private toDatabaseModel(order: Order): OrderModel {
+  private toDatabaseModel(order: Order): DatabaseOrder {
     // Convert domain OrderItems to database format
     const databaseItems = order.items.map(item => ({
       productId: item.productId.value,

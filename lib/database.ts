@@ -46,6 +46,7 @@ export interface Order {
   total: number;
   paymentMethod: 'cash' | 'card' | 'upi';
   paymentStatus: 'pending' | 'completed' | 'failed';
+  orderType: 'takeaway' | 'delivery' | 'dine-in';
   cashierId: number;
   customerName?: string;
   customerPhone?: string;
