@@ -1,19 +1,6 @@
 import { Product, ProductId, ProductName, ProductPrice, ProductCategory } from '../../domain/entities/Product'
 import { ProductRepository, ProductFilters } from '../../domain/repositories/ProductRepository'
-import { db } from '../../../lib/database'
-
-// Database model interface
-interface ProductModel {
-  id?: number
-  name: string
-  price: number
-  category: string
-  description: string
-  isActive: boolean
-  imageUrl?: string
-  createdAt: Date
-  updatedAt: Date
-}
+import { db, Product as DatabaseProduct } from '../../../lib/database'
 
 export class DexieProductRepository implements ProductRepository {
   async findById(id: ProductId): Promise<Product | null> {
@@ -125,13 +112,13 @@ export class DexieProductRepository implements ProductRepository {
     }
   }
 
-  private toDomainEntity(model: ProductModel): Product {
+  private toDomainEntity(model: DatabaseProduct): Product {
     return new Product(
       { value: model.id! },
       new ProductName(model.name),
       new ProductPrice(model.price),
       new ProductCategory(model.category),
-      model.description,
+      model.description || '',
       model.isActive,
       model.imageUrl,
       model.createdAt,
@@ -139,7 +126,7 @@ export class DexieProductRepository implements ProductRepository {
     )
   }
 
-  private toDatabaseModel(product: Product): ProductModel {
+  private toDatabaseModel(product: Product): DatabaseProduct {
     return {
       id: product.id.value || undefined,
       name: product.name.value,
