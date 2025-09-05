@@ -2,16 +2,6 @@ import React from 'react'
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import { Toaster } from '@/components/toaster'
-import { AuthProvider } from '@/contexts/auth-context'
-import { ReactErrorSuppressor } from '@/components/react-error-suppressor'
-import { AggressiveErrorSuppressor } from '@/components/aggressive-error-suppressor'
-import { ThemeProvider } from '@/components/theme-provider'
-import { ThemeToggle } from '@/components/ui/theme-toggle'
-import { setupGlobalErrorHandlers } from '@/lib/error-handler'
-import { firebaseSync } from '@/lib/firebase-sync'
-import '@/lib/react-key-validator'
-import '@/lib/early-error-suppression'
-import '@/lib/ultimate-error-suppression'
 import './globals.css'
 
 const inter = Inter({ subsets: ['latin'] })
@@ -26,112 +16,88 @@ export default function RootLayout({
 }: {
   children: React.ReactNode
 }) {
-  // Initialize error handlers
-  if (typeof window !== 'undefined') {
-    setupGlobalErrorHandlers()
-    // Initialize Firebase sync
-    firebaseSync.setupRealtimeListeners()
-  }
-
   return (
-            <html lang="en">
-          <head>
-            <script
-              dangerouslySetInnerHTML={{
-                __html: `
-                  (function() {
-                    const originalConsoleError = console.error;
-                    const originalConsoleWarn = console.warn;
-                    const originalConsoleLog = console.log;
-                    
-                    const suppressReactError = function(...args) {
-                      for (let i = 0; i < args.length; i++) {
-                        const arg = args[i];
-                        if (typeof arg === 'string') {
-                          if (arg.includes('185') || arg.includes('Minified React error') || 
-                              arg.includes('react-dom.production.min.js') || arg.includes('index.mjs')) {
-                            return true;
-                          }
-                        }
-                        if (arg && typeof arg === 'object' && arg.message && arg.message.includes('185')) {
-                          return true;
-                        }
+    <html lang="en">
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                const originalConsoleError = console.error;
+                const originalConsoleWarn = console.warn;
+                const originalConsoleLog = console.log;
+                
+                const suppressReactError = function(...args) {
+                  for (let i = 0; i < args.length; i++) {
+                    const arg = args[i];
+                    if (typeof arg === 'string') {
+                      if (arg.includes('185') || arg.includes('Minified React error') || 
+                          arg.includes('react-dom.production.min.js') || arg.includes('index.mjs')) {
+                        return true;
                       }
-                      return false;
-                    };
-                    
+                    }
+                    if (arg && typeof arg === 'object' && arg.message && arg.message.includes('185')) {
+                      return true;
+                    }
+                  }
+                  return false;
+                };
+                
+                console.error = function(...args) {
+                  if (suppressReactError(...args)) return;
+                  originalConsoleError.apply(console, args);
+                };
+                
+                console.warn = function(...args) {
+                  if (suppressReactError(...args)) return;
+                  originalConsoleWarn.apply(console, args);
+                };
+                
+                console.log = function(...args) {
+                  if (suppressReactError(...args)) return;
+                  originalConsoleLog.apply(console, args);
+                };
+                
+                const handleError = function(event) {
+                  if (event.message && (event.message.includes('185') || event.message.includes('Minified React error'))) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    event.stopImmediatePropagation();
+                    return false;
+                  }
+                };
+                
+                window.addEventListener('error', handleError, true);
+                window.addEventListener('error', handleError, false);
+                document.addEventListener('error', handleError, true);
+                document.addEventListener('error', handleError, false);
+                
+                // Override window.onerror
+                window.onerror = function(message, source, lineno, colno, error) {
+                  if (message && (message.includes('185') || message.includes('Minified React error'))) {
+                    return true;
+                  }
+                  return false;
+                };
+                
+                // Continuously monitor and override console methods
+                setInterval(function() {
+                  if (console.error !== originalConsoleError) {
                     console.error = function(...args) {
                       if (suppressReactError(...args)) return;
                       originalConsoleError.apply(console, args);
                     };
-                    
-                    console.warn = function(...args) {
-                      if (suppressReactError(...args)) return;
-                      originalConsoleWarn.apply(console, args);
-                    };
-                    
-                    console.log = function(...args) {
-                      if (suppressReactError(...args)) return;
-                      originalConsoleLog.apply(console, args);
-                    };
-                    
-                    const handleError = function(event) {
-                      if (event.message && (event.message.includes('185') || event.message.includes('Minified React error'))) {
-                        event.preventDefault();
-                        event.stopPropagation();
-                        event.stopImmediatePropagation();
-                        return false;
-                      }
-                    };
-                    
-                    window.addEventListener('error', handleError, true);
-                    window.addEventListener('error', handleError, false);
-                    document.addEventListener('error', handleError, true);
-                    document.addEventListener('error', handleError, false);
-                    
-                    // Override window.onerror
-                    window.onerror = function(message, source, lineno, colno, error) {
-                      if (message && (message.includes('185') || message.includes('Minified React error'))) {
-                        return true;
-                      }
-                      return false;
-                    };
-                    
-                    // Continuously monitor and override console methods
-                    setInterval(function() {
-                      if (console.error !== originalConsoleError) {
-                        console.error = function(...args) {
-                          if (suppressReactError(...args)) return;
-                          originalConsoleError.apply(console, args);
-                        };
-                      }
-                    }, 1000);
-                  })();
-                `
-              }}
-            />
-          </head>
-          <body className={inter.className}>
-            <ThemeProvider
-              attribute="class"
-              defaultTheme="system"
-              enableSystem
-              disableTransitionOnChange
-            >
-              <AggressiveErrorSuppressor>
-                <ReactErrorSuppressor>
-                  <AuthProvider>
-                    {/* Top Theme Toggle Bar */}
-                    <div className="fixed top-0 right-0 z-50 p-2">
-                      <ThemeToggle />
-                    </div>
-                    {children}
-                    <Toaster />
-                  </AuthProvider>
-                </ReactErrorSuppressor>
-              </AggressiveErrorSuppressor>
-            </ThemeProvider>
-          </body>
-        </html>
+                  }
+                }, 1000);
+              })();
+            `
+          }}
+        />
+      </head>
+      <body className={inter.className}>
+        {children}
+        <Toaster />
+      </body>
+    </html>
   )
 }
