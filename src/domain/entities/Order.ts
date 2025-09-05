@@ -21,7 +21,7 @@ export type PaymentMethod = 'cash' | 'card' | 'upi'
 export type PaymentStatus = 'pending' | 'completed' | 'failed'
 export type OrderType = 'takeaway' | 'delivery' | 'dine-in'
 
-export interface Money {
+export interface OrderMoney {
   value: number
 }
 
@@ -30,11 +30,11 @@ export class Order {
     public readonly id: OrderId,
     public readonly orderNumber: OrderNumber,
     public readonly items: OrderItem[],
-    public readonly subtotal: Money,
-    public readonly discount: Money,
+    public readonly subtotal: OrderMoney,
+    public readonly discount: OrderMoney,
     public readonly discountType: 'flat' | 'percentage',
-    public readonly tax: Money,
-    public readonly total: Money,
+    public readonly tax: OrderMoney,
+    public readonly total: OrderMoney,
     public readonly paymentMethod: PaymentMethod,
     public readonly paymentStatus: PaymentStatus,
     public readonly orderType: OrderType,
@@ -94,7 +94,7 @@ export class Order {
     orderNumber: OrderNumber,
     paymentMethod: PaymentMethod,
     orderType: OrderType,
-    discount: Money = { value: 0 },
+    discount: OrderMoney = { value: 0 },
     discountType: 'flat' | 'percentage' = 'flat',
     taxRate: number = 0,
     deliveryCharge: number = 0,
